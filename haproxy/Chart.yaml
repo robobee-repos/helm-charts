@@ -11,16 +11,16 @@ dependencies:
 description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL termination and offloading, TCP and HTTP normalization, traffic regulation, caching and protection against DDoS attacks.
 engine: gotpl
 home: https://www.haproxy.org/
-icon: https://bitnami.com/assets/stacks/haproxy/img/haproxy-stack-220x234.png
 keywords:
   - haproxy
   - proxy
   - infrastructure
+  - robobee
 maintainers:
-  - email: containers@bitnami.com
-    name: Bitnami
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
 name: haproxy
 sources:
-  - https://github.com/bitnami/bitnami-docker-haproxy
+  - https://github.com/robobee-repos/helm-charts
   - https://github.com/haproxytech/haproxy
 version: 0.2.21-robobee-1.0.0

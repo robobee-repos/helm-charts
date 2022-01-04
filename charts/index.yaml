@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-03T21:13:12.554202978+01:00"
+    created: "2022-01-04T13:31:44.643786681+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -15,21 +15,21 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: 4b71bf4d109e579fb10844a48ca0e33fa12dd79a0e14e923ef32a710633f8b02
+    digest: c6b23692d772722c8f970e106232014a5b4eecca4407cac7cd3122e2cd8315e8
     home: https://www.haproxy.org/
-    icon: https://bitnami.com/assets/stacks/haproxy/img/haproxy-stack-220x234.png
     keywords:
     - haproxy
     - proxy
     - infrastructure
+    - robobee
     maintainers:
-    - email: containers@bitnami.com
-      name: Bitnami
+    - email: erwin@muellerpublic.de
+      name: Erwin Müller
     name: haproxy
     sources:
-    - https://github.com/bitnami/bitnami-docker-haproxy
+    - https://github.com/robobee-repos/helm-charts
     - https://github.com/haproxytech/haproxy
     urls:
     - haproxy-0.2.21-robobee-1.0.0.tgz
     version: 0.2.21-robobee-1.0.0
-generated: "2022-01-03T21:13:12.540011885+01:00"
+generated: "2022-01-04T13:31:44.639401519+01:00"
