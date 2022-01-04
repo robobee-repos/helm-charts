@@ -15,7 +15,7 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: c6b23692d772722c8f970e106232014a5b4eecca4407cac7cd3122e2cd8315e8
+    digest: c74dd64f0e3ab6a11974dc2945840af695c2de05aa271b904ba536b807da50cc
     home: https://www.haproxy.org/
     keywords:
     - haproxy
@@ -30,6 +30,6 @@ entries:
     - https://github.com/robobee-repos/helm-charts
     - https://github.com/haproxytech/haproxy
     urls:
-    - haproxy-1.0.0.0.2.21.tgz
-    version: 1.0.0.0.2.21
+    - haproxy-1.0.0.tgz
+    version: 1.0.0
 generated: "2022-01-04T13:31:44.639401519+01:00"
