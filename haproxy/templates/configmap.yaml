@@ -14,5 +14,67 @@ metadata:
   {{- end }}
 data:
   haproxy.cfg: |
-    {{- include "common.tplvalues.render" ( dict "value" .Values.configuration "context" $ ) | nindent 4 }}
+    {{- include "haproxy.configuration.global" . | nindent 4 }}
+    {{- include "haproxy.configuration.defaults" . | nindent 4 }}
+    {{- if .Values.edgeNode }}
+    frontend http-in
+        bind            :80 name node-http
+        mode            http
+        redirect scheme https code 301 unless { path_beg /.well-known/acme-challenge/ }
+        default_backend nodes-http
+    backend nodes-http
+        mode            http
+        balance         roundrobin
+        option          forwardfor
+        http-request    set-header X-Forwarded-Port %[dst_port]
+        http-request    add-header X-Forwarded-Proto https if { ssl_fc }
+        option          httpchk HEAD / HTTP/1.1\r\nHost:\ {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }}
+        http-check      expect rstatus ((2|3)[0-9][0-9]|404)
+        server          ingress01-http {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }} check inter 1000 send-proxy
+    frontend https-in
+        bind            :443 name node-https
+        mode            tcp
+        option          tcplog
+        tcp-request     inspect-delay 5s
+        tcp-request     content accept if { req.ssl_hello_type 1 }
+        acl proto_tls   req.ssl_hello_type 1
+        use_backend     nodes-https if proto_tls
+        default_backend nodes-https
+    backend nodes-https
+        mode            tcp
+        log             global
+        stick-table     type ip size 512k expire 30m
+        stick on        dst
+        balance         roundrobin
+        server          ingress01-https {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpsPort }} check inter 1000 send-proxy
+    frontend ssh-in
+        bind            :22 name node-ssh
+        mode            tcp
+        default_backend nodes-ssh
+    backend nodes-ssh
+        mode            tcp
+        log             global
+        stick-table     type ip size 512k expire 30m
+        stick on        dst
+        balance         roundrobin
+        retries         3
+        option          tcplog
+        server          ingress01-ssh {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.sshPort }} check inter 1000
+    {{- end }}
+  dhparam: |
+    {{- (.Files.Get "files/dhparam.txt") | nindent 4 }}
+  400.http: |
+    {{- (.Files.Get "files/400.http") | nindent 4 }}
+  403.http: |
+    {{- (.Files.Get "files/403.http") | nindent 4 }}
+  408.http: |
+    {{- (.Files.Get "files/408.http") | nindent 4 }}
+  500.http: |
+    {{- (.Files.Get "files/500.http") | nindent 4 }}
+  502.http: |
+    {{- (.Files.Get "files/502.http") | nindent 4 }}
+  503.http: |
+    {{- (.Files.Get "files/503.http") | nindent 4 }}
+  504.http: |
+    {{- (.Files.Get "files/504.http") | nindent 4 }}
 {{- end }}

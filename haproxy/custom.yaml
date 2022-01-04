@@ -12,3 +12,8 @@ service:
   externalIPs:
   - 46.19.33.244
  
+edgeNode:
+  address: 46.19.33.244
+  httpPort: 30000
+  httpsPort: 30001
+  sshPort: 30022

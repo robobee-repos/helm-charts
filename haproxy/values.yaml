@@ -57,6 +57,14 @@ diagnosticMode:
   args:
     - infinity
 
+## Edge node values for frontends and backends.
+##
+#edgeNode:
+#  address:
+#  httpPort:
+#  httpsPort:
+#  sshPort:
+
 ## @section Traffic Exposure Parameters
 ##
 
