@@ -1,5 +1,51 @@
  <!DOCTYPE html>
 <html>
+
+<style>
+table {
+  width: 50%;
+  text-align: left;
+  border-collapse: collapse;
+  margin: 0 0 1em 0;
+  caption-side: top;
+}
+
+caption, td, th {
+  padding: 0.3em;
+}
+
+tbody {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+tbody th, tfoot th {
+  border: 0;
+}
+
+th.name {
+  width: 25%;
+}
+
+th.location {
+  width: 20%;
+}
+
+th.lasteruption {
+  width: 30%;
+}
+
+th.eruptiontype {
+  width: 25%;
+}
+
+tfoot {
+  text-align: center;
+  color: #555;
+  font-size: 0.8em;
+}
+</style>
+
 <body>
 
 <h1>robobee-repos / helm-charts</h1>
@@ -11,6 +57,28 @@ helm search repo robobee-repos
 helm install my-release robobee-repos/
 </pre>
 </p>
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+
+<tr>
+<td><code>robobee-repos/haproxy</code></td>
+<td><code>0.2.21-robobee-1.0.0</code></td>
+</tr>
+
+<tfoot>
+<tr>
+<td colspan="2">Updated 04/01/2022</td>
+</tr>
+</tfoot>
+
+</table>
 
 </body>
 </html>
