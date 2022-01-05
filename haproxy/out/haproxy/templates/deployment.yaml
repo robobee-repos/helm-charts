@@ -7,7 +7,7 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.4
+    helm.sh/chart: haproxy-1.0.5
     app.kubernetes.io/instance: haproxy
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
@@ -23,10 +23,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: f33c1bab5b2bd47672eb5f0773fd4a71733b5a294cc345e7f55474e6a456456a
+        checksum/configmap: 6554d1d4b588ddd990e1350fb1d35291cdbfef6f55ee321a976900b6de5d71e7
       labels:
         app.kubernetes.io/name: haproxy
-        helm.sh/chart: haproxy-1.0.4
+        helm.sh/chart: haproxy-1.0.5
         app.kubernetes.io/instance: haproxy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: haproxy
@@ -65,6 +65,9 @@ spec:
             containerPort: 443
           - name: ssh
             containerPort: 22
+          - name: metrics
+            containerPort: 8404
+            protocol: TCP
           env:
           envFrom:
           resources:

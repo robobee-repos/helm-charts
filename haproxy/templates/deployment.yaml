@@ -87,6 +87,11 @@ spec:
           - name: ssh
             containerPort: 22
           {{- end }}
+          {{- if .Values.metrics.enabled }}
+          - name: metrics
+            containerPort: {{ .Values.metrics.port }}
+            protocol: TCP
+          {{- end }}
           {{- end }}
           {{- if .Values.diagnosticMode.enabled }}
           command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
