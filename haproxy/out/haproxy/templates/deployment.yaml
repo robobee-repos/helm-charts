@@ -7,7 +7,7 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.1
+    helm.sh/chart: haproxy-1.0.2
     app.kubernetes.io/instance: haproxy
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
@@ -23,10 +23,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 7c47b18cac1892f4105e4fc58552c169d222401ae127e2fafd86440b04d79674
+        checksum/configmap: 791f8ac850b88965133f46ebe565e8a485d08d87673820703df08a25a00a7a84
       labels:
         app.kubernetes.io/name: haproxy
-        helm.sh/chart: haproxy-1.0.1
+        helm.sh/chart: haproxy-1.0.2
         app.kubernetes.io/instance: haproxy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: haproxy
@@ -51,16 +51,20 @@ spec:
         nodeAffinity:
           
       securityContext:
-        fsGroup: 1001
+        fsGroup: 99
       containers:
         - name: haproxy
-          image: docker.io/haproxy:2.5-bullseye
+          image: docker.io/robobeerun/kube-haproxy:2.5-r1
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 1001
+            runAsUser: 99
           ports:
-            - containerPort: 8080
-              name: http
+          - name: http
+            containerPort: 80
+          - name: https
+            containerPort: 443
+          - name: ssh
+            containerPort: 22
           env:
           envFrom:
           resources:
@@ -90,7 +94,7 @@ spec:
             failureThreshold: 5
           volumeMounts:
             - name: haproxy-conf
-              mountPath: /usr/local/etc/haproxy/conf
+              mountPath: /usr/local/etc/haproxy
       volumes:
         - name: haproxy-conf
           configMap:

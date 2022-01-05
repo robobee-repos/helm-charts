@@ -77,10 +77,6 @@ service:
   ## @param service.ports [array] List of haproxy service ports
   ##
   ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: http
   ## @param service.clusterIP haproxy service Cluster IP
   ## e.g.:
   ## clusterIP: None
@@ -275,8 +271,6 @@ configuration:
 ## @param containerPorts [array] List of container ports to enable in the haproxy container
 ##
 containerPorts:
-  - name: http
-    containerPort: 8080
 
 ## @param existingConfigmap configmap with HAProxy configuration
 ##

@@ -1,4 +1,4 @@
-{{- if .Values.service.ports }}
+{{- if (or (.Values.service.ports) (.Values.edgeNode)) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -20,7 +20,11 @@ metadata:
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
 spec:
+{{- if (and (.Values.edgeNode) (.Values.edgeNode.address)) }}
+  type: NodePort
+{{- else }}
   type: {{ .Values.service.type }}
+{{- end }}
   {{- if .Values.clusterIP }}
   clusterIP: {{ .Values.clusterIP }}
   {{- end }}
@@ -33,13 +37,33 @@ spec:
   {{- if (and (eq .Values.service.type "LoadBalancer") (not (empty .Values.service.loadBalancerIP))) }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
-  {{- if (not (empty .Values.service.externalIPs)) }}
+{{- if (and (.Values.edgeNode) (.Values.edgeNode.address)) }}
   externalIPs:
-  {{- range .Values.service.externalIPs }}
-  - {{ print . }}
-  {{- end }}
-  {{- end }}
+  - {{ .Values.edgeNode.address }}
+{{- end }}
+{{- if (and (.Values.edgeNode) (.Values.edgeNode.httpPort)) }}
+{{- if .Values.service.ports }}
   ports: {{- include "common.tplvalues.render" ( dict "value" .Values.service.ports "context" $ ) | nindent 4 }}
+{{- else }}
+  ports:
+{{- end }}
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: http
+{{- end }}
+{{- if (and (.Values.edgeNode) (.Values.edgeNode.httpsPort)) }}
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: https
+{{- end }}
+{{- if (and (.Values.edgeNode) (.Values.edgeNode.sshPort)) }}
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: ssh
+{{- end }}
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
     app.kubernetes.io/component: haproxy
 {{- end }}

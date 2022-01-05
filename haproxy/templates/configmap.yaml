@@ -17,6 +17,7 @@ data:
     {{- include "haproxy.configuration.global" . | nindent 4 }}
     {{- include "haproxy.configuration.defaults" . | nindent 4 }}
     {{- if .Values.edgeNode }}
+    {{- if .Values.edgeNode.httpPort }}
     frontend http-in
         bind            :80 name node-http
         mode            http
@@ -31,6 +32,8 @@ data:
         option          httpchk HEAD / HTTP/1.1\r\nHost:\ {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }}
         http-check      expect rstatus ((2|3)[0-9][0-9]|404)
         server          ingress01-http {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }} check inter 1000 send-proxy
+    {{- end }}
+    {{- if .Values.edgeNode.httpsPort }}
     frontend https-in
         bind            :443 name node-https
         mode            tcp
@@ -47,6 +50,8 @@ data:
         stick on        dst
         balance         roundrobin
         server          ingress01-https {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpsPort }} check inter 1000 send-proxy
+    {{- end }}
+    {{- if .Values.edgeNode.sshPort }}
     frontend ssh-in
         bind            :22 name node-ssh
         mode            tcp
@@ -60,6 +65,7 @@ data:
         retries         3
         option          tcplog
         server          ingress01-ssh {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.sshPort }} check inter 1000
+    {{- end }}
     {{- end }}
   dhparam: |
     {{- (.Files.Get "files/dhparam.txt") | nindent 4 }}
