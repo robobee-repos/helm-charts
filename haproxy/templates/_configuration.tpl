@@ -66,7 +66,6 @@ Stats Prometheus frontend.
 {{- define "haproxy.configuration.prometheus" -}}
 frontend stats
    bind *:{{ .Values.metrics.port }}
-   option http-use-htx
    http-request use-service prometheus-exporter if { path /metrics }
    stats enable
    stats uri /stats

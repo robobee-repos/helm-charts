@@ -24,4 +24,4 @@ sources:
   - https://github.com/robobee-repos/helm-charts
   - https://hub.docker.com/_/haproxy
   - https://github.com/haproxytech/haproxy
-version: 1.0.6
+version: 1.0.7
