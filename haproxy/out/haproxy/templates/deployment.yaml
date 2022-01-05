@@ -7,7 +7,7 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.0
+    helm.sh/chart: haproxy-1.0.1
     app.kubernetes.io/instance: haproxy
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
@@ -23,10 +23,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: c7064091a3be8829fe6f9e2b6764184ca7024e7ffa4fed0154be5d2efb6ac739
+        checksum/configmap: 7c47b18cac1892f4105e4fc58552c169d222401ae127e2fafd86440b04d79674
       labels:
         app.kubernetes.io/name: haproxy
-        helm.sh/chart: haproxy-1.0.0
+        helm.sh/chart: haproxy-1.0.1
         app.kubernetes.io/instance: haproxy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: haproxy
@@ -54,7 +54,7 @@ spec:
         fsGroup: 1001
       containers:
         - name: haproxy
-          image: docker.io/bitnami/haproxy:2.5.0-debian-10-r22
+          image: docker.io/haproxy:2.5-bullseye
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 1001
@@ -90,7 +90,7 @@ spec:
             failureThreshold: 5
           volumeMounts:
             - name: haproxy-conf
-              mountPath: /bitnami/haproxy/conf
+              mountPath: /usr/local/etc/haproxy/conf
       volumes:
         - name: haproxy-conf
           configMap:
