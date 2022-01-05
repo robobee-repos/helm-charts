@@ -63,6 +63,13 @@ data:
         errorfile 502 /usr/local/etc/haproxy/502.http
         errorfile 503 /usr/local/etc/haproxy/503.http
         errorfile 504 /usr/local/etc/haproxy/504.http
+    frontend stats
+       bind *:8404
+       option http-use-htx
+       http-request use-service prometheus-exporter if { path /metrics }
+       stats enable
+       stats uri /stats
+       stats refresh 10s
     frontend http-in
         bind            :80 name node-http
         mode            http

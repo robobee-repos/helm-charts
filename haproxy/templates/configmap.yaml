@@ -16,6 +16,9 @@ data:
   haproxy.cfg: |
     {{- include "haproxy.configuration.global" . | nindent 4 }}
     {{- include "haproxy.configuration.defaults" . | nindent 4 }}
+    {{- if (and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1" ) (.Values.metrics.enabled) (.Values.metrics.serviceMonitor.enabled)) -}}
+    {{- include "haproxy.configuration.prometheus" . | nindent 4 }}
+    {{- end }}
     {{- if .Values.edgeNode }}
     {{- if .Values.edgeNode.httpPort }}
     frontend http-in
