@@ -23,7 +23,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 791f8ac850b88965133f46ebe565e8a485d08d87673820703df08a25a00a7a84
+        checksum/configmap: 68b151361d6c89b7be3e3969ffcaaf09c8a8fd80ea24f71273de535da8236334
       labels:
         app.kubernetes.io/name: haproxy
         helm.sh/chart: haproxy-1.0.2
