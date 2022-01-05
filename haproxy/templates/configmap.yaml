@@ -45,7 +45,6 @@ data:
         default_backend nodes-https
     backend nodes-https
         mode            tcp
-        option          tcplog
         stick-table     type ip size 512k expire 30m
         stick on        dst
         balance         roundrobin
@@ -63,7 +62,6 @@ data:
         stick on        dst
         balance         roundrobin
         retries         3
-        option          tcplog
         server          ingress01-ssh {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.sshPort }} check inter 1000
     {{- end }}
     {{- end }}

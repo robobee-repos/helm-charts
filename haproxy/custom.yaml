@@ -3,3 +3,8 @@ edgeNode:
   httpPort: 30000
   httpsPort: 30001
   sshPort: 30022
+metrics:
+  port: 8404
+  enabled: true
+  serviceMonitor:
+    enabled: true

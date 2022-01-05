@@ -1,0 +1,46 @@
+{{/*
+  Taken from https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/templates/controller-service-metrics.yaml
+*/}}
+{{- if .Values.metrics.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.metrics.service.annotations }}
+  annotations: {{ toYaml .Values.metrics.service.annotations | nindent 4 }}
+{{- end }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: haproxy
+  {{- if .Values.metrics.service.labels }}
+    {{- toYaml .Values.metrics.service.labels | nindent 4 }}
+  {{- end }}
+  name: {{ template "common.names.fullname" . }}-metrics
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  type: {{ .Values.metrics.service.type }}
+{{- if .Values.metrics.service.clusterIP }}
+  clusterIP: {{ .Values.metrics.service.clusterIP }}
+{{- end }}
+{{- if .Values.metrics.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.metrics.service.externalIPs | nindent 4 }}
+{{- end }}
+{{- if .Values.metrics.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.metrics.service.loadBalancerIP }}
+{{- end }}
+{{- if .Values.metrics.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{ toYaml .Values.metrics.service.loadBalancerSourceRanges | nindent 4 }}
+{{- end }}
+{{- if .Values.metrics.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.metrics.service.externalTrafficPolicy }}
+{{- end }}
+  ports:
+    - name: metrics
+      port: {{ .Values.metrics.service.servicePort }}
+      protocol: TCP
+      targetPort: metrics
+    {{- $setNodePorts := (or (eq .Values.metrics.service.type "NodePort") (eq .Values.metrics.service.type "LoadBalancer")) }}
+    {{- if (and $setNodePorts (not (empty .Values.metrics.service.nodePort))) }}
+      nodePort: {{ .Values.metrics.service.nodePort }}
+    {{- end }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
+    app.kubernetes.io/component: haproxy
+{{- end }}

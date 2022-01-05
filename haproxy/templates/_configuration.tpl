@@ -59,3 +59,16 @@ defaults
     errorfile 503 /usr/local/etc/haproxy/503.http
     errorfile 504 /usr/local/etc/haproxy/504.http
 {{- end -}}
+
+{{/*
+Stats Prometheus frontend.
+*/}}
+{{- define "haproxy.configuration.prometheus" -}}
+frontend stats
+   bind *:{{ .Values.metrics.port }}
+   option http-use-htx
+   http-request use-service prometheus-exporter if { path /metrics }
+   stats enable
+   stats uri /stats
+   stats refresh 10s
+{{- end -}}

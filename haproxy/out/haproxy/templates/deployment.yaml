@@ -7,7 +7,7 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.2
+    helm.sh/chart: haproxy-1.0.4
     app.kubernetes.io/instance: haproxy
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
@@ -23,10 +23,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 68b151361d6c89b7be3e3969ffcaaf09c8a8fd80ea24f71273de535da8236334
+        checksum/configmap: f33c1bab5b2bd47672eb5f0773fd4a71733b5a294cc345e7f55474e6a456456a
       labels:
         app.kubernetes.io/name: haproxy
-        helm.sh/chart: haproxy-1.0.2
+        helm.sh/chart: haproxy-1.0.4
         app.kubernetes.io/instance: haproxy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: haproxy
