@@ -135,7 +135,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: haproxy-conf
-              mountPath: /bitnami/haproxy/conf
+              mountPath: /usr/local/etc/haproxy
           {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}

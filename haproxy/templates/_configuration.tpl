@@ -17,7 +17,7 @@ global
     ssl-default-server-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
 
     # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam
-    ssl-dh-param-file /bitnami/haproxy/conf/dhparam
+    ssl-dh-param-file /usr/local/etc/haproxy/dhparam
 {{- end -}}
 
 {{/*
@@ -51,11 +51,11 @@ defaults
     timeout client-fin 30s
     option http-server-close
 
-    errorfile 400 /bitnami/haproxy/conf/400.http
-    errorfile 403 /bitnami/haproxy/conf/403.http
-    errorfile 408 /bitnami/haproxy/conf/408.http
-    errorfile 500 /bitnami/haproxy/conf/500.http
-    errorfile 502 /bitnami/haproxy/conf/502.http
-    errorfile 503 /bitnami/haproxy/conf/503.http
-    errorfile 504 /bitnami/haproxy/conf/504.http
+    errorfile 400 /usr/local/etc/haproxy/400.http
+    errorfile 403 /usr/local/etc/haproxy/403.http
+    errorfile 408 /usr/local/etc/haproxy/408.http
+    errorfile 500 /usr/local/etc/haproxy/500.http
+    errorfile 502 /usr/local/etc/haproxy/502.http
+    errorfile 503 /usr/local/etc/haproxy/503.http
+    errorfile 504 /usr/local/etc/haproxy/504.http
 {{- end -}}

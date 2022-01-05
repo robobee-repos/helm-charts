@@ -18,6 +18,8 @@ https://github.com/bitnami/charts/tree/master/bitnami/haproxy
 ## Modifications
 
 * Add externalIPs to service;
+* Change image to haproxy-2.5-bullseye because the Bitnami HaProxy
+image does not have Prometheus and no OpenSSL 1.1.1k and no TLSv1.3.
 
 ## License
 
