@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:53:38.97683865+01:00"
+    created: "2022-01-05T16:59:33.771362606+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -15,7 +15,7 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: c0e1774cbc475c5591b456281bf8ec86440d19cced7e18f33575bd87bde212cf
+    digest: fd53a093ed159bdaacafc000bc5c4928fc2f1853d69d09e1a00977d2a043c0cb
     home: https://www.haproxy.org/
     keywords:
     - haproxy
@@ -37,7 +37,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:53:38.973557451+01:00"
+    created: "2022-01-05T16:59:33.767404342+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -69,7 +69,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:53:38.970166364+01:00"
+    created: "2022-01-05T16:59:33.763970265+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -101,7 +101,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:53:38.967082907+01:00"
+    created: "2022-01-05T16:59:33.761672588+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -133,7 +133,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:53:38.964320483+01:00"
+    created: "2022-01-05T16:59:33.759079785+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -160,4 +160,4 @@ entries:
     urls:
     - haproxy-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-05T16:53:38.959355341+01:00"
+generated: "2022-01-05T16:59:33.755105069+01:00"
