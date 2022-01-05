@@ -5,7 +5,39 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:59:33.771362606+01:00"
+    created: "2022-01-05T17:19:00.214488198+01:00"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - bitnami-common
+      version: 1.x.x
+    description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
+      termination and offloading, TCP and HTTP normalization, traffic regulation,
+      caching and protection against DDoS attacks.
+    digest: 879bb785ddaaeafc2b46b795639a9916d12dbc5b9cfdb456a56ca3185fd9af71
+    home: https://www.haproxy.org/
+    keywords:
+    - haproxy
+    - proxy
+    - infrastructure
+    - robobee
+    maintainers:
+    - email: erwin@muellerpublic.de
+      name: Erwin Müller
+    name: haproxy
+    sources:
+    - https://github.com/robobee-repos/helm-charts
+    - https://hub.docker.com/_/haproxy
+    - https://github.com/haproxytech/haproxy
+    urls:
+    - haproxy-1.0.5.tgz
+    version: 1.0.5
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
+    appVersion: 2.5.0
+    created: "2022-01-05T17:19:00.211129475+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -37,7 +69,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:59:33.767404342+01:00"
+    created: "2022-01-05T17:19:00.20362745+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -69,7 +101,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:59:33.763970265+01:00"
+    created: "2022-01-05T17:19:00.200210644+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -101,7 +133,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:59:33.761672588+01:00"
+    created: "2022-01-05T17:19:00.197318527+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -133,7 +165,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-05T16:59:33.759079785+01:00"
+    created: "2022-01-05T17:19:00.194807768+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -160,4 +192,4 @@ entries:
     urls:
     - haproxy-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-05T16:59:33.755105069+01:00"
+generated: "2022-01-05T17:19:00.190414443+01:00"
