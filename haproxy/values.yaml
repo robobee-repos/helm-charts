@@ -118,8 +118,8 @@ service:
 ##
 image:
   registry: docker.io
-  repository: haproxy
-  tag: 2.5-bullseye
+  repository: robobeerun/kube-haproxy
+  tag: 2.5-r1
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -187,7 +187,7 @@ resources:
 ##
 podSecurityContext:
   enabled: true
-  fsGroup: 1001
+  fsGroup: 99
 ## Configure Container Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 ## @param containerSecurityContext.enabled Enabled haproxy containers' Security Context
@@ -195,7 +195,7 @@ podSecurityContext:
 ##
 containerSecurityContext:
   enabled: true
-  runAsUser: 1001
+  runAsUser: 99
 
 ## HAProxy Pod Disruption Budget configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
@@ -270,20 +270,7 @@ nodeAffinityPreset:
 ## @param configuration [string] haproxy configuration
 ## Taken from haproxytech/haproxy chart: https://github.com/haproxytech/helm-charts/tree/main/haproxy
 ##
-configuration: |
-  global
-    log stdout format raw local0
-    maxconn 1024
-  defaults
-    log global
-    timeout client 60s
-    timeout connect 60s
-    timeout server 60s
-  frontend fe_main
-    bind :8080
-    default_backend be_main
-  backend be_main
-    server web1 10.0.0.1:8080 check
+configuration:
 
 ## @param containerPorts [array] List of container ports to enable in the haproxy container
 ##
