@@ -17,7 +17,7 @@ index:
 .PHONY: push
 push:
 	VERSION=`yq e '.version' Chart.yaml` && \
-	cd .. && git add . && git commit -a -m "Publish ${VERSION}"
+	cd .. && git add . && git commit -a -m "Publish $${VERSION}"
 
 include ../Makefile.help
 include ../Makefile.functions
