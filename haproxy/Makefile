@@ -1,23 +1,16 @@
 SHELL := /bin/bash
+BASE_DIR := ..
+VERSION := $(shell yq e ".version" Chart.yaml)
+NAME := $(shell yq e ".name" Chart.yaml)
 .DEFAULT_GOAL := publish
 
 .PHONY: publish
-publish: package index push
+publish: package
 
 .PHONY: package
 package:
 	helm package .
+	mv $(NAME)-$(VERSION).tgz $(BASE_DIR)/charts
 
-.PHONY: index
-index:
-	VERSION=`yq e '.version' Chart.yaml` && \
-	mv haproxy-$${VERSION}.tgz ../charts
-	cd ../charts && helm repo index .
-
-.PHONY: push
-push:
-	VERSION=`yq e '.version' Chart.yaml` && \
-	cd .. && git add . && git commit -a -m "Publish $${VERSION}" && git push
-
-include ../Makefile.help
-include ../Makefile.functions
+include $(BASE_DIR)/Makefile.help
+include $(BASE_DIR)/Makefile.functions

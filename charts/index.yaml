@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-06T11:35:17.356696401+01:00"
+    created: "2022-01-06T11:46:18.954295027+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -15,7 +15,7 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: 6aef0a1a9acc7ab237a1634e0134e4e31dab50a257463038abcb0f4febdac624
+    digest: 3113a3d1fd0b2c7d46f0b3aafb2118beab3106874bae44868c5f116fc93d4ad4
     home: https://www.haproxy.org/
     keywords:
     - haproxy
@@ -33,4 +33,16 @@ entries:
     urls:
     - haproxy-1.0.7.tgz
     version: 1.0.7
-generated: "2022-01-06T11:35:17.353683653+01:00"
+  pgo:
+  - apiVersion: v2
+    appVersion: 5.0.4
+    created: "2022-01-06T11:46:18.957231209+01:00"
+    description: Installer for PGO, the open source Postgres Operator from Crunchy
+      Data
+    digest: bb846dd5b7d22b012c903a97e9cfc5b6bf0a39214facfbab4f451835b4d88040
+    name: pgo
+    type: application
+    urls:
+    - pgo-1.0.0.tgz
+    version: 1.0.0
+generated: "2022-01-06T11:46:18.952219323+01:00"
