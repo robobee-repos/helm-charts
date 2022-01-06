@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+.DEFAULT_GOAL := publish
 
 .PHONY: publish
 publish: package index push
@@ -9,14 +10,14 @@ package:
 
 .PHONY: index
 index:
-	$(call check_defined, VERSION, The version to publish.)
-	mv haproxy-$(VERSION).tgz ../charts
+	VERSION=`yq e '.version' Chart.yaml` && \
+	mv haproxy-$${VERSION}.tgz ../charts
 	cd ../charts && helm repo index .
 
 .PHONY: push
 push:
-	$(call check_defined, MESSAGE, The commit message.)
-	cd .. && git add . && git commit -a -m "$(MESSAGE)" && git push
+	VERSION=`yq e '.version' Chart.yaml` && \
+	cd .. && git add . && git commit -a -m "Publish $$(VERSION)"
 
-include Makefile.help
-include Makefile.functions
+include ../Makefile.help
+include ../Makefile.functions
