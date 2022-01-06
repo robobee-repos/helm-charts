@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-06T11:32:35.864927567+01:00"
+    created: "2022-01-06T11:33:19.728016196+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -15,7 +15,7 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: 77a2e9fe1aa5321fc26caec937d0e3bc37cdd3d0a76ba09067f07a08af29c542
+    digest: 3ed3a558b5ae551af240dddd4f9174d9e0ec6db52a3c1e19b7afe705b5d22305
     home: https://www.haproxy.org/
     keywords:
     - haproxy
@@ -33,4 +33,4 @@ entries:
     urls:
     - haproxy-1.0.7.tgz
     version: 1.0.7
-generated: "2022-01-06T11:32:35.852773599+01:00"
+generated: "2022-01-06T11:33:19.724932509+01:00"
