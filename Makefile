@@ -3,7 +3,7 @@ SHELL := /bin/bash
 
 .PHONY: publish
 publish:
-	$(MAKE) -c haproxy publish
+	$(MAKE) -C haproxy publish
 
 include Makefile.help
 include Makefile.functions
