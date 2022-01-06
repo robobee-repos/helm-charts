@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-06T13:45:31.62541939+01:00"
+    created: "2022-01-06T15:00:03.5692598+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -15,7 +15,7 @@ entries:
     description: HAProxy is a TCP proxy and a HTTP reverse proxy. It supports SSL
       termination and offloading, TCP and HTTP normalization, traffic regulation,
       caching and protection against DDoS attacks.
-    digest: d90e7da023cb549a77d7fabde4d0b5fe8640f1c065a6b1b65b94bb2da50c22b9
+    digest: 4d5c6b171abc6125653250aca246a068762aa8dd542f7b538d7da89c38ca1b85
     home: https://www.haproxy.org/
     keywords:
     - haproxy
@@ -36,13 +36,24 @@ entries:
   pgo:
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2022-01-06T13:45:31.627363421+01:00"
+    created: "2022-01-06T15:00:03.571884182+01:00"
     description: Installer for PGO, the open source Postgres Operator from Crunchy
       Data
-    digest: b36858d21a3b810cb87886774d3e8d511c51e117a3a325bc0106e8257095f8db
+    digest: 612c1097af5358a749cc2ee9649cf771d0810cd48feabe25c7793c08a99a9af2
     name: pgo
     type: application
     urls:
     - pgo-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-06T13:45:31.622037036+01:00"
+  postgrescluster:
+  - apiVersion: v2
+    appVersion: 5.0.4
+    created: "2022-01-06T15:00:03.573250824+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 9c00db7a616f3f09e3b23b424e42bccea1b39fa0a1b3fe48ca3f9340e88397a3
+    name: postgrescluster
+    type: application
+    urls:
+    - postgrescluster-1.0.0.tgz
+    version: 1.0.0
+generated: "2022-01-06T15:00:03.566292084+01:00"

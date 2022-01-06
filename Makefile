@@ -8,6 +8,7 @@ publish-all: publish index push
 publish:
 	$(MAKE) -C haproxy publish
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish
+	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish
 
 .PHONY: index
 index:
