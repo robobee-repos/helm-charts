@@ -9,6 +9,7 @@ publish:
 	$(MAKE) -C haproxy publish
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish
+	$(MAKE) -C certs-issuers publish
 
 .PHONY: index
 index:
