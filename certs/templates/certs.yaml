@@ -1,0 +1,4 @@
+{{- range .Values.certificates }}
+{{- $vars := merge $ (dict "cert" .) }}
+{{ include "certs.certificate" $vars }}
+{{- end }}

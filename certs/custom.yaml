@@ -1,0 +1,3 @@
+acmeIssuers:
+  - name: letsencrypt-staging
+    email: erwin@muellerpublic.de
