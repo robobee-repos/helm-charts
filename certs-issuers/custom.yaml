@@ -1,3 +1,5 @@
-acmeIssuers:
-  - name: letsencrypt-staging
-    email: erwin@muellerpublic.de
+acmeStagingIssuers:
+- name: letsencrypt-staging
+  email: erwin@muellerpublic.de
+acmeProdIssuers:
+- email: erwin@muellerpublic.de

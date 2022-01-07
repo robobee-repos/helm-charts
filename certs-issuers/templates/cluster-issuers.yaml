@@ -1,3 +1,8 @@
-{{- range .Values.acmeIssuers }}
-{{ include "certsissuers.acme.issuer" (dict "defaults" $.Values.defaultsAcme "issuer" .) }}
+{{- range .Values.acmeStagingIssuers }}
+{{ include "certsissuers.acme.issuer.staging" (deepCopy $ | merge (dict "issuer" .)) }}
+---
+{{- end }}
+{{- range .Values.acmeProdIssuers }}
+{{ include "certsissuers.acme.issuer.prod" (deepCopy $ | merge (dict "issuer" .)) }}
+---
 {{- end }}

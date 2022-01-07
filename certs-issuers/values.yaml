@@ -1,4 +1,4 @@
-defaultsAcme:
+defaultsAcmeStaging:
   name: letsencrypt-staging
   server: https://acme-staging-v02.api.letsencrypt.org/directory
   solvers:
@@ -6,16 +6,16 @@ defaultsAcme:
       ingress:
         class: nginx
 
-#acmeIssuers:
-#- enabled: false
-#  name: letsencrypt-staging
-  # You must replace this email address with your own.
-  # Let's Encrypt will use this to contact you about expiring
-  # certificates, and issues related to your account.
-  # email:
-#  server: https://acme-staging-v02.api.letsencrypt.org/directory
-#  solvers:
-#  - http01:
-#      enabled: false
-#      ingress:
-#        class: nginx
+defaultsAcmeProd:
+  name: letsencrypt-production
+  server: https://acme-v02.api.letsencrypt.org/directory
+  solvers:
+  - http01:
+      ingress:
+        class: nginx
+
+#acmeStagingIssuers:
+#- name: letsencrypt-staging
+#  email: erwin@muellerpublic.de
+#acmeProdIssuers:
+#- email: erwin@muellerpublic.de

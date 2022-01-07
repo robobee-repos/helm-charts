@@ -1,8 +1,24 @@
 {{/*
+Defines ACME Staging ClusterIssuer.
+https://cert-manager.io/docs/configuration/acme/
+*/}}
+{{- define "certsissuers.acme.issuer.staging" -}}
+{{ include "certsissuers.acme.issuer.general" (deepCopy $ | merge (dict "defaults" .Values.defaultsAcmeStaging)) }}
+{{- end -}}
+
+{{/*
+Defines ACME Production ClusterIssuer.
+https://cert-manager.io/docs/configuration/acme/
+*/}}
+{{- define "certsissuers.acme.issuer.prod" -}}
+{{ include "certsissuers.acme.issuer.general" (deepCopy $ | merge (dict "defaults" .Values.defaultsAcmeProd)) }}
+{{- end -}}
+
+{{/*
 Defines ACME ClusterIssuer.
 https://cert-manager.io/docs/configuration/acme/
 */}}
-{{- define "certsissuers.acme.issuer" -}}
+{{- define "certsissuers.acme.issuer.general" -}}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
