@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: v0.1.0
+description: A Helm chart for cert issuer.
+keywords:
+  - cert-manager
+  - kube-lego
+  - letsencrypt
+  - tls
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: certs-issuers
+sources:
+  - https://github.com/robobee-repos/helm-charts
+  - https://github.com/jetstack/cert-manager
+version: 1.0.0

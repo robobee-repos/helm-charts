@@ -1,0 +1,3 @@
+{{- range .Values.acmeIssuers }}
+{{ include "certsissuers.acme.issuer" (dict "defaults" $.Values.defaultsAcme "issuer" .) }}
+{{- end }}

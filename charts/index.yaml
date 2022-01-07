@@ -5,7 +5,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-06T15:00:03.5692598+01:00"
+    created: "2022-01-07T15:20:53.329991215+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -36,10 +36,10 @@ entries:
   pgo:
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2022-01-06T15:00:03.571884182+01:00"
+    created: "2022-01-07T15:20:53.331904799+01:00"
     description: Installer for PGO, the open source Postgres Operator from Crunchy
       Data
-    digest: 612c1097af5358a749cc2ee9649cf771d0810cd48feabe25c7793c08a99a9af2
+    digest: edc450610ac38efddeabd32ad7bd1213e7fdb95613ae5067f9d5f1b15b846c21
     name: pgo
     type: application
     urls:
@@ -48,12 +48,12 @@ entries:
   postgrescluster:
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2022-01-06T15:00:03.573250824+01:00"
+    created: "2022-01-07T15:20:53.332348525+01:00"
     description: A Helm chart for Kubernetes
-    digest: 9c00db7a616f3f09e3b23b424e42bccea1b39fa0a1b3fe48ca3f9340e88397a3
+    digest: 00c91b84e48205798ef2f13fd922f9818d65bdb114311af071048d2b189546c6
     name: postgrescluster
     type: application
     urls:
     - postgrescluster-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-06T15:00:03.566292084+01:00"
+generated: "2022-01-07T15:20:53.314804302+01:00"
