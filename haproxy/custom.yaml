@@ -1,8 +1,12 @@
-edgeNode:
-  address: 46.19.33.244
-  httpPort: 30000
-  httpsPort: 30001
-  sshPort: 30022
+ingressHttp:
+  server: ingress-nginx-controller.kube-ingress-nginx.svc.cluster.local
+  port: 80
+ingressHttps:
+  server: ingress-nginx-controller.kube-ingress-nginx.svc.cluster.local
+  port: 443
+ingressSsh:
+  server: gitea.anrisoftware-com-gitea.svc.cluster.local
+  port: 22
 metrics:
   port: 8404
   enabled: true

@@ -69,21 +69,21 @@ spec:
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
-          {{- if (or (.Values.containerPorts) (.Values.edgeNode)) }}
+          {{- if (or (.Values.containerPorts) (.Values.ingressHttp) (.Values.ingressHttps) (.Values.ingressSsh)) }}
           {{- if .Values.containerPorts }}
           ports: {{- include "common.tplvalues.render" (dict "value" .Values.containerPorts "context" $) | nindent 12 }}
           {{- else }}
           ports:
           {{- end }}
-          {{- if .Values.edgeNode.httpPort }}
+          {{- if .Values.ingressHttp }}
           - name: http
             containerPort: 80
           {{- end }}
-          {{- if .Values.edgeNode.httpsPort }}
+          {{- if .Values.ingressHttps }}
           - name: https
             containerPort: 443
           {{- end }}
-          {{- if .Values.edgeNode.sshPort }}
+          {{- if .Values.ingressSsh }}
           - name: ssh
             containerPort: 22
           {{- end }}

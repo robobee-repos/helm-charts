@@ -272,6 +272,10 @@ configuration:
 ##
 containerPorts:
 
+## @param defaultCheckInterval Default backend check interval.
+##
+defaultCheckInterval: 10000
+
 ## @param existingConfigmap configmap with HAProxy configuration
 ##
 existingConfigmap: ""

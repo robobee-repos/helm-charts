@@ -3,12 +3,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: haproxy
-  namespace: "default"
+  name: certs-haproxy
+  namespace: "kube-certs"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.5
-    app.kubernetes.io/instance: haproxy
+    helm.sh/chart: haproxy-1.0.8
+    app.kubernetes.io/instance: certs
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
 data:
@@ -63,13 +63,6 @@ data:
         errorfile 502 /usr/local/etc/haproxy/502.http
         errorfile 503 /usr/local/etc/haproxy/503.http
         errorfile 504 /usr/local/etc/haproxy/504.http
-    frontend stats
-       bind *:8404
-       option http-use-htx
-       http-request use-service prometheus-exporter if { path /metrics }
-       stats enable
-       stats uri /stats
-       stats refresh 10s
     frontend http-in
         bind            :80 name node-http
         mode            http
@@ -81,9 +74,7 @@ data:
         option          forwardfor
         http-request    set-header X-Forwarded-Port %[dst_port]
         http-request    add-header X-Forwarded-Proto https if { ssl_fc }
-        option          httpchk HEAD / HTTP/1.1\r\nHost:\ 46.19.33.244:30000
-        http-check      expect rstatus ((2|3)[0-9][0-9]|404)
-        server          ingress01-http 46.19.33.244:30000 check inter 1000 send-proxy
+        server          ingress01-http ingress-nginx-controller.kube-ingress-nginx.svc.cluster.local:80 check inter 10000 send-proxy
     frontend https-in
         bind            :443 name node-https
         mode            tcp
@@ -98,19 +89,7 @@ data:
         stick-table     type ip size 512k expire 30m
         stick on        dst
         balance         roundrobin
-        server          ingress01-https 46.19.33.244:30001 check inter 1000 send-proxy
-    frontend ssh-in
-        bind            :22 name node-ssh
-        mode            tcp
-        option          tcplog
-        default_backend nodes-ssh
-    backend nodes-ssh
-        mode            tcp
-        stick-table     type ip size 512k expire 30m
-        stick on        dst
-        balance         roundrobin
-        retries         3
-        server          ingress01-ssh 46.19.33.244:30022 check inter 1000
+        server          ingress01-https ingress-nginx-controller.kube-ingress-nginx.svc.cluster.local:443 check inter 10000 send-proxy
   dhparam: |
     -----BEGIN DH PARAMETERS-----
     MIIBCAKCAQEA//////////+t+FRYortKmq/cViAnPTzx2LnFg84tNpWp4TZBFGQz

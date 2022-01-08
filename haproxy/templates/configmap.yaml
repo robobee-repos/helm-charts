@@ -19,8 +19,7 @@ data:
     {{- if (and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1" ) (.Values.metrics.enabled) (.Values.metrics.serviceMonitor.enabled)) -}}
     {{- include "haproxy.configuration.prometheus" . | nindent 4 }}
     {{- end }}
-    {{- if .Values.edgeNode }}
-    {{- if .Values.edgeNode.httpPort }}
+    {{- if .Values.ingressHttp }}
     frontend http-in
         bind            :80 name node-http
         mode            http
@@ -32,11 +31,9 @@ data:
         option          forwardfor
         http-request    set-header X-Forwarded-Port %[dst_port]
         http-request    add-header X-Forwarded-Proto https if { ssl_fc }
-        option          httpchk HEAD / HTTP/1.1\r\nHost:\ {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }}
-        http-check      expect rstatus ((2|3)[0-9][0-9]|404)
-        server          ingress01-http {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpPort }} check inter 1000 send-proxy
+        server          ingress01-http {{ .Values.ingressHttp.server }}:{{ .Values.ingressHttp.port }} check inter {{ default .Values.defaultCheckInterval .Values.ingressHttp.checkInterval }} send-proxy
     {{- end }}
-    {{- if .Values.edgeNode.httpsPort }}
+    {{- if .Values.ingressHttps }}
     frontend https-in
         bind            :443 name node-https
         mode            tcp
@@ -51,9 +48,9 @@ data:
         stick-table     type ip size 512k expire 30m
         stick on        dst
         balance         roundrobin
-        server          ingress01-https {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.httpsPort }} check inter 1000 send-proxy
+        server          ingress01-https {{ .Values.ingressHttps.server }}:{{ .Values.ingressHttps.port }} check inter {{ default .Values.defaultCheckInterval .Values.ingressHttps.checkInterval }} send-proxy
     {{- end }}
-    {{- if .Values.edgeNode.sshPort }}
+    {{- if .Values.sshHttp }}
     frontend ssh-in
         bind            :22 name node-ssh
         mode            tcp
@@ -65,8 +62,7 @@ data:
         stick on        dst
         balance         roundrobin
         retries         3
-        server          ingress01-ssh {{ .Values.edgeNode.address }}:{{ .Values.edgeNode.sshPort }} check inter 1000
-    {{- end }}
+        server          ingress01-ssh {{ .Values.ingressSsh.server }}:{{ .Values.ingressSsh.port }} check inter {{ default .Values.defaultCheckInterval .Values.ingressSsh.checkInterval }}
     {{- end }}
   dhparam: |
     {{- (.Files.Get "files/dhparam.txt") | nindent 4 }}

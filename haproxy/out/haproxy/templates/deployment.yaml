@@ -3,12 +3,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: haproxy
-  namespace: "default"
+  name: certs-haproxy
+  namespace: "kube-certs"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.5
-    app.kubernetes.io/instance: haproxy
+    helm.sh/chart: haproxy-1.0.8
+    app.kubernetes.io/instance: certs
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
 spec:
@@ -18,20 +18,20 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: haproxy
-      app.kubernetes.io/instance: haproxy
+      app.kubernetes.io/instance: certs
       app.kubernetes.io/component: haproxy
   template:
     metadata:
       annotations:
-        checksum/configmap: f80a6075abbb83b7030fd2ae05044ecced197fe796f935a38b889924b20a11ff
+        checksum/configmap: b1a0074d50cb372009ea3b3ece9250dc548ba63f0ebdedce79cb56846d92b7e0
       labels:
         app.kubernetes.io/name: haproxy
-        helm.sh/chart: haproxy-1.0.5
-        app.kubernetes.io/instance: haproxy
+        helm.sh/chart: haproxy-1.0.8
+        app.kubernetes.io/instance: certs
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: haproxy
     spec:
-      serviceAccountName: haproxy-foo
+      serviceAccountName: certs-haproxy-foo
       
       affinity:
         podAffinity:
@@ -42,10 +42,10 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/name: haproxy
-                    app.kubernetes.io/instance: haproxy
+                    app.kubernetes.io/instance: certs
                     app.kubernetes.io/component: haproxy
                 namespaces:
-                  - "default"
+                  - "kube-certs"
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
@@ -101,4 +101,4 @@ spec:
       volumes:
         - name: haproxy-conf
           configMap:
-            name: haproxy
+            name: certs-haproxy
