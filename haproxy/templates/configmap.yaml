@@ -41,6 +41,7 @@ data:
         tcp-request     inspect-delay 5s
         tcp-request     content accept if { req.ssl_hello_type 1 }
         acl proto_tls   req.ssl_hello_type 1
+        http-request    set-header X-Forwarded-Proto https
         use_backend     nodes-https if proto_tls
         default_backend nodes-https
     backend nodes-https
