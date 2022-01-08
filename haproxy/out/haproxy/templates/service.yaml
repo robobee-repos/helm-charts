@@ -3,22 +3,20 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: haproxy
-  namespace: "default"
+  name: certs-haproxy
+  namespace: "kube-certs"
   labels:
     app.kubernetes.io/name: haproxy
-    helm.sh/chart: haproxy-1.0.5
-    app.kubernetes.io/instance: haproxy
+    helm.sh/chart: haproxy-1.0.8
+    app.kubernetes.io/instance: certs
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: haproxy
   annotations:
 spec:
   type: NodePort
   externalTrafficPolicy: "Cluster"
-  loadBalancerSourceRanges: []
-  
-  externalIPs:
-  - 46.19.33.244
+  externalIPs: 
+    - 192.168.0.1
   ports:
   - name: http
     protocol: TCP
@@ -34,5 +32,5 @@ spec:
     targetPort: ssh
   selector:
     app.kubernetes.io/name: haproxy
-    app.kubernetes.io/instance: haproxy
+    app.kubernetes.io/instance: certs
     app.kubernetes.io/component: haproxy

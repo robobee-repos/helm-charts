@@ -1,3 +1,7 @@
+service:
+  type: NodePort
+externalIPs:
+  - 192.168.0.1
 ingressHttp:
   server: ingress-nginx-controller.kube-ingress-nginx.svc.cluster.local
   port: 80
