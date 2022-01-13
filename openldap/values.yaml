@@ -181,26 +181,26 @@ replication:
 
 # Default configuration for openldap as environment variables. These get injected directly in the container.
 env:
- LDAP_LOG_LEVEL: "256"
- LDAP_ORGANISATION: "Example Inc."
- LDAP_DOMAIN: "example.org"
- LDAP_READONLY_USER: "false"
- LDAP_READONLY_USER_USERNAME: "readonly"
- LDAP_READONLY_USER_PASSWORD: "readonly"
- LDAP_RFC2307BIS_SCHEMA: "false"
- LDAP_BACKEND: "mdb"
- LDAP_TLS: "false"
- LDAP_TLS_CRT_FILENAME: "tls.crt"
- LDAP_TLS_KEY_FILENAME: "tls.key"
- LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
- LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
- LDAP_TLS_ENFORCE: "false"
- LDAP_TLS_REQCERT: "never"
- LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
- LDAP_SSL_HELPER_PREFIX: "ldap"
- LDAP_TLS_VERIFY_CLIENT: "never"
- LDAP_TLS_PROTOCOL_MIN: "3.0"
- LDAP_TLS_CIPHER_SUITE: "NORMAL"
+  LDAP_PORT_NUMBER: 1389
+  LDAP_ROOT: "dc=example,dc=org"
+  LDAP_ADMIN_USERNAME: "admin"
+  LDAP_CONFIG_ADMIN_ENABLED: "yes"
+  LDAP_CONFIG_ADMIN_USERNAME: "admin"
+  LDAP_USERS: "user01,user02"
+  LDAP_USER_DC: "users"
+  LDAP_GROUP: "readers"
+  LDAP_EXTRA_SCHEMAS: "cosine, inetorgperson, nis"
+  LDAP_SKIP_DEFAULT_TREE: "no"
+  LDAP_CUSTOM_LDIF_DIR: "/ldifs"
+  LDAP_CUSTOM_SCHEMA_FILE: "/schema/custom.ldif"
+  LDAP_ULIMIT_NOFILES: 1024
+  LDAP_ALLOW_ANON_BINDING: "yes"
+  LDAP_ENABLE_TLS: "no"
+  LDAP_LDAPS_PORT_NUMBER: 1636
+  LDAP_TLS_CERT_FILE: ""
+  LDAP_TLS_KEY_FILE: ""
+  LDAP_TLS_CA_FILE: ""
+  LDAP_TLS_DH_PARAMS_FILE: ""
 
 ## @param existingSecret Name of existing secret to use for OpenLDAP passwords
 ## The value is evaluated as a template.
@@ -213,8 +213,9 @@ existingSecret: ""
 # Default Passwords to use, stored as a secret. Not used if existingSecret is set.
 # You can override these at install time with
 # helm install openldap --set openldap.adminPassword=<passwd>,openldap.configPassword=<passwd>
-adminPassword: Not@SecurePassw0rd
-configPassword: Not@SecurePassw0rd
+adminPassword: "Not@SecurePassw0rd"
+configPassword: "Not@SecurePassw0rd"
+usersPasswords: "bitnami1,bitnami2"
 
 # Custom openldap configuration files used to override default settings
 # customLdifFiles:
