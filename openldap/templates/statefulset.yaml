@@ -178,7 +178,6 @@ spec:
             {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
             - name: custom-init-scripts
               mountPath: /docker-entrypoint-initdb.d/
-              defaultMode: 0777
             {{- end }}
             {{- if .Values.initdbScriptsSecret }}
             - name: custom-init-scripts-secret
@@ -285,6 +284,7 @@ spec:
         - name: custom-init-scripts
           configMap:
             name: {{ template "openldap.initdbScriptsCM" . }}
+            defaultMode: 0777
         {{- end }}
         {{- if .Values.initdbScriptsSecret }}
         - name: custom-init-scripts-secret
