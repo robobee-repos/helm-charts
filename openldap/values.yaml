@@ -272,8 +272,8 @@ initdbScriptsSecret: ""
 ## @param containerPorts.postgresql OpenLDAP container port
 ##
 containerPorts:
-  ldap: 8389
-  sslLdap: 8636
+  ldap: 1389
+  sslLdap: 1636
 ## @param terminationGracePeriodSeconds Seconds the pod needs to terminate gracefully
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 ## e.g:
@@ -294,14 +294,14 @@ service:
   ## OpenLDAP service ports.
   ##
   ports:
-    ldap: 8389
-    sslLdap: 8636
+    ldap: 1389
+    sslLdap: 1636
   ## OpenLDAP service node ports.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts: {}
-   # ldap: 8389
-   # sslLdap: 8636
+   # ldap: 1389
+   # sslLdap: 1636
   ## @param service.annotations Annotations for OpenLDAP service
   ##
   annotations: {}
