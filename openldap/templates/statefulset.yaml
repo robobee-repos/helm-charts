@@ -173,7 +173,7 @@ spec:
           {{- end }}
           {{- end }}
           volumeMounts:
-            {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh,ldif}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
+            {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
             - name: custom-init-scripts
               mountPath: /docker-entrypoint-initdb.d/
             {{- end }}
