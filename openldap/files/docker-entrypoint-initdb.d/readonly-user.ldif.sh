@@ -14,7 +14,7 @@ FILE="${LDAP_SHARE_DIR}/readonly-user.ldif"
 
 cat > "${FILE}" << EOF
 # Paths
-dn: cn=${LDAP_READONLY_USER_USERNAME},${LDAP_ROOT_DN}
+dn: cn=${LDAP_READONLY_USER_USERNAME},${LDAP_ROOT}
 changetype: add
 cn: ${LDAP_READONLY_USER_USERNAME}
 objectClass: simpleSecurityObject
