@@ -181,7 +181,7 @@ replication:
 
 # Default configuration for openldap as environment variables. These get injected directly in the container.
 env:
-  LDAP_PORT_NUMBER: 1389
+  LDAP_PORT_NUMBER: "1389"
   LDAP_ROOT: "dc=example,dc=org"
   LDAP_ADMIN_USERNAME: "admin"
   LDAP_CONFIG_ADMIN_ENABLED: "yes"
@@ -193,10 +193,10 @@ env:
   LDAP_SKIP_DEFAULT_TREE: "no"
   LDAP_CUSTOM_LDIF_DIR: "/ldifs"
   LDAP_CUSTOM_SCHEMA_FILE: "/schema/custom.ldif"
-  LDAP_ULIMIT_NOFILES: 1024
+  LDAP_ULIMIT_NOFILES: "1024"
   LDAP_ALLOW_ANON_BINDING: "yes"
   LDAP_ENABLE_TLS: "no"
-  LDAP_LDAPS_PORT_NUMBER: 1636
+  LDAP_LDAPS_PORT_NUMBER: "1636"
   LDAP_TLS_CERT_FILE: ""
   LDAP_TLS_KEY_FILE: ""
   LDAP_TLS_CA_FILE: ""
