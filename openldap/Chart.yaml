@@ -19,4 +19,4 @@ maintainers:
 name: openldap
 sources:
   - https://github.com/robobee-repos/helm-charts/
-version: 1.0.10
+version: 1.0.11

@@ -138,7 +138,7 @@ spec:
           {{- if .Values.startupProbe.enabled }}
           startupProbe:
             tcpSocket:
-              port: ldap-port
+              port: ldap
             initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.startupProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
@@ -150,7 +150,7 @@ spec:
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             tcpSocket:
-              port: ldap-port
+              port: ldap
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -162,7 +162,7 @@ spec:
           {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             tcpSocket:
-              port: ldap-port
+              port: ldap
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
