@@ -36,6 +36,13 @@ Return the proper Docker Image Registry Secret Names
 {{- end -}}
 
 {{/*
+Generate chart secret name
+*/}}
+{{- define "openldap.secretName" -}}
+{{ default (include "openldap.name" .) .Values.existingSecret }}
+{{- end -}}
+
+{{/*
 Returns the available value for certain key in an existing secret (if it exists),
 otherwise it generates a random value.
 */}}

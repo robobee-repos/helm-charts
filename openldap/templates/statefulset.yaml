@@ -119,6 +119,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ template "openldap.name" . }}-env
+            - secretRef:
+                name: {{ template "openldap.secretName" . }}
           {{- if (not (empty .Values.extraEnvVarsCM)) }}
             - configMapRef:
                 name: {{ tpl .Values.extraEnvVarsCM . }}
