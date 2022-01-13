@@ -3,7 +3,7 @@ entries:
   certs:
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2022-01-13T13:36:53.708420509+01:00"
+    created: "2022-01-13T15:59:55.589878279+01:00"
     description: A Helm chart for cert issuer.
     digest: 6dcd32b8ebac9fd88c745a95e30c89cc1252c8e9ed8a073b7409439a9c0bfa91
     keywords:
@@ -23,7 +23,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2022-01-13T13:36:53.708131926+01:00"
+    created: "2022-01-13T15:59:55.589659811+01:00"
     description: A Helm chart for cert issuer.
     digest: 4dfe7ea4e395ea7850b8a9478cb7624ecd8abe3b0b8b49f27b793cbfc3f2f44d
     keywords:
@@ -43,7 +43,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2022-01-13T13:36:53.707880272+01:00"
+    created: "2022-01-13T15:59:55.589116712+01:00"
     description: A Helm chart for cert issuer.
     digest: 87da86752cddb9c736385d52a1a4ddbded36cbefc5bc4e1bdc3d9425293eff20
     keywords:
@@ -64,7 +64,7 @@ entries:
   certs-issuers:
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2022-01-13T13:36:53.708989607+01:00"
+    created: "2022-01-13T15:59:55.590402617+01:00"
     description: A Helm chart for cert issuer.
     digest: e82d6915dc2b51aa6443cff5d8a753eb760803432d3de3d89123e9d5db5dea68
     keywords:
@@ -84,7 +84,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2022-01-13T13:36:53.708711043+01:00"
+    created: "2022-01-13T15:59:55.590101979+01:00"
     description: A Helm chart for cert issuer.
     digest: a6ef917d2b96784f7a254fb54ed67cd15e59f50145a9567b6d219d446d20289a
     keywords:
@@ -107,7 +107,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-13T13:36:53.710933436+01:00"
+    created: "2022-01-13T15:59:55.592310953+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -139,7 +139,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-13T13:36:53.717483025+01:00"
+    created: "2022-01-13T15:59:55.601297572+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -171,7 +171,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-13T13:36:53.71564767+01:00"
+    created: "2022-01-13T15:59:55.597136319+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -203,7 +203,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2022-01-13T13:36:53.712833238+01:00"
+    created: "2022-01-13T15:59:55.594742236+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -236,7 +236,40 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.739431299+01:00"
+    created: "2022-01-13T15:59:55.630895361+01:00"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.x.x
+    - condition: ltb-passwd.enabled
+      name: ltb-passwd
+      repository: ""
+      version: 0.1.x
+    - condition: phpldapadmin.enabled
+      name: phpldapadmin
+      repository: ""
+      version: 0.1.3
+    description: Community developed LDAP software
+    digest: 4e917f9805ccb67f2c4ed2edeaf4b9709ddaa3073c367ff2e3b1e74064fdcc3e
+    home: https://github.com/robobee-repos/helm-charts/
+    keywords:
+    - ldap
+    - openldap
+    - iam-stack
+    maintainers:
+    - email: erwin@muellerpublic.de
+      name: Erwin Müller
+    name: openldap
+    sources:
+    - https://github.com/robobee-repos/helm-charts/
+    urls:
+    - openldap-1.0.15.tgz
+    version: 1.0.15
+  - annotations:
+      category: iam
+    apiVersion: v2
+    appVersion: 2.6.0
+    created: "2022-01-13T15:59:55.626917423+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -269,7 +302,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.736306159+01:00"
+    created: "2022-01-13T15:59:55.622121501+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -302,7 +335,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.732383721+01:00"
+    created: "2022-01-13T15:59:55.618500283+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -335,7 +368,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.729070162+01:00"
+    created: "2022-01-13T15:59:55.614502751+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -360,7 +393,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.726101447+01:00"
+    created: "2022-01-13T15:59:55.609254692+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -385,7 +418,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.760029755+01:00"
+    created: "2022-01-13T15:59:55.691796355+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -410,7 +443,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.757708029+01:00"
+    created: "2022-01-13T15:59:55.688146812+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -435,7 +468,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.755431658+01:00"
+    created: "2022-01-13T15:59:55.684659997+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -460,7 +493,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.75227523+01:00"
+    created: "2022-01-13T15:59:55.68120257+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -485,7 +518,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.74993397+01:00"
+    created: "2022-01-13T15:59:55.676700625+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -510,7 +543,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.747630196+01:00"
+    created: "2022-01-13T15:59:55.66726199+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -535,7 +568,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.7452968+01:00"
+    created: "2022-01-13T15:59:55.636234178+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -560,7 +593,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.74169683+01:00"
+    created: "2022-01-13T15:59:55.633534114+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -585,7 +618,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.722766956+01:00"
+    created: "2022-01-13T15:59:55.606679133+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -610,7 +643,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2022-01-13T13:36:53.720372389+01:00"
+    created: "2022-01-13T15:59:55.603996507+01:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -634,7 +667,7 @@ entries:
   openldap-stack-ha:
   - apiVersion: v2
     appVersion: 2.4.57
-    created: "2022-01-13T13:36:53.762088437+01:00"
+    created: "2022-01-13T15:59:55.694579621+01:00"
     dependencies:
     - condition: ltb-passwd.enabled
       name: ltb-passwd
@@ -666,7 +699,7 @@ entries:
   pgo:
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2022-01-13T13:36:53.764580437+01:00"
+    created: "2022-01-13T15:59:55.696727085+01:00"
     description: Installer for PGO, the open source Postgres Operator from Crunchy
       Data
     digest: edc450610ac38efddeabd32ad7bd1213e7fdb95613ae5067f9d5f1b15b846c21
@@ -678,7 +711,7 @@ entries:
   postgrescluster:
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2022-01-13T13:36:53.765002632+01:00"
+    created: "2022-01-13T15:59:55.697253036+01:00"
     description: A Helm chart for Kubernetes
     digest: 00c91b84e48205798ef2f13fd922f9818d65bdb114311af071048d2b189546c6
     name: postgrescluster
@@ -686,4 +719,4 @@ entries:
     urls:
     - postgrescluster-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-13T13:36:53.707438251+01:00"
+generated: "2022-01-13T15:59:55.588215529+01:00"
