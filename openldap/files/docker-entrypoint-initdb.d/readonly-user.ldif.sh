@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 . /opt/bitnami/scripts/libvalidations.sh
 
@@ -9,7 +10,9 @@ fi
 LDAP_READONLY_USER_PASSWORD_ENCRYPTED="$(echo -n $LDAP_READONLY_USER_PASSWORD |
  slappasswd -n -T /dev/stdin)"
 
-cat << "EOF"
+FILE="${LDAP_SHARE_DIR}/readonly-user.ldif"
+
+cat > "${FILE}" << EOF
 # Paths
 dn: cn=${LDAP_READONLY_USER_USERNAME},${LDAP_ROOT_DN}
 changetype: add
@@ -19,3 +22,5 @@ objectClass: organizationalRole
 userPassword: ${LDAP_READONLY_USER_PASSWORD_ENCRYPTED}
 description: LDAP read only user
 EOF
+
+debug_execute ldapmodify -Y EXTERNAL -H "ldapi:///" -f "${FILE}"
