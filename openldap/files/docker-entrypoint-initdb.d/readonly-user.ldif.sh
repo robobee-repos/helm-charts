@@ -6,9 +6,6 @@ set -e
 if ! is_boolean_yes "$LDAP_READONLY_USER"; then
   exit 0
 fi
-if [ ! -d "${LDAP_CUSTOM_LDIF_DIR}" ]; then
-  mkdir -p "${LDAP_CUSTOM_LDIF_DIR}"
-fi
 
 LDAP_READONLY_USER_PASSWORD_ENCRYPTED="$(echo -n $LDAP_READONLY_USER_PASSWORD |
  slappasswd -n -T /dev/stdin)"

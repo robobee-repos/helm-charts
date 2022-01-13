@@ -173,6 +173,8 @@ spec:
           {{- end }}
           {{- end }}
           volumeMounts:
+            - name: ldifs
+              mountPath: {{ .Values.env.LDAP_CUSTOM_LDIF_DIR | quote }}
             {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
             - name: custom-init-scripts
               mountPath: /docker-entrypoint-initdb.d/
@@ -276,6 +278,8 @@ spec:
           {{- end }}
 {{- end }}
       volumes:
+        - name: ldifs
+          emptyDir: {}
         {{- if  or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
         - name: custom-init-scripts
           configMap:
