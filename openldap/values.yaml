@@ -17,6 +17,12 @@ global:
   imagePullSecrets: []
   storageClass: ""
 
+phpldapadmin:
+  enabled: false
+
+ltb-passwd:
+  enabled: false
+
 ## @section Common parameters
 ##
 
