@@ -38,6 +38,13 @@ spec:
 {{ toYaml .Values.readinessProbe | indent 12 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
+        volumeMounts:
+        {{- if .Values.customConfigCM }}
+        - name: custom-config
+          mountPath: /container/service/phpldapadmin/assets/config
+          subPath: config.php
+          readOnly: true
+        {{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
@@ -50,3 +57,9 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+      volumes:
+        {{- if .Values.customConfigCM }}
+        - name: custom-config
+          configMap:
+            name: {{ .Values.customConfigCM }}
+        {{- end }}
