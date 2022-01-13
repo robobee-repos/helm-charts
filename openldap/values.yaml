@@ -1,0 +1,723 @@
+## @section Global parameters
+## Global Docker image parameters
+## Please, note that this will override the image parameters, including dependencies, configured to use the global value
+## Current available global Docker image parameters: imageRegistry, imagePullSecrets and storageClass
+##
+
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+
+## @section Common parameters
+##
+
+## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override common.names.fullname template
+##
+fullnameOverride: ""
+## @param extraDeploy Array of extra objects to deploy with the release (evaluated as a template)
+##
+extraDeploy: []
+## @param commonLabels Add labels to all the deployed resources
+##
+commonLabels: {}
+## @param commonAnnotations Add annotations to all the deployed resources
+##
+commonAnnotations: {}
+
+## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - infinity
+
+## @section OpenLDAP parameters
+##
+
+## Bitnami OpenLDAP image version
+## ref: https://hub.docker.com/r/bitnami/openldap/tags
+## @param image.registry OpenLDAP image registry
+## @param image.repository OpenLDAP image repository
+## @param image.tag OpenLDAP image tag (immutable tags are recommended)
+## @param image.pullPolicy OpenLDAP image pull policy
+## @param image.pullSecrets Specify image pull secrets
+## @param image.debug Specify if debug values should be set
+##
+image:
+  registry: docker.io
+  repository: bitnami/openldap
+  tag: 2.6.0-debian-10-r6
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: []
+  ## Set to true if you would like to see extra information on logs
+  ## It turns BASH and/or NAMI debugging in the image
+  ##
+  debug: false
+## Init containers parameters:
+## volumePermissions: Change the owner of the persist volume mountpoint to RunAsUser:fsGroup
+##
+volumePermissions:
+  ## @param volumePermissions.enabled Enable init container that changes volume permissions in the data directory (for cases where the default k8s `runAsUser` and `fsUser` values do not work)
+  ##
+  enabled: false
+  ## @param volumePermissions.image.registry Init container volume-permissions image registry
+  ## @param volumePermissions.image.repository Init container volume-permissions image repository
+  ## @param volumePermissions.image.tag Init container volume-permissions image tag (immutable tags are recommended)
+  ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
+  ## @param volumePermissions.image.pullSecrets Init container volume-permissions image pull secrets
+  ##
+  image:
+    registry: docker.io
+    repository: bitnami/bitnami-shell
+    tag: 10-debian-10-r305
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    ##
+    pullPolicy: IfNotPresent
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ## Example:
+    ## pullSecrets:
+    ##   - myRegistryKeySecretName
+    ##
+    pullSecrets: []
+  ## Init container Security Context
+  ## @param volumePermissions.securityContext.runAsUser User ID for the init container
+  ## Note: the chown of the data folder is done to securityContext.runAsUser
+  ## and not the below volumePermissions.securityContext.runAsUser
+  ## When runAsUser is set to special value "auto", init container will try to chwon the
+  ## data folder to autodetermined user&group, using commands: `id -u`:`id -G | cut -d" " -f2`
+  ## "auto" is especially useful for OpenShift which has scc with dynamic userids (and 0 is not allowed).
+  ## You may want to use this volumePermissions.securityContext.runAsUser="auto" in combination with
+  ## pod securityContext.enabled=false and shmVolume.chmod.enabled=false
+  ##
+  securityContext:
+    runAsUser: 0
+## @param schedulerName Use an alternate scheduler, e.g. "stork".
+## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+##
+schedulerName: ""
+## @param lifecycleHooks for the OpenLDAP container to automate configuration before or after startup
+##
+lifecycleHooks: {}
+## Pod Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+## @param securityContext.enabled Enable security context
+## @param securityContext.fsGroup Group ID for the pod
+##
+securityContext:
+  enabled: true
+  fsGroup: 1001
+## Container Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+## @param containerSecurityContext.enabled Enable container security context
+## @param containerSecurityContext.runAsUser User ID for the container
+##
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+## Pod Service Account
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
+serviceAccount:
+  ## @param serviceAccount.enabled Enable service account (Note: Service Account will only be automatically created if `serviceAccount.name` is not set)
+  ##
+  enabled: false
+  ## @param serviceAccount.name Name of an already existing service account. Setting this value disables the automatic service account creation
+  ##
+  name: ""
+  ## @param serviceAccount.autoMount Auto-mount the service account token in the pod
+  ##
+  autoMount: false
+## Pod Security Policy
+## ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+## @param psp.create Whether to create a PodSecurityPolicy. WARNING: PodSecurityPolicy is deprecated in Kubernetes v1.21 or later, unavailable in v1.25 or later
+##
+psp:
+  create: false
+## Creates role for ServiceAccount
+## Required for PSP
+## @param rbac.create Create Role and RoleBinding (required for PSP to work)
+##
+rbac:
+  create: false
+
+## @param replication.enabled Enable replication
+replication:
+  enabled: false
+
+# Default configuration for openldap as environment variables. These get injected directly in the container.
+env:
+ LDAP_LOG_LEVEL: "256"
+ LDAP_ORGANISATION: "Example Inc."
+ LDAP_DOMAIN: "example.org"
+ LDAP_READONLY_USER: "false"
+ LDAP_READONLY_USER_USERNAME: "readonly"
+ LDAP_READONLY_USER_PASSWORD: "readonly"
+ LDAP_RFC2307BIS_SCHEMA: "false"
+ LDAP_BACKEND: "mdb"
+ LDAP_TLS: "false"
+ LDAP_TLS_CRT_FILENAME: "tls.crt"
+ LDAP_TLS_KEY_FILENAME: "tls.key"
+ LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
+ LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+ LDAP_TLS_ENFORCE: "false"
+ LDAP_TLS_REQCERT: "never"
+ LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+ LDAP_SSL_HELPER_PREFIX: "ldap"
+ LDAP_TLS_VERIFY_CLIENT: "never"
+ LDAP_TLS_PROTOCOL_MIN: "3.0"
+ LDAP_TLS_CIPHER_SUITE: "NORMAL"
+
+## @param existingSecret Name of existing secret to use for OpenLDAP passwords
+## The value is evaluated as a template.
+## The expected key are LDAP_ADMIN_PASSWORD and LDAP_CONFIG_PASSWORD.
+## e.g:
+## existingSecret: secret
+##
+existingSecret: ""
+
+# Default Passwords to use, stored as a secret. Not used if existingSecret is set.
+# You can override these at install time with
+# helm install openldap --set openldap.adminPassword=<passwd>,openldap.configPassword=<passwd>
+adminPassword: Not@SecurePassw0rd
+configPassword: Not@SecurePassw0rd
+
+# Custom openldap configuration files used to override default settings
+# customLdifFiles:
+  # 01-default-users.ldif: |-
+    # Predefine users here
+
+# Custom files with provided contents to be added in container.
+customFileSets: []
+#- name: fileset1
+#  targetPath: /container/service/slapd/assets/config/bootstrap/ldif
+#  files:
+#  - filename: 03-memberOf.ldif
+#    content: |
+#      dn: cn=module{0},cn=config
+#      changetype: modify
+#      add: olcModuleLoad
+#      olcModuleLoad: memberof
+
+## @param extraEnv An array to add extra environment variables
+## For example:
+## extraEnv:
+##   - name: FOO
+##     value: "bar"
+##
+extraEnv: []
+## @param extraEnvVarsCM Name of a Config Map containing extra environment variables
+##
+extraEnvVarsCM: ""
+## @param extraEnvVarsSecret Name of a Secret containing extra environment variables
+##
+extraEnvVarsSecret: ""
+## @param configurationConfigMap ConfigMap with OpenLDAP configuration
+##
+configurationConfigMap: ""
+## @param extendedConfConfigMap ConfigMap with OpenLDAP extended configuration
+##
+extendedConfConfigMap: ""
+## @param initdbScripts Dictionary of initdb scripts
+## Specify dictionary of scripts to be run at first boot
+## Alternatively, you can put your scripts under the files/docker-entrypoint-initdb.d directory
+## e.g:
+## initdbScripts:
+##   my_init_script.sh: |
+##      #!/bin/sh
+##      echo "Do something."
+##
+initdbScripts: {}
+## @param initdbScriptsConfigMap ConfigMap with scripts to be run at first boot
+##
+initdbScriptsConfigMap: ""
+## @param initdbScriptsSecret Secret with scripts to be run at first boot (in case it contains sensitive information)
+##
+initdbScriptsSecret: ""
+
+## @param containerPorts.postgresql OpenLDAP container port
+##
+containerPorts:
+  ldap: 8389
+  sslLdap: 8636
+## @param terminationGracePeriodSeconds Seconds the pod needs to terminate gracefully
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
+## e.g:
+## terminationGracePeriodSeconds: 30
+##
+terminationGracePeriodSeconds: ""
+## OpenLDAP service configuration
+##
+service:
+  ## @param service.type Kubernetes Service type
+  ##
+  type: ClusterIP
+  ## @param service.clusterIP Static clusterIP or None for headless services
+  ## e.g:
+  ## clusterIP: None
+  ##
+  clusterIP: ""
+  ## OpenLDAP service ports.
+  ##
+  ports:
+    ldap: 8389
+    sslLdap: 8636
+  ## OpenLDAP service node ports.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ##
+  nodePorts: {}
+   # ldap: 8389
+   # sslLdap: 8636
+  ## @param service.annotations Annotations for OpenLDAP service
+  ##
+  annotations: {}
+  ## @param service.loadBalancerIP Load balancer IP if service type is `LoadBalancer`
+  ## Set the LoadBalancer service type to internal only
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.externalTrafficPolicy Enable client source IP preservation
+  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param service.loadBalancerSourceRanges Addresses that are allowed when service is LoadBalancer
+  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ##
+  ## loadBalancerSourceRanges:
+  ## - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+
+persistence:
+  ## @param persistence.enabled Enable persistence using PVC
+  ##
+  enabled: true
+  ## @param persistence.existingClaim Provide an existing `PersistentVolumeClaim`, the value is evaluated as a template.
+  ## If defined, PVC must be created manually before volume will be bound
+  ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
+  ##
+  existingClaim: ""
+  ## @param persistence.mountPath The path the volume will be mounted at, useful when using different
+  ## OpenLDAP images.
+  ##
+  mountPath: /bitnami/openldap
+  ## @param persistence.subPath The subdirectory of the volume to mount to
+  ## Useful in dev environments and one PV for multiple services
+  ##
+  subPath: ""
+  ## @param persistence.storageClass PVC Storage Class for OpenLDAP volume
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for OpenLDAP volume
+  ##
+  accessModes:
+    - ReadWriteOnce
+  ## @param persistence.snapshotName Provide a VolumeSnapshot name which to create the PVC
+  ## The same snapshot will be used for the primary and any read replicas
+  ## ref: https://kubernetes.io/docs/concepts/storage/volume-snapshots/
+  ##
+  snapshotName: ""
+  ## @param persistence.size PVC Storage Request for OpenLDAP volume
+  ##
+  size: 8Gi
+  ## @param persistence.annotations Annotations for the PVC
+  ##
+  annotations: {}
+  ## @param persistence.selector Selector to match an existing Persistent Volume (this value is evaluated as a template)
+  ## selector:
+  ##   matchLabels:
+  ##     app: my-app
+  ##
+  selector: {}
+## @param updateStrategy.type updateStrategy for OpenLDAP StatefulSet and its reads StatefulSets
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+##
+updateStrategy:
+  type: RollingUpdate
+
+## @param podAffinityPreset OpenLDAP pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAffinityPreset: ""
+## @param podAntiAffinityPreset OpenLDAP pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAntiAffinityPreset: soft
+## OpenLDAP Primary node affinity preset
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+##
+nodeAffinityPreset:
+  ## @param nodeAffinityPreset.type OpenLDAP node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ##
+  type: ""
+  ## @param nodeAffinityPreset.key OpenLDAP node label key to match Ignored if `affinity` is set.
+  ## E.g.
+  ## key: "kubernetes.io/e2e-az-name"
+  ##
+  key: ""
+  ## @param nodeAffinityPreset.values OpenLDAP node label values to match. Ignored if `affinity` is set.
+  ## E.g.
+  ## values:
+  ##   - e2e-az1
+  ##   - e2e-az2
+  ##
+  values: []
+## @param affinity Affinity for OpenLDAP pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
+##
+affinity: {}
+## @param nodeSelector Node labels for OpenLDAP pods assignment
+## ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+## @param tolerations Tolerations for OpenLDAP pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+## @param extraPodSpec Optionally specify extra PodSpec
+##
+extraPodSpec: {}
+## @param labels Map of labels to add to the statefulset (postgresql primary)
+##
+labels: {}
+## @param annotations Annotations for OpenLDAP pods
+##
+annotations: {}
+## @param podLabels Map of labels to add to the pods (postgresql primary)
+##
+podLabels: {}
+## @param podAnnotations Map of annotations to add to the pods (postgresql primary)
+##
+podAnnotations: {}
+## @param priorityClassName Priority Class to use for each pod (postgresql primary)
+##
+priorityClassName: ""
+## @param extraInitContainers Extra init containers to add to the pods (postgresql primary)
+## Example
+##
+## extraInitContainers:
+##   - name: do-something
+##     image: busybox
+##     command: ['do', 'something']
+##
+extraInitContainers: []
+## @param extraVolumeMounts Extra volume mounts to add to the pods (postgresql primary)
+##
+extraVolumeMounts: []
+## @param extraVolumes Extra volumes to add to the pods (postgresql primary)
+##
+extraVolumes: []
+## @param sidecars Extra containers to the pod
+## For example:
+## sidecars:
+##   - name: your-image-name
+##     image: your-image
+##     imagePullPolicy: Always
+##     ports:
+##       - name: portname
+##         containerPort: 1234
+##
+sidecars: []
+## Configure resource requests and limits
+## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+## @param resources.requests [object] The requested resources for the container
+##
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+networkPolicy:
+  ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources. Only Ingress traffic is filtered for now.
+  ##
+  enabled: false
+  ## @param networkPolicy.allowExternal Don't require client label for connections
+  ## The Policy model to apply. When set to false, only pods with the correct
+  ## client label will have network access to the port OpenLDAP is listening
+  ## on. When true, OpenLDAP will accept connections from any source
+  ## (with the correct destination port).
+  ##
+  allowExternal: true
+  ## @param networkPolicy.explicitNamespacesSelector A Kubernetes LabelSelector to explicitly select namespaces from which ingress traffic could be allowed
+  ## If explicitNamespacesSelector is missing or set to {}, only client Pods that are in the networkPolicy's namespace
+  ## and that match other criteria, the ones that have the good label, can reach the DB.
+  ## But sometimes, we want the DB to be accessible to clients from other namespaces, in this case, we can use this
+  ## LabelSelector to select these namespaces, note that the networkPolicy's namespace should also be explicitly added.
+  ##
+  ## Example:
+  ## explicitNamespacesSelector:
+  ##   matchLabels:
+  ##     role: frontend
+  ##   matchExpressions:
+  ##    - {key: role, operator: In, values: [frontend]}
+  ##
+  explicitNamespacesSelector: {}
+## Configure extra options for startup probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+## @param startupProbe.enabled Enable startupProbe
+## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+## @param startupProbe.successThreshold Success threshold for startupProbe
+##
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 10
+  successThreshold: 1
+## Configure extra options for liveness probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+## @param livenessProbe.enabled Enable livenessProbe
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+## Configure extra options for readiness probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param readinessProbe.enabled Enable readinessProbe
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
+##
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+## @param customStartupProbe Override default startup probe
+##
+customStartupProbe: {}
+## @param customLivenessProbe Override default liveness probe
+##
+customLivenessProbe: {}
+## @param customReadinessProbe Override default readiness probe
+##
+customReadinessProbe: {}
+##
+## TLS configuration
+##
+tls:
+  ## @param tls.enabled Enable TLS traffic support
+  ##
+  enabled: false
+  ## @param tls.autoGenerated Generate automatically self-signed TLS certificates
+  ##
+  autoGenerated: false
+  ## @param tls.preferServerCiphers Whether to use the server's TLS cipher preferences rather than the client's
+  ##
+  preferServerCiphers: true
+  ## @param tls.certificatesSecret Name of an existing secret that contains the certificates
+  ##
+  certificatesSecret: ""
+  ## @param tls.certFilename Certificate filename
+  ##
+  certFilename: ""
+  ## @param tls.certKeyFilename Certificate key filename
+  ##
+  certKeyFilename: ""
+  ## @param tls.certCAFilename CA Certificate filename
+  ## If provided, OpenLDAP will authenticate TLS/SSL clients by requesting them a certificate
+  ## ref: https://www.postgresql.org/docs/9.6/auth-methods.html
+  ##
+  certCAFilename: ""
+  ## @param tls.crlFilename File containing a Certificate Revocation List
+  ##
+  crlFilename: ""
+## Configure metrics exporter
+##
+metrics:
+  ## @param metrics.enabled Start a prometheus exporter
+  ##
+  enabled: false
+  ## @param metrics.resources Prometheus exporter container resources
+  ##
+  resources: {}
+  ## @param metrics.service.type Kubernetes Service type
+  ## @param metrics.service.annotations [object] Additional annotations for metrics exporter pod
+  ## @param metrics.service.loadBalancerIP loadBalancerIP if redis metrics service type is `LoadBalancer`
+  ##
+  service:
+    type: ClusterIP
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+    loadBalancerIP: ""
+  ## @param metrics.serviceMonitor.enabled Set this to `true` to create ServiceMonitor for Prometheus operator
+  ## @param metrics.serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
+  ## @param metrics.serviceMonitor.namespace Optional namespace in which to create ServiceMonitor
+  ## @param metrics.serviceMonitor.interval Scrape interval. If not set, the Prometheus default scrape interval is used
+  ## @param metrics.serviceMonitor.scrapeTimeout Scrape timeout. If not set, the Prometheus default scrape timeout is used
+  ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+  ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+  ##
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    namespace: ""
+    interval: ""
+    scrapeTimeout: ""
+    relabelings: []
+    metricRelabelings: []
+  ## Custom PrometheusRule to be defined
+  ## The value is evaluated as a template, so, for example, the value can depend on .Release or .Chart
+  ## ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
+  ##
+  prometheusRule:
+    ## @param metrics.prometheusRule.enabled Set this to true to create prometheusRules for Prometheus operator
+    ##
+    enabled: false
+    ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so prometheusRules will be discovered by Prometheus
+    ##
+    additionalLabels: {}
+    ## @param metrics.prometheusRule.namespace namespace where prometheusRules resource should be created
+    ##
+    namespace: ""
+    ## @param metrics.prometheusRule.rules Create specified [Rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)
+    ## Make sure to constraint the rules to the current postgresql service.
+    ## rules:
+    ##   - alert: HugeReplicationLag
+    ##     expr: pg_replication_lag{service="{{ template "common.names.fullname" . }}-metrics"} / 3600 > 1
+    ##     for: 1m
+    ##     labels:
+    ##       severity: critical
+    ##     annotations:
+    ##       description: replication for {{ template "common.names.fullname" . }} OpenLDAP is lagging by {{ "{{ $value }}" }} hour(s).
+    ##       summary: OpenLDAP replication is lagging by {{ "{{ $value }}" }} hour(s).
+    ##
+    rules: []
+  ## @param metrics.image.registry OpenLDAP Exporter image registry
+  ## @param metrics.image.repository OpenLDAP Exporter image repository
+  ## @param metrics.image.tag OpenLDAP Exporter image tag (immutable tags are recommended)
+  ## @param metrics.image.pullPolicy OpenLDAP Exporter image pull policy
+  ## @param metrics.image.pullSecrets Specify image pull secrets
+  ##
+  image:
+    registry: docker.io
+    repository: bitnami/postgres-exporter
+    tag: 0.10.0-debian-10-r172
+    pullPolicy: IfNotPresent
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ## Example:
+    ## pullSecrets:
+    ##   - myRegistryKeySecretName
+    ##
+    pullSecrets: []
+  ## @param metrics.customMetrics Define additional custom metrics
+  ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
+  ## customMetrics:
+  ##   pg_database:
+  ##     query: "SELECT d.datname AS name, CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') THEN pg_catalog.pg_database_size(d.datname) ELSE 0 END AS size_bytes FROM pg_catalog.pg_database d where datname not in ('template0', 'template1', 'postgres')"
+  ##     metrics:
+  ##       - name:
+  ##           usage: "LABEL"
+  ##           description: "Name of the database"
+  ##       - size_bytes:
+  ##           usage: "GAUGE"
+  ##           description: "Size of the database in bytes"
+  ##
+  customMetrics: {}
+  ## @param metrics.extraEnvVars Extra environment variables to add to postgres-exporter
+  ## see: https://github.com/wrouesnel/postgres_exporter#environment-variables
+  ## For example:
+  ##  extraEnvVars:
+  ##  - name: PG_EXPORTER_DISABLE_DEFAULT_METRICS
+  ##    value: "true"
+  ##
+  extraEnvVars: []
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ## @param metrics.securityContext.enabled Enable security context for metrics
+  ## @param metrics.securityContext.runAsUser User ID for the container for metrics
+  ##
+  securityContext:
+    enabled: false
+    runAsUser: 1001
+  ## Configure extra options for liveness probe
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+  ## @param metrics.livenessProbe.enabled Enable livenessProbe
+  ## @param metrics.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+  ## @param metrics.livenessProbe.periodSeconds Period seconds for livenessProbe
+  ## @param metrics.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+  ## @param metrics.livenessProbe.failureThreshold Failure threshold for livenessProbe
+  ## @param metrics.livenessProbe.successThreshold Success threshold for livenessProbe
+  ##
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  ## Configure extra options for readiness probe
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+  ## @param metrics.readinessProbe.enabled Enable readinessProbe
+  ## @param metrics.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+  ## @param metrics.readinessProbe.periodSeconds Period seconds for readinessProbe
+  ## @param metrics.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+  ## @param metrics.readinessProbe.failureThreshold Failure threshold for readinessProbe
+  ## @param metrics.readinessProbe.successThreshold Success threshold for readinessProbe
+  ##
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
