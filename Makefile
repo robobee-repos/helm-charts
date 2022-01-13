@@ -11,7 +11,7 @@ publish:
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish
 	$(MAKE) -C certs-issuers publish
 	$(MAKE) -C certs publish
-	$(MAKE) -C helm-openldap publish
+	$(MAKE) -C openldap publish
 
 .PHONY: index
 index:
