@@ -10,7 +10,7 @@ fi
 LDAP_READONLY_USER_PASSWORD_ENCRYPTED="$(echo -n $LDAP_READONLY_USER_PASSWORD |
  slappasswd -n -T /dev/stdin)"
 
-FILE="${LDAP_SHARE_DIR}/readonly-user.ldif"
+FILE="${LDAP_CUSTOM_LDIF_DIR}/readonly-user.ldif"
 
 cat > "${FILE}" << EOF
 # Paths
@@ -22,5 +22,3 @@ objectClass: organizationalRole
 userPassword: ${LDAP_READONLY_USER_PASSWORD_ENCRYPTED}
 description: LDAP read only user
 EOF
-
-debug_execute ldapmodify -Y EXTERNAL -H "ldapi:///" -f "${FILE}"
