@@ -240,7 +240,7 @@ readonlyUser:
 # Custom files with provided contents to be added in container.
 customFileSets: {}
 #- name: memberof
-  #targetPath: /ldif
+  #targetPath: /ldifs
   #files:
   #- filename: 03-memberOf.ldif
     #content: |
@@ -255,7 +255,7 @@ predefinedFileSets:
   enabled: true
   fileSets:
   - name: memberof
-    targetPath: /ldif
+    targetPath: /ldifs
     files:
     - filename: 03-memberOf.ldif
       content: |
@@ -313,7 +313,7 @@ predefinedFileSets:
   enabled: true
   fileSets:
   - name: readonlyuser
-    targetPath: /ldif
+    targetPath: /ldifs
     files:
     - filename: 10-readonly-user.ldif
       content: |
