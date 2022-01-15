@@ -1,0 +1,46 @@
+{{- range .Values.customFileSets }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
+  labels:
+  {{- include "common.labels.standard" $ | nindent 4 }}
+  {{- if $.Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if $.Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $.Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  namespace: {{ $.Release.Namespace }}
+data:
+{{- range .files }}
+{{ .filename | indent 2}}: |
+{{- include "common.tplvalues.render" ( dict "value" .content "context" $ ) | nindent 4 }}
+{{- end}}
+---
+{{- end }}
+{{- range .Values.predefinedFileSets }}
+{{- if .enabled }}
+{{- range .fileSets }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
+  labels:
+  {{- include "common.labels.standard" $ | nindent 4 }}
+  {{- if $.Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if $.Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $.Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  namespace: {{ $.Release.Namespace }}
+data:
+{{- range .files }}
+{{ .filename | indent 2}}: |
+{{- include "common.tplvalues.render" ( dict "value" .content "context" $ ) | nindent 4 }}
+{{- end}}
+---
+{{- end }}
+{{- end }}
+{{- end }}

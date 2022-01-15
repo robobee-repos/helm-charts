@@ -173,8 +173,6 @@ spec:
           {{- end }}
           {{- end }}
           volumeMounts:
-            - name: ldifs
-              mountPath: {{ .Values.env.LDAP_CUSTOM_LDIF_DIR | quote }}
             {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
             - name: custom-init-scripts
               mountPath: /docker-entrypoint-initdb.d/
@@ -182,6 +180,26 @@ spec:
             {{- if .Values.initdbScriptsSecret }}
             - name: custom-init-scripts-secret
               mountPath: /docker-entrypoint-initdb.d/secret
+            {{- end }}
+            {{- range .Values.customFileSets }}
+            {{- $fs := . }}
+            {{- range .files }}
+            - name: {{ $fs.name }}
+              mountPath: {{ $fs.targetPath }}/{{ .filename }}
+              subPath: {{ .filename }}
+            {{- end }}
+            {{- end }}
+            {{- range .Values.predefinedFileSets }}
+            {{- if .enabled }}
+            {{- range .fileSets }}
+            {{- $fs := . }}
+            {{- range .files }}
+            - name: {{ $fs.name }}
+              mountPath: {{ $fs.targetPath }}/{{ .filename }}
+              subPath: {{ .filename }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
             {{- end }}
             {{- if .Values.persistence.enabled }}
             - name: data
@@ -268,7 +286,6 @@ spec:
             - name: custom-metrics
               mountPath: /conf
               readOnly: true
-          args: ["--extend.query-path", "/conf/custom-metrics.yaml"]
             {{- end }}
           ports:
             - name: http-metrics
@@ -278,8 +295,6 @@ spec:
           {{- end }}
 {{- end }}
       volumes:
-        - name: ldifs
-          emptyDir: {}
         {{- if  or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
         - name: custom-init-scripts
           configMap:
@@ -290,6 +305,20 @@ spec:
         - name: custom-init-scripts-secret
           secret:
             secretName: {{ template "openldap.initdbScriptsSecret" . }}
+        {{- end }}
+        {{- range .Values.customFileSets }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ template "openldap.name" $ }}-fs-{{ .name }}
+        {{- end }}
+        {{- range .Values.predefinedFileSets }}
+        {{- if .enabled }}
+        {{- range .fileSets }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ template "openldap.name" $ }}-fs-{{ .name }}
+        {{- end }}
+        {{- end }}
         {{- end }}
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" ( dict "value" .Values.extraVolumes "context" $ ) | nindent 8 }}

@@ -203,11 +203,6 @@ env:
   LDAP_ALLOW_ANON_BINDING: "yes"
   LDAP_ENABLE_TLS: "no"
   LDAP_LDAPS_PORT_NUMBER: "1636"
-  LDAP_BACKEND: "mdb"
-  # READONLY_USER
-  LDAP_READONLY_USER: "yes"
-  LDAP_READONLY_USER_USERNAME: readonly
-  LDAP_READONLY_USER_MASSWORD: Ies0wohMa7Ahquae
   # TLS
   LDAP_TLS_CERT_FILE: ""
   LDAP_TLS_KEY_FILE: ""
@@ -229,22 +224,117 @@ adminPassword: "Not@SecurePassw0rd"
 configPassword: "Not@SecurePassw0rd"
 usersPasswords: "bitnami1,bitnami2"
 
+## @param readonlyUser Create a read-only user.
+readonlyUser:
+  enabled: true
+  username: readonly
+  # docker run --rm bitnami/openldap:latest -- bash -c 'echo "1234" | slappasswd -n -T /dev/stdin'
+  # "1234"
+  password: "{SSHA}XBGz+4sZehpOx7FXIMCMOE1c5srFfQGL"
+
 # Custom openldap configuration files used to override default settings
 # customLdifFiles:
   # 01-default-users.ldif: |-
     # Predefine users here
 
 # Custom files with provided contents to be added in container.
-customFileSets: []
-#- name: fileset1
-#  targetPath: /container/service/slapd/assets/config/bootstrap/ldif
-#  files:
-#  - filename: 03-memberOf.ldif
-#    content: |
-#      dn: cn=module{0},cn=config
-#      changetype: modify
-#      add: olcModuleLoad
-#      olcModuleLoad: memberof
+customFileSets: {}
+#- name: memberof
+  #targetPath: /ldif
+  #files:
+  #- filename: 03-memberOf.ldif
+    #content: |
+      #dn: cn=module{0},cn=config
+      #changetype: modify
+      #add: olcModuleLoad
+      #olcModuleLoad: memberof
+
+# Optional predifined files with provided contents to be added in container.
+predefinedFileSets:
+- name: memberof
+  enabled: true
+  fileSets:
+  - name: memberof
+    targetPath: /ldif
+    files:
+    - filename: 03-memberOf.ldif
+      content: |
+        # Load memberof module
+        dn: cn=module{0},cn=config
+        changetype: add
+        objectClass: olcModuleList
+        cn: module{0}
+        olcModuleLoad: memberof
+
+        # Backend memberOf overlay
+        dn: olcOverlay={0}memberof,olcDatabase={2}mdb,cn=config
+        changetype: add
+        objectClass: olcOverlayConfig
+        objectClass: olcMemberOf
+        olcOverlay: {0}memberof
+        olcMemberOfDangling: ignore
+        olcMemberOfRefInt: TRUE
+        olcMemberOfGroupOC: groupOfUniqueNames
+        olcMemberOfMemberAD: uniqueMember
+        olcMemberOfMemberOfAD: memberOf
+    - filename: 04-refint.ldif
+      content: |
+        # Load refint module
+        dn: cn=module{0},cn=config
+        changetype: add
+        objectClass: olcModuleList
+        cn: module{0}
+        olcModuleLoad: refint
+
+        # Backend refint overlay
+        dn: olcOverlay={1}refint,olcDatabase={2}mdb,cn=config
+        changetype: add
+        objectClass: olcOverlayConfig
+        objectClass: olcRefintConfig
+        olcOverlay: {1}refint
+        olcRefintAttribute: owner
+        olcRefintAttribute: manager
+        olcRefintAttribute: uniqueMember
+        olcRefintAttribute: member
+        olcRefintAttribute: memberOf
+    - filename: 05-index.ldif
+      content: |
+        # Add indexes
+        dn: olcDatabase={2}mdb,cn=config
+        changetype:  modify
+        replace: olcDbIndex
+        olcDbIndex: uid eq
+        olcDbIndex: mail eq
+        olcDbIndex: memberOf eq
+        olcDbIndex: entryCSN eq
+        olcDbIndex: entryUUID eq
+        olcDbIndex: objectClass eq
+- name: readonlyuser
+  enabled: true
+  fileSets:
+  - name: readonlyuser
+    targetPath: /ldif
+    files:
+    - filename: 10-readonly-user.ldif
+      content: |
+        # Paths
+        dn: cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}
+        changetype: add
+        cn: {{ .Values.readonlyUser.username }}
+        objectClass: simpleSecurityObject
+        objectClass: organizationalRole
+        userPassword: {{ .Values.readonlyUser.password }}
+        description: LDAP read only user
+    - filename: 11-readonly-user-acl.ldif
+      content: |
+        dn: olcDatabase={2}mdb,cn=config
+        changetype: modify
+        delete: olcAccess
+        -
+        add: olcAccess
+        olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
+        olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
+        olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}" read by * none
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
