@@ -251,10 +251,15 @@ customFileSets: {}
       #add: olcModuleLoad
       #olcModuleLoad: memberof
 
+# Enable optional predefined file sets.
+enableOptional:
+  memberof: false
+  readonlyuser: false
+  defaulttree: false
+
 # Optional predifined files with provided contents to be added in container.
 predefinedFileSets:
 - name: memberof
-  enabled: true
   fileSets:
   - name: memberof
     targetPath: /ldifs
@@ -312,12 +317,11 @@ predefinedFileSets:
         olcDbIndex: entryUUID eq
         olcDbIndex: objectClass eq
 - name: readonlyuser
-  enabled: true
   fileSets:
   - name: readonlyuser
     targetPath: /ldifs
     files:
-    - filename: 10-readonly-user.ldif
+    - filename: 20-readonly-user.ldif
       content: |
         # Paths
         dn: cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}
@@ -327,7 +331,7 @@ predefinedFileSets:
         objectClass: organizationalRole
         userPassword: {{ .Values.readonlyUser.password }}
         description: LDAP read only user
-    - filename: 11-readonly-user-acl.config.ldif
+    - filename: 21-readonly-user-acl.config.ldif
       content: |
         dn: olcDatabase={2}mdb,cn=config
         changetype: modify
@@ -335,6 +339,23 @@ predefinedFileSets:
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
         olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}" read by * none
+- name: defaulttree
+  fileSets:
+  - name: defaulttree
+    targetPath: /ldifs
+    files:
+    - filename: 10-default-tree.ldif
+      content: |
+        # Root creation
+        dn: {{ .Values.env.LDAP_ROOT }}
+        objectClass: dcObject
+        objectClass: organization
+        dc: $dc
+        o: $o
+
+        dn: ${LDAP_USER_DC/#/ou=},${LDAP_ROOT}
+        objectClass: organizationalUnit
+        ou: users
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
@@ -428,7 +449,7 @@ service:
 persistence:
   ## @param persistence.enabled Enable persistence using PVC
   ##
-  enabled: true
+  enabled: false
   ## @param persistence.existingClaim Provide an existing `PersistentVolumeClaim`, the value is evaluated as a template.
   ## If defined, PVC must be created manually before volume will be bound
   ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart

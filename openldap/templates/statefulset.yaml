@@ -190,7 +190,7 @@ spec:
             {{- end }}
             {{- end }}
             {{- range .Values.predefinedFileSets }}
-            {{- if .enabled }}
+            {{- if (get $.Values.enableOptional .name) }}
             {{- range .fileSets }}
             {{- $fs := . }}
             {{- range .files }}
@@ -312,7 +312,7 @@ spec:
             name: {{ template "openldap.name" $ }}-fs-{{ .name }}
         {{- end }}
         {{- range .Values.predefinedFileSets }}
-        {{- if .enabled }}
+        {{- if (get $.Values.enableOptional .name) }}
         {{- range .fileSets }}
         - name: {{ .name }}
           configMap:

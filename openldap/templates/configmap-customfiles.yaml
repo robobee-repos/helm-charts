@@ -20,7 +20,7 @@ data:
 ---
 {{- end }}
 {{- range .Values.predefinedFileSets }}
-{{- if .enabled }}
+{{- if (get $.Values.enableOptional .name) }}
 {{- range .fileSets }}
 apiVersion: v1
 kind: ConfigMap
