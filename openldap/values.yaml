@@ -282,10 +282,10 @@ predefinedFileSets:
     - filename: 04-refint.ldif
       content: |
         # Load refint module
-        dn: cn=module{0},cn=config
+        dn: cn=module{1},cn=config
         changetype: add
         objectClass: olcModuleList
-        cn: module{0}
+        cn: module{1}
         olcModuleLoad: refint
 
         # Backend refint overlay
