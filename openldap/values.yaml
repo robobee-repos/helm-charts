@@ -72,7 +72,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: robobeerun/bitnami-openldap
-  tag: 2.6.0-debian-10-r9-ldifs-r2
+  tag: 2.6.0-debian-10-r9-ldifs-r3
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -259,7 +259,7 @@ predefinedFileSets:
   - name: memberof
     targetPath: /ldifs
     files:
-    - filename: 03-memberOf.ldif
+    - filename: 03-memberOf.config.ldif
       content: |
         # Load memberof module
         dn: cn=module{0},cn=config
@@ -279,7 +279,7 @@ predefinedFileSets:
         olcMemberOfGroupOC: groupOfUniqueNames
         olcMemberOfMemberAD: uniqueMember
         olcMemberOfMemberOfAD: memberOf
-    - filename: 04-refint.ldif
+    - filename: 04-refint.config.ldif
       content: |
         # Load refint module
         dn: cn=module{1},cn=config
@@ -299,7 +299,7 @@ predefinedFileSets:
         olcRefintAttribute: uniqueMember
         olcRefintAttribute: member
         olcRefintAttribute: memberOf
-    - filename: 05-index.ldif
+    - filename: 05-index.config.ldif
       content: |
         # Add indexes
         dn: olcDatabase={2}mdb,cn=config
@@ -327,7 +327,7 @@ predefinedFileSets:
         objectClass: organizationalRole
         userPassword: {{ .Values.readonlyUser.password }}
         description: LDAP read only user
-    - filename: 11-readonly-user-acl.ldif
+    - filename: 11-readonly-user-acl.config.ldif
       content: |
         dn: olcDatabase={2}mdb,cn=config
         changetype: modify
