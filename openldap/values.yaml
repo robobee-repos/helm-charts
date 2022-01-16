@@ -72,7 +72,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: robobeerun/bitnami-openldap
-  tag: 2.6.0-debian-10-r9-ldifs-r1
+  tag: 2.6.0-debian-10-r9-ldifs-r2
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -203,6 +203,8 @@ env:
   LDAP_ALLOW_ANON_BINDING: "yes"
   LDAP_ENABLE_TLS: "no"
   LDAP_LDAPS_PORT_NUMBER: "1636"
+  # Set to "yes" to use ldapmodify -Y EXTERNAL -H "ldapi:///" to apply custom LDIFs.
+  LDAP_USE_EXTERNAL_FOR_CUSTOM_LDIFS: "yes"
   # TLS
   LDAP_TLS_CERT_FILE: ""
   LDAP_TLS_KEY_FILE: ""
@@ -329,9 +331,7 @@ predefinedFileSets:
       content: |
         dn: olcDatabase={2}mdb,cn=config
         changetype: modify
-        delete: olcAccess
-        -
-        add: olcAccess
+        replace: olcAccess
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
         olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}" read by * none
