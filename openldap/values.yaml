@@ -189,6 +189,8 @@ replication:
 env:
   LDAP_PORT_NUMBER: "1389"
   LDAP_ROOT: "dc=example,dc=org"
+  LDAP_ROOT_DC: "example"
+  LDAP_ROOT_O: "example"
   LDAP_ADMIN_USERNAME: "admin"
   LDAP_CONFIG_ADMIN_ENABLED: "yes"
   LDAP_CONFIG_ADMIN_USERNAME: "admin"
@@ -203,8 +205,6 @@ env:
   LDAP_ALLOW_ANON_BINDING: "yes"
   LDAP_ENABLE_TLS: "no"
   LDAP_LDAPS_PORT_NUMBER: "1636"
-  # Set to "yes" to use ldapmodify -Y EXTERNAL -H "ldapi:///" to apply custom LDIFs.
-  LDAP_USE_EXTERNAL_FOR_CUSTOM_LDIFS: "yes"
   # TLS
   LDAP_TLS_CERT_FILE: ""
   LDAP_TLS_KEY_FILE: ""
@@ -316,6 +316,23 @@ predefinedFileSets:
         olcDbIndex: entryCSN eq
         olcDbIndex: entryUUID eq
         olcDbIndex: objectClass eq
+- name: defaulttree
+  fileSets:
+  - name: defaulttree
+    targetPath: /ldifs
+    files:
+    - filename: 10-default-tree.ldif
+      content: |
+        # Root creation
+        dn: {{ .Values.env.LDAP_ROOT }}
+        objectClass: dcObject
+        objectClass: organization
+        dc: {{ .Values.env.LDAP_ROOT_DC }}
+        o: {{ .Values.env.LDAP_ROOT_O }}
+
+        dn: ou={{ .Values.env.LDAP_USER_DC }},{{ .Values.env.LDAP_ROOT }}
+        objectClass: organizationalUnit
+        ou: users
 - name: readonlyuser
   fileSets:
   - name: readonlyuser
@@ -339,23 +356,6 @@ predefinedFileSets:
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
         olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}" read by * none
-- name: defaulttree
-  fileSets:
-  - name: defaulttree
-    targetPath: /ldifs
-    files:
-    - filename: 10-default-tree.ldif
-      content: |
-        # Root creation
-        dn: {{ .Values.env.LDAP_ROOT }}
-        objectClass: dcObject
-        objectClass: organization
-        dc: $dc
-        o: $o
-
-        dn: ${LDAP_USER_DC/#/ou=},${LDAP_ROOT}
-        objectClass: organizationalUnit
-        ou: users
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
