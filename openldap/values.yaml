@@ -225,14 +225,10 @@ existingSecret: ""
 adminPassword: "Not@SecurePassw0rd"
 configPassword: "Not@SecurePassw0rd"
 usersPasswords: "bitnami1,bitnami2"
-
-## @param readonlyUser Create a read-only user.
-readonlyUser:
-  enabled: true
-  username: readonly
-  # docker run --rm bitnami/openldap:latest -- bash -c 'echo "1234" | slappasswd -n -T /dev/stdin'
-  # "1234"
-  password: "{SSHA}XBGz+4sZehpOx7FXIMCMOE1c5srFfQGL"
+readonlyUser: "readonly"
+# docker run --rm bitnami/openldap:latest -- bash -c 'echo "1234" | slappasswd -n -T /dev/stdin'
+# "1234"
+readonlyPasswordEncrypted: "{SSHA}5Y0mPhzRCYDBRltdvF6hp+m0DWgPTdjD"
 
 # Custom openldap configuration files used to override default settings
 # customLdifFiles:
@@ -341,12 +337,12 @@ predefinedFileSets:
     - filename: 20-readonly-user.ldif
       content: |
         # Paths
-        dn: cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}
+        dn: cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}
         changetype: add
-        cn: {{ .Values.readonlyUser.username }}
+        cn: {{ .Values.readonlyUser }}
         objectClass: simpleSecurityObject
         objectClass: organizationalRole
-        userPassword: {{ .Values.readonlyUser.password }}
+        userPassword: {{ .Values.readonlyPasswordEncrypted }}
         description: LDAP read only user
     - filename: 21-readonly-user-acl.config.ldif
       content: |
@@ -355,7 +351,7 @@ predefinedFileSets:
         replace: olcAccess
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
-        olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser.username }},{{ .Values.env.LDAP_ROOT }}" read by * none
+        olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}" read by * none
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
