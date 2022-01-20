@@ -228,7 +228,7 @@ usersPasswords: "bitnami1,bitnami2"
 readonlyUser: "readonly"
 # docker run --rm bitnami/openldap:latest -- bash -c 'echo "1234" | slappasswd -n -T /dev/stdin'
 # "1234"
-readonlyPasswordEncrypted: "{SSHA}5Y0mPhzRCYDBRltdvF6hp+m0DWgPTdjD"
+readonlyPasswordEncrypted: "{SSHA}KTb34Sc227XpFNeXitQQK8LOXgXnT4AY"
 
 # Custom openldap configuration files used to override default settings
 # customLdifFiles:
