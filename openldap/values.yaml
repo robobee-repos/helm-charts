@@ -252,6 +252,7 @@ enableOptional:
   memberof: false
   readonlyuser: false
   defaulttree: false
+  openssh-lpk-schema: false
 
 # Optional predifined files with provided contents to be added in container.
 predefinedFileSets:
@@ -352,6 +353,18 @@ predefinedFileSets:
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
         olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}" read by * none
+- name: openssh-lpk-schema
+  fileSets:
+  - name: openssh-lpk-schema
+    targetPath: /ldifs
+    files:
+    - filename: 20-openssh-lpk-schema.config.ldif
+      content: |
+        dn: cn=openssh-lpk,cn=schema,cn=config
+        objectClass: olcSchemaConfig
+        cn: openssh-lpk
+        olcAttributeTypes: {0}( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )
+        olcObjectClasses: {0}( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass'MAY ( sshPublicKey $ uid ) )
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
