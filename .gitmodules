@@ -1,3 +1,6 @@
 [submodule "kube-postgres-operator-crunchy"]
 	path = kube-postgres-operator-crunchy
 	url = git@github.com:robobee-repos/kube-postgres-operator-crunchy.git
+[submodule "nextcloud-helm"]
+	path = nextcloud-helm
+	url = git@github.com:robobee-repos/nextcloud-helm.git
