@@ -12,7 +12,7 @@ publish:
 	$(MAKE) -C certs-issuers publish
 	$(MAKE) -C certs publish
 	$(MAKE) -C openldap publish
-	$(MAKE) -C nextcloud-helm publish
+	$(MAKE) -C nextcloud-helm/charts/nextcloud publish
 
 .PHONY: index
 index:
