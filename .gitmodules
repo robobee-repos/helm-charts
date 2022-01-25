@@ -1,6 +1,3 @@
 [submodule "kube-postgres-operator-crunchy"]
 	path = kube-postgres-operator-crunchy
-	url = git@github.com:robobee-repos/kube-postgres-operator-crunchy.git
-[submodule "helm-openldap-jp-gouin"]
-	path = helm-openldap-jp-gouin
-	url = git@github.com:robobee-repos/helm-openldap-jp-gouin.git
+	url = git@gitea.anrisoftware.com:robobeerun/kube-postgres-operator-crunchy.git
