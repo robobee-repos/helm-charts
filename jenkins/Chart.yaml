@@ -1,0 +1,28 @@
+annotations:
+  category: Infrastructure
+apiVersion: v2
+appVersion: 2.319.2
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+description: The leading open source automation server
+engine: gotpl
+home: https://github.com/robobee-repos/helm-charts/
+keywords:
+  - jenkins
+  - ci
+  - cd
+  - http
+  - web
+  - application
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: jenkins
+sources:
+  - https://github.com/bitnami/bitnami-docker-jenkins
+  - https://jenkins.io/
+version: 1.0.0
