@@ -14,6 +14,7 @@ publish:
 	$(MAKE) -C openldap publish
 	$(MAKE) -C nextcloud-helm/charts/nextcloud publish
 	$(MAKE) -C jenkins publish
+	$(MAKE) -C matomo publish
 
 .PHONY: index
 index:
