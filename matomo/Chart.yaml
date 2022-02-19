@@ -8,6 +8,10 @@ dependencies:
     tags:
       - bitnami-common
     version: 1.x.x
+  - condition: mariadb.enabled
+    name: mariadb
+    repository: https://charts.bitnami.com/bitnami
+    version: 10.x.x
 description: Matomo is the leading Free/Libre open analytics platform.
 engine: gotpl
 home: https://github.com/robobee-repos/helm-charts/
