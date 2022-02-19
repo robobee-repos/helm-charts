@@ -527,16 +527,27 @@ persistence:
   ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
   ##
   storageClass: ""
-  ## @param persistence.annotations Additional custom annotations for the PVC
-  ##
-  annotations: {}
   ## @param persistence.accessModes [array] Persistent Volume access modes
   ##
   accessModes:
     - ReadWriteOnce
   ## @param persistence.size Persistent Volume size
   ##
-  size: 8Gi
+  size: 10Gi
+  ## @param persistence.dataSource Custom PVC data source
+  ##
+  dataSource: {}
+  ## @param persistence.existingClaim The name of an existing PVC to use for persistence
+  ##
+  existingClaim: ""
+  ## @param persistence.selector Selector to match an existing Persistent Volume for WordPress data PVC
+  ## If set, the PVC can't have a PV dynamically provisioned for it
+  ## E.g.
+  ## selector:
+  ##   matchLabels:
+  ##     app: my-app
+  ##
+  selector: {}
 ## 'volumePermissions' init container parameters
 ## Changes the owner and group of the persistent volume mount point to runAsUser:fsGroup values
 ##   based on the podSecurityContext/containerSecurityContext parameters
