@@ -1,0 +1,22 @@
+annotations:
+  category: Analytics
+apiVersion: v2
+appVersion: 4.7.1
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+description: Matomo is the leading Free/Libre open analytics platform.
+engine: gotpl
+home: https://github.com/robobee-repos/helm-charts/
+keywords:
+  - web
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: matomo
+sources:
+  - https://github.com/matomo-org/matomo
+version: 1.0.0
