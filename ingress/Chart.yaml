@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: v0.1.0
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+description: A Helm chart to deploy ingress.
+keywords:
+  - ingress
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: ingress
+sources:
+  - https://github.com/robobee-repos/helm-charts
+  - https://github.com/jetstack/cert-manager
+version: 1.0.0

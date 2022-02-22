@@ -15,6 +15,7 @@ publish:
 	$(MAKE) -C nextcloud-helm/charts/nextcloud publish
 	$(MAKE) -C jenkins publish
 	$(MAKE) -C matomo publish
+	$(MAKE) -C ingress publish
 
 .PHONY: index
 index:
