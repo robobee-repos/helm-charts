@@ -1,3 +1,4 @@
 {{- range .Values.certificates }}
 {{ include "certs.certificate" (deepCopy $ | merge (dict "cert" .)) }}
+---
 {{- end }}

@@ -1,12 +1,24 @@
 certificates:
-- name: muellerpublic.de
-  dnsNames:
-  - muellerpublic.de
-  - www.muellerpublic.de
-  uris:
-  - spiffe://cluster.local/ns/sandbox/sa/example
-  ipAddresses:
-  - 192.168.0.5
-  issuer:
-    name: letsencrypt-staging
-    kind: ClusterIssuers
+  - name: muellerpublic.de
+    dnsNames:
+    - muellerpublic.de
+    - www.muellerpublic.de
+    uris:
+    - spiffe://cluster.local/ns/sandbox/sa/example
+    ipAddresses:
+    - 192.168.0.5
+    issuer:
+      name: letsencrypt-staging
+      kind: ClusterIssuers
+  - name: console.minio
+    dnsNames:
+      - console.minio
+    issuer:
+      name: letsencrypt-production
+      kind: ClusterIssuer
+  - name: api.minio
+    dnsNames:
+      - api.minio
+    issuer:
+      name: letsencrypt-production
+      kind: ClusterIssuer
