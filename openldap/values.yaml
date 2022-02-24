@@ -379,6 +379,18 @@ predefinedFileSets:
         olcAttributeTypes: {1}( 2.999.2 NAME 'matomoAdmin' DESC 'Determines which sites a user has admin access to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcAttributeTypes: {2}( 2.999.3 NAME 'matomoSuperuser' DESC 'Determines whether a user is a superuser or not.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 2.999.4 NAME 'matomoUser' DESC 'matomoUser' SUP top AUXILIARY MAY  ( matomoView $ matomoAdmin $ matomoSuperuser ) )
+- name: wordpress-schema
+  fileSets:
+  - name: wordpress-schema
+    targetPath: /ldifs
+    files:
+    - filename: 20-wordpress-schema.config.ldif
+      content: |
+        dn: cn=wordpress,cn=schema,cn=config
+        objectClass: olcSchemaConfig
+        cn: wordpress
+        olcAttributeTypes: {0}( 2.999.4 NAME 'wordpressGroups' DESC 'Determines which Wordpress groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+        olcObjectClasses: {0}( 2.999.5 NAME 'wordpressUser' DESC 'wordpressUser' SUP top AUXILIARY MAY  ( wordpressGroups ) )
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
