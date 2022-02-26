@@ -16,6 +16,7 @@ publish:
 	$(MAKE) -C jenkins publish
 	$(MAKE) -C matomo publish
 	$(MAKE) -C ingress publish
+	$(MAKE) -C minio-kes publish
 
 .PHONY: index
 index:
