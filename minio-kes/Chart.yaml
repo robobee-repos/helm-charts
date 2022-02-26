@@ -1,0 +1,28 @@
+annotations:
+  category: Infrastructure
+apiVersion: v2
+appVersion: v0.17.6
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+description: KES is a stateless and distributed key-management system for high-performance applications.
+engine: gotpl
+home: https://github.com/bitnami/charts/tree/master/bitnami/minio
+keywords:
+  - minio
+  - kes
+  - storage
+  - object-storage
+  - s3
+  - cluster
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: kes
+sources:
+  - https://github.com/robobee-repos/helm-charts
+  - https://github.com/minio/kes
+version: 1.0.0
