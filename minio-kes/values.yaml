@@ -121,7 +121,7 @@ extraEnvVarsCM: ""
 extraEnvVarsSecret: ""
 ## @param command Default container command (useful when using custom images). Use array form
 ##
-command: ["kes"]
+command: ["/kes"]
 ## @param args Default container args (useful when using custom images). Use array form
 ##
 args: ["server", "--config", "/config/config.yml"]
