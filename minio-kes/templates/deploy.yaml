@@ -86,13 +86,13 @@ spec:
           {{- else if .Values.args }}
           args: {{- include "common.tplvalues.render" ( dict "value" .Values.args "context" $) | nindent 12 }}
           {{- else if .Values.tls.enabled }}
-          args: -|
+          args:
             - -ec
             - |
               /kes tool identity of /certs/public.crt
               /kes server --config /config/config.yml
           {{- else }}
-          args: -|
+          args:
             - -ec
             - |
               /kes server --config /config/config.yml
