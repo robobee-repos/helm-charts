@@ -121,10 +121,10 @@ extraEnvVarsCM: ""
 extraEnvVarsSecret: ""
 ## @param command Default container command (useful when using custom images). Use array form
 ##
-command: ["/kes"]
+command: []
 ## @param args Default container args (useful when using custom images). Use array form
 ##
-args: ["server", "--config", "/config/config.yml"]
+args: []
 
 ## @param configuration KES configuration.
 ## https://github.com/minio/kes/blob/master/server-config.yaml
