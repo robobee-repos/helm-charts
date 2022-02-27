@@ -127,26 +127,26 @@ configuration:
 ##
 existingConfigmap: ""
 
+## @param replicaCount Number of MinIO KES replicas to deploy
+##
+replicaCount: 1
+## @param updateStrategy.type MinIO KES deployment strategy type
+## @param updateStrategy.rollingUpdate MinIO KES deployment rolling update configuration parameters
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+## e.g:
+## updateStrategy:
+##  type: RollingUpdate
+##  rollingUpdate:
+##    maxSurge: 25%
+##    maxUnavailable: 25%
+##
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate: {}
 ## @param schedulerName Specifies the schedulerName, if it's nil uses kube-scheduler
 ## https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
 schedulerName: ""
-## MinIO KES deployment parameters
-## Only when 'mode' is 'standalone' or 'gateway.enabled' is 'true'
-##
-deployment:
-  ## @param deployment.updateStrategy.type Deployment strategy type
-  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
-  ## e.g:
-  ## updateStrategy:
-  ##  type: RollingUpdate
-  ##  rollingUpdate:
-  ##    maxSurge: 25%
-  ##    maxUnavailable: 25%
-  ##
-  updateStrategy:
-    type: Recreate
-
 ## @param hostAliases MinIO KES pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
@@ -519,17 +519,27 @@ serviceAccount:
 
 ## @section Other parameters
 
-## MinIO KES Pod Disruption Budget configuration in distributed mode.
-## If MinIO KES Gateway is enabled, creates a Pod Disruption Budget for the Gateway instead (mutually exclusive with distributed mode).
+## MinIO KES Pod Disruption Budget configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+## @param pdb.create Enable a Pod Disruption Budget creation
+## @param pdb.minAvailable Minimum number/percentage of pods that should remain scheduled
+## @param pdb.maxUnavailable Maximum number/percentage of pods that may be made unavailable
 ##
 pdb:
-  ## @param pdb.create Enable/disable a Pod Disruption Budget creation
-  ##
   create: false
-  ## @param pdb.minAvailable Minimum number/percentage of pods that must still be available after the eviction
-  ##
   minAvailable: 1
-  ## @param pdb.maxUnavailable Maximum number/percentage of pods that may be made unavailable after the eviction
-  ##
   maxUnavailable: ""
+## MinIO KES Autoscaling configuration
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+## @param autoscaling.enabled Enable Horizontal POD autoscaling for MinIO KES
+## @param autoscaling.minReplicas Minimum number of MinIO KES replicas
+## @param autoscaling.maxReplicas Maximum number of MinIO KES replicas
+## @param autoscaling.targetCPU Target CPU utilization percentage
+## @param autoscaling.targetMemory Target Memory utilization percentage
+##
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 11
+  targetCPU: 50
+  targetMemory: 50
