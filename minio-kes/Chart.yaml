@@ -25,4 +25,4 @@ name: kes
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://github.com/minio/kes
-version: 1.0.2
+version: 1.0.3
