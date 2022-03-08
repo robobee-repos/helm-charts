@@ -365,12 +365,12 @@ predefinedFileSets:
         cn: openssh-lpk
         olcAttributeTypes: {0}( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass'MAY ( sshPublicKey $ uid ) )
-- name: matobo-schema
+- name: matomo-schema
   fileSets:
-  - name: matobo-schema
+  - name: matomo-schema
     targetPath: /ldifs
     files:
-    - filename: 20-matobo-schema.config.ldif
+    - filename: 20-matomo-schema.config.ldif
       content: |
         dn: cn=matomo,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -391,6 +391,18 @@ predefinedFileSets:
         cn: wordpress
         olcAttributeTypes: {0}( 2.999.4 NAME 'wordpressGroups' DESC 'Determines which Wordpress groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 2.999.5 NAME 'wordpressUser' DESC 'wordpressUser' SUP top AUXILIARY MAY  ( wordpressGroups ) )
+- name: minio-schema
+  fileSets:
+  - name: minio-schema
+    targetPath: /ldifs
+    files:
+    - filename: 20-minio-schema.config.ldif
+      content: |
+        dn: cn=minio,cn=schema,cn=config
+        objectClass: olcSchemaConfig
+        cn: minio
+        olcAttributeTypes: {0}( 2.999.6 NAME 'minioGroups' DESC 'Determines which MinIO groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+        olcObjectClasses: {0}( 2.999.7 NAME 'minioUser' DESC 'minioUser' SUP top AUXILIARY MAY  ( minioGroups ) )
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
