@@ -17,6 +17,7 @@ publish:
 	$(MAKE) -C matomo publish
 	$(MAKE) -C ingress publish
 	$(MAKE) -C minio-kes publish
+	$(MAKE) -C gitea-helm-chart publish
 
 .PHONY: index
 index:
