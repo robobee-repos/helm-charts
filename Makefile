@@ -18,6 +18,7 @@ publish:
 	$(MAKE) -C ingress publish
 	$(MAKE) -C minio-kes publish
 	$(MAKE) -C gitea-helm-chart publish
+	$(MAKE) -C k8s-resources-job publish
 
 .PHONY: index
 index:
