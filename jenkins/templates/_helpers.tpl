@@ -47,3 +47,10 @@ Check if there are rolling tags in the images
 {{- include "common.warnings.rollingTag" .Values.image }}
 {{- include "common.warnings.rollingTag" .Values.metrics.image }}
 {{- end -}}
+
+{{/*
+Return the proper Service Account Name
+*/}}
+{{- define "jenkins.serviceAccountName" -}}
+{{- if .Values.serviceAccount.enabled -}}jenkins-admin{{- else }}{{ .Values.serviceAccountName }}{{- end }}
+{{- end -}}
