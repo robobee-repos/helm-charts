@@ -259,10 +259,12 @@ resources:
 ## Container ports
 ## @param containerPorts.http Jenkins HTTP container port
 ## @param containerPorts.https Jenkins HTTPS container port
+## @param containerPorts.agent Jenkins agent container port
 ##
 containerPorts:
   http: 8080
   https: 8443
+  agent: 50000
 ## Configure Pods Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 ## @param podSecurityContext.enabled Enabled Jenkins pods' Security Context
@@ -345,18 +347,22 @@ service:
   type: LoadBalancer
   ## @param service.ports.http Jenkins service HTTP port
   ## @param service.ports.https Jenkins service HTTPS port
+  ## @param service.ports.agent Jenkins agent port
   ##
   ports:
     http: 80
     https: 443
+    agent: 50000
   ## Node ports to expose
   ## @param service.nodePorts.http Node port for HTTP
   ## @param service.nodePorts.https Node port for HTTPS
+  ## @param service.nodePorts.https Node port for agent
   ## NOTE: choose port between <30000-32767>
   ##
   nodePorts:
     http: ""
     https: ""
+    agent: ""
   ## @param service.clusterIP Jenkins service Cluster IP
   ## e.g.:
   ## clusterIP: None
