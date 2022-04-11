@@ -19,6 +19,7 @@ publish:
 	$(MAKE) -C minio-kes publish
 	$(MAKE) -C gitea-helm-chart publish
 	$(MAKE) -C k8s-resources-job publish
+	$(MAKE) -C nexus-operator publish
 
 .PHONY: index
 index:
