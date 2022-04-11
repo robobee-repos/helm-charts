@@ -16,4 +16,4 @@ name: nexus-operator
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://github.com/m88i/nexus-operator
-version: 1.0.0
+version: 1.0.1
