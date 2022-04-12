@@ -19,7 +19,7 @@ pipeline {
     stages {
 
         /**
-        * The stage will checkout the current branch.
+        * Checkouts the current branch.
         */
         stage("Checkout Build") {
             steps {
@@ -30,7 +30,7 @@ pipeline {
         }
 
         /**
-        * The stage will setup the container for the build.
+        * Setups the container for the build.
         */
         stage("Setup Build") {
             steps {
@@ -44,6 +44,17 @@ pipeline {
                         string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL")]) {
                         sh "DEBUG=true /setup-ssh.sh"
                     }
+                }
+            }
+        }
+
+        /**
+        * Deployes the helm charts.
+        */
+        stage("Deploy") {
+            steps {
+                container("maven") {
+                    sh "make"
                 }
             }
         }
