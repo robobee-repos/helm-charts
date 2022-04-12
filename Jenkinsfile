@@ -13,7 +13,7 @@ pipeline {
     }
 
     agent {
-        label "maven-latest"
+        label "helm"
     }
 
     stages {
@@ -23,7 +23,7 @@ pipeline {
         */
         stage("Checkout Build") {
             steps {
-                container("maven") {
+                container("helm") {
                     checkout scm
                 }
             }
@@ -34,7 +34,7 @@ pipeline {
         */
         stage("Setup Build") {
             steps {
-                container("maven") {
+                container("helm") {
                     withCredentials([
                         file(credentialsId: "PROJECT_SSH_HOST_FILE", variable: "PROJECT_SSH_HOST_FILE"),
                         string(credentialsId: "PROJECT_SSH_USER", variable: "PROJECT_SSH_USER"),
@@ -53,7 +53,7 @@ pipeline {
         */
         stage("Deploy") {
             steps {
-                container("maven") {
+                container("helm") {
                     sh "make"
                 }
             }
