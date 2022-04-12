@@ -36,6 +36,7 @@ pipeline {
             steps {
                 container("maven") {
                     withCredentials([
+                        string(credentialsId: "PROJECT_SSH_HOST_FILE", variable: "PROJECT_SSH_HOST_FILE"),
                         string(credentialsId: "PROJECT_SSH_USER", variable: "PROJECT_SSH_USER"),
                         string(credentialsId: "PROJECT_SSH_PASS", variable: "PROJECT_SSH_PASS"),
                         file(credentialsId: "PROJECT_SSH_PRIVATE_FILE", variable: "PROJECT_SSH_PRIVATE_FILE"),
