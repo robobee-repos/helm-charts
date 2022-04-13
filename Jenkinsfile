@@ -54,7 +54,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 container("helm") {
-                    sh "make"
+                    sh "git submodule init; git submodule update; make"
                 }
             }
         }
