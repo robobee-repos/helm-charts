@@ -41,7 +41,7 @@ pipeline {
                         string(credentialsId: "PROJECT_SSH_PASS", variable: "PROJECT_SSH_PASS"),
                         file(credentialsId: "PROJECT_SSH_PRIVATE_FILE", variable: "PROJECT_SSH_PRIVATE_FILE"),
                         string(credentialsId: "PROJECT_GIT_NAME", variable: "PROJECT_GIT_NAME"),
-                        string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL")]) {
+                        string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL"),
                         usernamePassword(credentialsId: "HELM_ROBOBEE_REPO_CREDENTIALS", usernameVariable: "HELM_REPO_USERNAME", passwordVariable: "HELM_REPO_PASSWORD")]) {
                         sh "DEBUG=true /setup-ssh.sh"
                         sh "helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun"
