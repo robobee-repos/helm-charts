@@ -54,7 +54,11 @@ pipeline {
         stage("Deploy") {
             steps {
                 container("helm") {
-                    sh "git submodule init; git submodule update; make"
+                    sh """
+                        git submodule init
+                        git submodule update
+                        make publish-harbor-all
+                    """
                 }
             }
         }
