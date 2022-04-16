@@ -44,7 +44,7 @@ index:
 
 .PHONY: push
 push:
-	git add . && git commit -a -m "Publish charts." && git push
+	git add . && git commit --allow-empty -a -m "Publish charts." && git push
 
 include Makefile.help
 include Makefile.functions
