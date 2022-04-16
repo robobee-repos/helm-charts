@@ -30,9 +30,9 @@ pipeline {
         }
 
         /**
-        * Setups the container for the build.
+        * Publishs the helm charts.
         */
-        stage("Setup Build") {
+        stage("Publish") {
             steps {
                 container("helm") {
                     withCredentials([
@@ -46,24 +46,13 @@ pipeline {
                         sh "DEBUG=true /setup-ssh.sh"
                         sh "helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun"
                         sh "helm repo update"
+                        sh "git submodule init"
+                        sh "git submodule update"
+                        sh "make publish-harbor-all"
                     }
                 }
             }
         }
 
-        /**
-        * Deployes the helm charts.
-        */
-        stage("Deploy") {
-            steps {
-                container("helm") {
-                    sh """
-                        git submodule init
-                        git submodule update
-                        make publish-harbor-all
-                    """
-                }
-            }
-        }
     }
 }
