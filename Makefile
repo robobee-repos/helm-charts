@@ -21,6 +21,23 @@ publish:
 	$(MAKE) -C k8s-resources-job publish
 	$(MAKE) -C nexus-operator publish
 
+.PHONY: publish-harbor-all
+publish-harbor-all: push
+	$(MAKE) -C haproxy publish-harbor
+	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish-harbor
+	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish-harbor
+	$(MAKE) -C certs-issuers publish-harbor
+	$(MAKE) -C certs publish-harbor
+	$(MAKE) -C openldap publish-harbor
+	$(MAKE) -C nextcloud-helm/charts/nextcloud publish-harbor
+	$(MAKE) -C jenkins publish-harbor
+	$(MAKE) -C matomo publish-harbor
+	$(MAKE) -C ingress publish-harbor
+	$(MAKE) -C minio-kes publish-harbor
+	$(MAKE) -C gitea-helm-chart publish-harbor
+	$(MAKE) -C k8s-resources-job publish-harbor
+	$(MAKE) -C nexus-operator publish-harbor
+
 .PHONY: index
 index:
 	cd charts && helm repo index .

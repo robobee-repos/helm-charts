@@ -7,6 +7,10 @@ NAME := $(shell yq e ".name" Chart.yaml)
 .PHONY: publish
 publish: package
 
+.PHONY: publish-harbor
+publish-harbor:
+	helm cm-push . robobeerun
+
 .PHONY: package
 package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
 
