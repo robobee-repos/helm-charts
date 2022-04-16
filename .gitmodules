@@ -4,3 +4,6 @@
 [submodule "nextcloud-helm"]
 	path = nextcloud-helm
 	url = git@gitea.anrisoftware.com:robobeerun/nextcloud-helm.git
+[submodule "gitea-helm-chart"]
+	path = gitea-helm-chart
+	url = git@gitea.anrisoftware.com:robobeerun/gitea-helm-chart.git
