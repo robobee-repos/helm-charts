@@ -51,6 +51,7 @@ pipeline {
                             helm repo update
                             git submodule init
                             git submodule update
+                            git checkout ${GIT_BRANCH}
                             make publish-harbor-all
                         """
                     }
