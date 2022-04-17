@@ -43,12 +43,14 @@ pipeline {
                         string(credentialsId: "PROJECT_GIT_NAME", variable: "PROJECT_GIT_NAME"),
                         string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL"),
                         usernamePassword(credentialsId: "HELM_ROBOBEE_REPO_CREDENTIALS", usernameVariable: "HELM_REPO_USERNAME", passwordVariable: "HELM_REPO_PASSWORD")]) {
-                        sh "DEBUG=true /setup-ssh.sh"
-                        sh "helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun"
-                        sh "helm repo update"
-                        sh "git submodule init"
-                        sh "git submodule update"
-                        sh "make publish-harbor-all"
+                        sh """
+                            DEBUG=true /setup-ssh.sh
+                            helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
+                            helm repo update
+                            git submodule init
+                            git submodule update
+                            make publish-harbor-all
+                        """
                     }
                 }
             }
