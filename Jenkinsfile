@@ -44,6 +44,7 @@ pipeline {
                         string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL"),
                         usernamePassword(credentialsId: "HELM_ROBOBEE_REPO_CREDENTIALS", usernameVariable: "HELM_REPO_USERNAME", passwordVariable: "HELM_REPO_PASSWORD")]) {
                         sh """
+                            eval `ssh-agent -s`
                             DEBUG=true /setup-ssh.sh
                             echo \$SSH_AUTH_SOCK
                             helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
