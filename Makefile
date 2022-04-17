@@ -22,7 +22,7 @@ publish:
 	$(MAKE) -C nexus-operator publish
 
 .PHONY: publish-harbor-all
-publish-harbor-all: push
+publish-harbor-all:
 	$(MAKE) -C haproxy publish-harbor
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish-harbor
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish-harbor

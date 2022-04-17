@@ -45,13 +45,11 @@ pipeline {
                         usernamePassword(credentialsId: "HELM_ROBOBEE_REPO_CREDENTIALS", usernameVariable: "HELM_REPO_USERNAME", passwordVariable: "HELM_REPO_PASSWORD")]) {
                         sh """
                             eval `ssh-agent -s`
-                            DEBUG=true /setup-ssh.sh
-                            echo \$SSH_AUTH_SOCK
+                            /setup-ssh.sh
                             helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
                             helm repo update
                             git submodule init
                             git submodule update
-                            git checkout ${GIT_BRANCH}
                             make publish-harbor-all
                         """
                     }
