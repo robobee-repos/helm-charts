@@ -1,5 +1,14 @@
 {{/*
-Return the appropriate apiVersion for job.
+Create a default fully qualified resource name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "res.fullname" -}}
+{{- .Values.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for res.
 */}}
 {{- define "common.capabilities.job.apiVersion" -}}
 {{- print "batch/v1" -}}
@@ -8,47 +17,26 @@ Return the appropriate apiVersion for job.
 {{/*
 Return the proper Redmine image name
 */}}
-{{- define "job.image" -}}
+{{- define "res.image" -}}
 {{- include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
 Return the proper Docker Image Registry Secret Names
 */}}
-{{- define "job.imagePullSecrets" -}}
+{{- define "res.imagePullSecrets" -}}
 {{- include "common.images.pullSecrets" (dict "images" (list .Values.image) "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "job.serviceAccountName" -}}
+{{- define "res.serviceAccountName" -}}
+{{- if .Values.serviceAccount }}
 {{- if .Values.serviceAccount.create -}}
 {{ default (include "common.names.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
 {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Compile all warnings into a single message.
-*/}}
-{{- define "job.validateValues" -}}
-{{- $messages := list -}}
-{{- $messages := append $messages (include "job.validateValues.image" .) -}}
-{{- $messages := without $messages "" -}}
-{{- $message := join "\n" $messages -}}
-{{- if $message -}}
-{{-   printf "\nVALUES VALIDATION:\n%s" $message | fail -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Validate values of Job image
-*/}}
-{{- define "job.validateValues.image" -}}
-{{- if or (not .Values.image.registry) (not .Values.image.repository) (not .Values.image.tag) -}}
-job: image
-    No image registry, repository or tag was specified for the container.
 {{- end -}}
 {{- end -}}

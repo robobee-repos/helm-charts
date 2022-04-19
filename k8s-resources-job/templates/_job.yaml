@@ -1,7 +1,8 @@
+{{- define "jobs.job" -}}
 apiVersion: {{ template "common.capabilities.job.apiVersion" . }}
 kind: Job
 metadata:
-  name: {{ include "common.names.fullname" . }}
+  name: {{ include "res.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
     app.kubernetes.io/component: job
@@ -23,7 +24,7 @@ spec:
       annotations: {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
       {{- end }}
     spec:
-      {{- include "job.imagePullSecrets" . | nindent 6 }}
+      {{- include "res.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.schedulerName }}
       schedulerName: {{ .Values.schedulerName | quote }}
       {{- end }}
@@ -42,14 +43,16 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
-      serviceAccountName: {{ template "job.serviceAccountName" . }}
+      serviceAccountName: {{ template "res.serviceAccountName" . }}
+      {{- if .Values.podSecurityContext }}
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       {{- end }}
       restartPolicy: {{ .Values.restartPolicy }}
       containers:
         - name: {{ include "common.names.fullname" . }}
-          image: {{ template "job.image" . }}
+          image: {{ template "res.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.lifecycleHooks }}
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
@@ -57,8 +60,10 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
+          {{- if .Values.containerSecurityContext }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           {{- end }}
           {{- if .Values.command }}
           command: {{- include "common.tplvalues.render" (dict "value" .Values.command "context" $) | nindent 12 }}
@@ -82,3 +87,4 @@ spec:
         {{- if .Values.sidecars }}
         {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
         {{- end }}
+{{- end -}}
