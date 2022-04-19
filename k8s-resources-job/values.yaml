@@ -147,3 +147,16 @@ jobs:
     containerSecurityContext:
       enabled: false
       runAsUser: 1001
+
+configMaps: []
+#  - name: jenkins-cas
+#    data:
+#      jenkins.yaml: |-
+#        clouds:
+
+secrets: []
+#  - name: jenkins-cas
+#    type: Opaque
+#    data:
+#      jenkins.yaml: |-
+#        clouds:
