@@ -1,6 +1,10 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := publish-all
 
+.PHONY: readme
+readme: ##@targets Updates the README.md from the README.textile
+	pandoc -f textile -t markdown_mmd -o README.md README.textile
+
 .PHONY: publish-all
 publish-all: publish index push
 
