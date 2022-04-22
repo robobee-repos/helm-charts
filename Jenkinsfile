@@ -39,24 +39,15 @@ pipeline {
         stage("Publish") {
             steps {
                 container("helm") {
-                    withCredentials([
-                        file(credentialsId: "PROJECT_SSH_HOST_FILE", variable: "PROJECT_SSH_HOST_FILE"),
-                        string(credentialsId: "PROJECT_SSH_USER", variable: "PROJECT_SSH_USER"),
-                        string(credentialsId: "PROJECT_SSH_PASS", variable: "PROJECT_SSH_PASS"),
-                        file(credentialsId: "PROJECT_SSH_PRIVATE_FILE", variable: "PROJECT_SSH_PRIVATE_FILE"),
-                        string(credentialsId: "PROJECT_GIT_NAME", variable: "PROJECT_GIT_NAME"),
-                        string(credentialsId: "PROJECT_GIT_EMAIL", variable: "PROJECT_GIT_EMAIL"),
-                        usernamePassword(credentialsId: "HELM_ROBOBEE_REPO_CREDENTIALS", usernameVariable: "HELM_REPO_USERNAME", passwordVariable: "HELM_REPO_PASSWORD")]) {
-                        sh """
-                            eval `ssh-agent -s`
-                            /setup-ssh.sh
-                            helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
-                            helm repo update
-                            git submodule init
-                            git submodule update
-                            make publish-harbor-all
-                        """
-                    }
+                    sh """
+                        eval `ssh-agent -s`
+                        /setup-ssh.sh
+                        helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
+                        helm repo update
+                        git submodule init
+                        git submodule update
+                        make publish-harbor-all
+                    """
                 }
             }
         }
