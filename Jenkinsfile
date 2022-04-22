@@ -40,6 +40,7 @@ pipeline {
             steps {
                 container("helm") {
                     sh """
+                        export DEBUG="true"
                         eval `ssh-agent -s`
                         /setup-ssh.sh
                         helm repo add robobeerun https://harbor.anrisoftware.com/chartrepo/robobeerun
