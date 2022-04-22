@@ -4,10 +4,11 @@
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0.0
  */
-pipeline {
 
-    def harborLink = "https://harbor.anrisoftware.com/harbor/projects/2/helm-charts"
-    def destination = "helm-charts"
+def harborLink = "https://harbor.anrisoftware.com/harbor/projects/2/helm-charts"
+def destination = "helm-charts"
+
+pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: "3"))
