@@ -6,6 +6,9 @@
  */
 pipeline {
 
+    def harborLink = "https://harbor.anrisoftware.com/harbor/projects/2/helm-charts"
+    def destination = "helm-charts"
+
     options {
         buildDiscarder(logRotator(numToKeepStr: "3"))
         disableConcurrentBuilds()
@@ -56,6 +59,13 @@ pipeline {
                 }
             }
         }
+    }
 
+    post {
+        success {
+            script {
+                manager.createSummary("document.png").appendText("<a href='${harborLink}'>${destination}</a>", false)
+            }
+        }
     }
 }
