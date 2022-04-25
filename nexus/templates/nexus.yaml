@@ -1,0 +1,17 @@
+apiVersion: apps.m88i.io/v1alpha1
+kind: Nexus
+metadata:
+  name: nexus3
+  namespace: {{ include "common.names.namespace" . }}
+spec:
+  # Number of Nexus pod replicas (can't be increased after creation)
+  replicas: {{ .Values.replicas }}
+  # Here you can specify the image version to fulfill your needs. Defaults to docker.io/sonatype/nexus3:latest if useRedHatImage is set to false
+  #image: "docker.io/sonatype/nexus3:latest"
+  # let's use the centOS image since we do not have access to Red Hat Catalog
+  useRedHatImage: {{ if .Values.useRedHatImage }}true{{ else }}false{{ end }}
+  # Set the resources requests and limits for Nexus pods. See: https://help.sonatype.com/repomanager3/system-requirements
+  resources: {{- toYaml .Values.resources | nindent 4 }}
+  # Data persistence details
+  persistence: {{- toYaml .Values.persistence | nindent 4 }}
+  networking: {{- toYaml .Values.networking | nindent 4 }}

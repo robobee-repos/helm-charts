@@ -1,0 +1,62 @@
+
+replicas: 1
+
+useRedHatImage: false
+
+resources:
+  limits:
+    cpu: "2"
+    memory: "2Gi"
+  requests:
+    cpu: "1"
+    memory: "2Gi"
+
+persistence:
+  # extraVolumes:
+  #   awsElasticBlockStore:
+  #     fsType:
+  #     partition:
+  #     readOnly:
+  #     Required
+  #     volumeID:
+  #   azureDisk:
+  #     cachingMode:
+  #     Required
+  #     diskName:
+  #     Required
+  #     diskURI:
+  #     fsType:
+  #     kind:
+  #     readOnly:
+  #   azureFile:
+  #     readOnly:
+  #     Required
+  #     secretName:
+  #     Required
+  #     shareName:
+  #   cephfs:
+  #     Required
+  #     monitors:
+  #     path:
+  #     readOnly:
+  #     secretFile:
+  #     secretRef
+  #       name
+  #     user
+  # Required
+  persistent: true
+  # storageClass:
+  volumeSize: 10Gi
+
+networking:
+  # annotations:
+  expose: true
+  # NodePort, Route, Ingress
+  exposeAs: "Ingress"
+  host: "nexus.example.com"
+  # ignoreUpdates
+  # labels
+  # nodePort
+  # tls: {}
+    # mandatory: true
+    # secretName: "nexus.example.com-tls"
