@@ -58,5 +58,5 @@ networking:
   # labels
   # nodePort
   # tls: {}
-    # mandatory: true
+    # mandatory: false
     # secretName: "nexus.example.com-tls"
