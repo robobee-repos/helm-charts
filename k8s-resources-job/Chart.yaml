@@ -11,7 +11,7 @@ name: k8s-resources-job
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://kubernetes.io/docs/concepts/workloads/controllers/job/
-version: 1.0.2
+version: 1.0.3
 dependencies:
   - name: common
     repository: https://charts.bitnami.com/bitnami

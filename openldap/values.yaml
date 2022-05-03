@@ -415,6 +415,18 @@ predefinedFileSets:
         cn: jenkins
         olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.3.1 NAME 'jenkinsGroups' DESC 'Determines which Jenkins groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.3.0 NAME 'jenkinsUser' DESC 'jenkinsUser' SUP top AUXILIARY MAY  ( jenkinsGroups ) )
+- name: sonarqube-schema
+  fileSets:
+  - name: sonarqube-schema
+    targetPath: /ldifs
+    files:
+    - filename: 20-sonarqube-schema.config.ldif
+      content: |
+        dn: cn=sonarqube,cn=schema,cn=config
+        objectClass: olcSchemaConfig
+        cn: sonarqube
+        olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.4.1 NAME 'sonarqubeGroups' DESC 'Determines which SonarQube groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+        olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.4.0 NAME 'sonarqubeUser' DESC 'sonarqubeUser' SUP top AUXILIARY MAY  ( sonarqubeGroups ) )
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:

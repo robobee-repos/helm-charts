@@ -24,6 +24,7 @@ publish:
 	$(MAKE) -C gitea-helm-chart publish
 	$(MAKE) -C k8s-resources-job publish
 	$(MAKE) -C nexus-operator publish
+	$(MAKE) -C nexus publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all:
@@ -41,6 +42,7 @@ publish-harbor-all:
 	$(MAKE) -C gitea-helm-chart publish-harbor
 	$(MAKE) -C k8s-resources-job publish-harbor
 	$(MAKE) -C nexus-operator publish-harbor
+	$(MAKE) -C nexus publish-harbor
 
 .PHONY: index
 index:
