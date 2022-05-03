@@ -1,10 +1,16 @@
 ingresses:
   - ingressClassName: "nginx"
+    fullnameOverride: nexus3
     hostname: test.aaaa.de
     extraTls:
     - hosts:
         - test.aaaa.de
       secretName: test.aaaa.de-tls
+    backend:
+      service:
+        name: test
+        port:
+          number: 80
   - ingressClassName: "nginx"
     hostname: foo.aaaa.de
     annotations:
