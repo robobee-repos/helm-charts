@@ -161,6 +161,13 @@ secrets: []
 #      jenkins.yaml: |-
 #        clouds:
 
+pvcs: []
+#  - name: jenkins-cas
+#    type: Opaque
+#    data:
+#      jenkins.yaml: |-
+#        clouds:
+
 ingressesDefaults:
   pathType: ImplementationSpecific
   apiVersion: ""

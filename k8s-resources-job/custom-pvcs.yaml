@@ -1,0 +1,17 @@
+pvcs:
+  - name: data
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: managed-nfs-storage
+  - name: data-2
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: managed-nfs-storage
