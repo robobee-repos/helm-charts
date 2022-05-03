@@ -14,4 +14,4 @@ Edit the title with "`[PR] Feature #NUMBER`"
 Update the branch name in `BRANCH` to show build status.
 URL encoded `#` is `%23`
 
-[![Build](https://jenkins.anrisoftware.com/job/robobeerun-jenkins-maven-docker/job/BRANCH/badge/icon)](https://jenkins.anrisoftware.com/job/robobeerun-jenkins-maven-docker/job/BRANCH/)
+[![Build](https://jenkins.anrisoftware.com/job/robobeerun-helm-charts/job/BRANCH/badge/icon)](https://jenkins.anrisoftware.com/job/robobeerun-helm-charts/job/BRANCH/)
