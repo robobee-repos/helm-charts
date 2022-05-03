@@ -1,6 +1,6 @@
 {{- define "pvcs.pvc" -}}
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
   name: {{ include "res.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
