@@ -71,8 +71,8 @@ diagnosticMode:
 ##
 image:
   registry: harbor.anrisoftware.com
-  repository: robobeerun
-  tag: bitnami-openldap-2.6.3-debian-11-r35:1.1.0
+  repository: robobeerun/bitnami-openldap-2.6.3-debian-11-r35
+  tag: 1.1.0
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
