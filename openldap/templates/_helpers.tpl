@@ -57,19 +57,6 @@ otherwise it generates a random value.
 {{- end }}
 
 {{/*
-Return OpenLDAP postgres user password
-*/}}
-{{- define "openldap.postgres.password" -}}
-{{- if .Values.global.openldap.openldapPostgresPassword }}
-    {{- .Values.global.openldap.openldapPostgresPassword -}}
-{{- else if .Values.openldapPostgresPassword -}}
-    {{- .Values.openldapPostgresPassword -}}
-{{- else -}}
-    {{- include "getValueFromSecret" (dict "Namespace" .Release.Namespace "Name" (include "common.names.fullname" .) "Length" 10 "Key" "openldap-postgres-password")  -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return OpenLDAP password
 */}}
 {{- define "openldap.password" -}}
