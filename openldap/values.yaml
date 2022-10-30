@@ -70,9 +70,9 @@ diagnosticMode:
 ## @param image.debug Specify if debug values should be set
 ##
 image:
-  registry: docker.io
-  repository: robobeerun/bitnami-openldap
-  tag: 2.6.0-debian-10-r9-ldifs-r7
+  registry: harbor.anrisoftware.com
+  repository: robobeerun
+  tag: bitnami-openldap-2.6.3-debian-11-r35:1.1.0
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -106,7 +106,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: bitnami/bitnami-shell
-    tag: 10-debian-10-r305
+    tag: 11-debian-11-r43
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -253,6 +253,12 @@ enableOptional:
   readonlyuser: false
   defaulttree: false
   openssh-lpk-schema: false
+  matomo-schema: false
+  wordpress-schema: false
+  minio-schema: false
+  jenkins-schema: false
+  sonarqube-schema: false
+  syncprov-schema: false
 
 # Optional predifined files with provided contents to be added in container.
 predefinedFileSets:
@@ -313,6 +319,19 @@ predefinedFileSets:
         olcDbIndex: entryCSN eq
         olcDbIndex: entryUUID eq
         olcDbIndex: objectClass eq
+- name: syncprov-schema
+  fileSets:
+  - name: syncprov-schema
+    targetPath: /ldifs
+    files:
+    - filename: 06-syncprov.config.ldif
+      content: |
+        # Load syncprov module
+        dn: cn=module{2},cn=config
+        changetype: add
+        objectClass: olcModuleList
+        cn: module{2}
+        olcModuleLoad: syncprov
 - name: defaulttree
   fileSets:
   - name: defaulttree
@@ -464,7 +483,7 @@ initdbScriptsConfigMap: ""
 ##
 initdbScriptsSecret: ""
 
-## @param containerPorts.postgresql OpenLDAP container port
+## @param containerPorts OpenLDAP container port
 ##
 containerPorts:
   ldap: 1389
@@ -612,22 +631,22 @@ tolerations: []
 ## @param extraPodSpec Optionally specify extra PodSpec
 ##
 extraPodSpec: {}
-## @param labels Map of labels to add to the statefulset (postgresql primary)
+## @param labels Map of labels to add to the statefulset
 ##
 labels: {}
 ## @param annotations Annotations for OpenLDAP pods
 ##
 annotations: {}
-## @param podLabels Map of labels to add to the pods (postgresql primary)
+## @param podLabels Map of labels to add to the pods
 ##
 podLabels: {}
-## @param podAnnotations Map of annotations to add to the pods (postgresql primary)
+## @param podAnnotations Map of annotations to add to the pods
 ##
 podAnnotations: {}
-## @param priorityClassName Priority Class to use for each pod (postgresql primary)
+## @param priorityClassName Priority Class to use for each pod
 ##
 priorityClassName: ""
-## @param extraInitContainers Extra init containers to add to the pods (postgresql primary)
+## @param extraInitContainers Extra init containers to add to the pods
 ## Example
 ##
 ## extraInitContainers:
@@ -636,10 +655,20 @@ priorityClassName: ""
 ##     command: ['do', 'something']
 ##
 extraInitContainers: []
-## @param extraVolumeMounts Extra volume mounts to add to the pods (postgresql primary)
+## LDAP Pod Disruption Budget
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+## @param pdb.create Deploy a pdb object for the ZooKeeper pod
+## @param pdb.minAvailable Minimum available ZooKeeper replicas
+## @param pdb.maxUnavailable Maximum unavailable ZooKeeper replicas
+##
+pdb:
+  create: false
+  minAvailable: ""
+  maxUnavailable: 1
+## @param extraVolumeMounts Extra volume mounts to add to the pods
 ##
 extraVolumeMounts: []
-## @param extraVolumes Extra volumes to add to the pods (postgresql primary)
+## @param extraVolumes Extra volumes to add to the pods
 ##
 extraVolumes: []
 ## @param sidecars Extra containers to the pod
@@ -767,7 +796,6 @@ tls:
   certKeyFilename: ""
   ## @param tls.certCAFilename CA Certificate filename
   ## If provided, OpenLDAP will authenticate TLS/SSL clients by requesting them a certificate
-  ## ref: https://www.postgresql.org/docs/9.6/auth-methods.html
   ##
   certCAFilename: ""
   ## @param tls.crlFilename File containing a Certificate Revocation List
