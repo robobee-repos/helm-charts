@@ -6,7 +6,7 @@ readme: ##@targets Updates the README.md from the README.textile
 	pandoc -f textile -t markdown_mmd -o README.md README.textile
 
 .PHONY: publish-all
-publish-all: publish index push
+publish-all: publish index push ##@targets Publish all helm charts.
 
 .PHONY: publish
 publish:
@@ -27,7 +27,7 @@ publish:
 	$(MAKE) -C nexus publish
 
 .PHONY: publish-harbor-all
-publish-harbor-all:
+publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C haproxy publish-harbor
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish-harbor
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish-harbor
