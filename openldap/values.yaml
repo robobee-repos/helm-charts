@@ -185,6 +185,10 @@ rbac:
 replication:
   enabled: false
 
+## @param replicaCount Number of LDAP masters
+##
+replicaCount: 1
+
 # Default configuration for openldap as environment variables. These get injected directly in the container.
 env:
   LDAP_PORT_NUMBER: "1389"

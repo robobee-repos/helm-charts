@@ -19,7 +19,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   serviceName: {{ template "openldap.name" . }}-headless
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   updateStrategy:
     type: {{ .Values.updateStrategy.type }}
     {{- if (eq "Recreate" .Values.updateStrategy.type) }}
