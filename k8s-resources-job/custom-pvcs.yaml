@@ -7,6 +7,7 @@ pvcs:
         requests:
           storage: 20Gi
       storageClassName: managed-nfs-storage
+      volumeName: pvc-git-data
   - name: data-2
     spec:
       accessModes:
@@ -15,3 +16,17 @@ pvcs:
         requests:
           storage: 20Gi
       storageClassName: managed-nfs-storage
+
+pvs:
+  - name: pvc-git-data
+    spec:
+      accessModes:
+        - ReadWriteMany
+      capacity:
+        storage: 20Gi
+      nfs:
+        path: /nfsfileshare/4/anrisoftware-com-gitea-data-gitea-0-pvc-729a4ca3-ff16-4d9e-abd6-37942c49da5d
+        server: andrea-mail-0.muellerpublic.de
+      persistentVolumeReclaimPolicy: Retain
+      storageClassName: managed-nfs-storage
+      volumeMode: Filesystem
