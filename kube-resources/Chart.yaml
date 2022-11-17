@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: Deploys Kubernetes resources. The chart can deploy config maps, ingress, jobs, persistent volumes, persistent volume claims and secrets.
+keywords:
+  - kubernetes
+maintainers:
+  - email: erwin@muellerpublic.de
+    name: Erwin Müller
+name: kube-resources
+sources:
+  - https://github.com/robobee-repos/helm-charts
+  - https://kubernetes.io/docs/concepts/workloads/controllers/job/
+version: 1.0.5
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x

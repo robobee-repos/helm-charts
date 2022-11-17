@@ -1,0 +1,5 @@
+{{ range .Values.ingresses }}
+{{- $vars := dict "Release" $.Release "Chart" $.Chart "Files" $.Files "Template" $.Template "Capabilities" $.Capabilities "Values" (merge . $.Values.ingressesDefaults (dict "global" $.Values.global)) }}
+{{ include "ingresses.ingress" $vars }}
+---
+{{ end }}

@@ -1,0 +1,5 @@
+{{ range .Values.configMaps }}
+{{- $vars := dict "Release" $.Release "Chart" $.Chart "Files" $.Files "Template" $.Template "Values" (merge . (dict "global" $.Values.global)) }}
+{{ include "configmaps.configmap" $vars }}
+---
+{{ end }}

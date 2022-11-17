@@ -22,9 +22,10 @@ publish:
 	$(MAKE) -C ingress publish
 	$(MAKE) -C minio-kes publish
 	$(MAKE) -C gitea-helm-chart publish
-	$(MAKE) -C k8s-resources-job publish
+	$(MAKE) -C kube-resources publish
 	$(MAKE) -C nexus-operator publish
 	$(MAKE) -C nexus publish
+	$(MAKE) -C mariadb-jobs publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -40,9 +41,10 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C ingress publish-harbor
 	$(MAKE) -C minio-kes publish-harbor
 	$(MAKE) -C gitea-helm-chart publish-harbor
-	$(MAKE) -C k8s-resources-job publish-harbor
+	$(MAKE) -C kube-resources publish
 	$(MAKE) -C nexus-operator publish-harbor
 	$(MAKE) -C nexus publish-harbor
+	$(MAKE) -C mariadb-jobs publish-harbor
 
 .PHONY: index
 index:

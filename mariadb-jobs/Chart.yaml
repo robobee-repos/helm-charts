@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: 1.0.0
+appVersion: 10.6.10
 description: Deploys a Kubernetes Job resource.
 keywords:
   - kubernetes
@@ -11,10 +11,15 @@ name: k8s-resources-job
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://kubernetes.io/docs/concepts/workloads/controllers/job/
-version: 1.0.5
+version: 1.0.0
 dependencies:
   - name: common
     repository: https://charts.bitnami.com/bitnami
     tags:
       - bitnami-common
     version: 1.x.x
+  - name: kube-resources
+    repository: https://robobee-repos.github.io/helm-charts-charts/
+    tags:
+      - kube-resources
+    version: 1.0.x
