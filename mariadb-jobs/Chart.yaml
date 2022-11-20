@@ -7,7 +7,7 @@ keywords:
 maintainers:
   - email: erwin@muellerpublic.de
     name: Erwin Müller
-name: k8s-resources-job
+name: mariadb-jobs
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://kubernetes.io/docs/concepts/workloads/controllers/job/
