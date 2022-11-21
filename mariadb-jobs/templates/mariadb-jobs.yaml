@@ -33,7 +33,8 @@ mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} 
 {{ $databasesCommand := include "mariadbjobs.databasesCommand" . }}
 {{ $usersCommand := include "mariadbjobs.usersCommand" . }}
 {{ $command := list "bash" "-ec" (print $databasesCommand $usersCommand) }}
-{{ $mariadb := dict "name" "mariadb" "image" .Values.image "command" $command "extraEnvVars" .Values.job.extraEnvVars "extraEnvVarsCM" .Values.job.extraEnvVarsCM "extraEnvVarsSecret" .Values.job.extraEnvVarsSecret }}
+{{ $mariadb := dict "name" "mariadb" "image" .Values.image "command" $command }}
+{{ $mariadb := merge $mariadb .Values.job }}
 {{ $jobs := list $mariadb }}
 {{ range $jobs }}
 {{- $vars := dict "Release" $.Release "Chart" $.Chart "Files" $.Files "Template" $.Template "Values" (merge . (dict "global" $.Values.global)) }}

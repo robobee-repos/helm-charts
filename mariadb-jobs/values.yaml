@@ -55,14 +55,17 @@ databases: []
 
 users: []
 
-job: []
-   # extraEnvVars:
-   #   - name: FOO
-   #     value: "bar"
-#  extraEnvVars: []
-   ## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars
-   ##
-#  extraEnvVarsCM: ""
-   ## @param extraEnvVarsSecret Name of existing Secret containing extra env vars
-   ##
-#  extraEnvVarsSecret: ""
+job:
+  # extraEnvVars:
+  #   - name: FOO
+  #     value: "bar"
+# extraEnvVars: []
+  ## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars
+  ##
+# extraEnvVarsCM: ""
+  ## @param extraEnvVarsSecret Name of existing Secret containing extra env vars
+  ##
+# extraEnvVarsSecret: ""
+  ## @param restartPolicy
+  ##
+  restartPolicy: OnFailure
