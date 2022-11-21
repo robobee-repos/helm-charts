@@ -54,5 +54,9 @@ index:
 push:
 	git add . && git commit --allow-empty -a -m "Publish charts." && git push
 
+.PHONY: publish-charts-all
+publish-charts-all: ##@targets Publish all helm charts to the Github repository helm-chars-charts.
+	cp charts/* ../helm-charts-charts/
+
 include Makefile.help
 include Makefile.functions
