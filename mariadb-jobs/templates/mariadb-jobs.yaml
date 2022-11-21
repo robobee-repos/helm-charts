@@ -2,7 +2,7 @@
 {{ $mariadb := dict "name" "mariadb" "image" .Values.image "command" $command }}
 {{ $extraVolumes := dict "name" "script" "configMap" (dict "name" (print (include "res.fullname" .) "-script")) }}
 {{ $extraVolumeMounts := dict "name" "script" "mountPath" "/script.sh" "subPath" "script.sh" }}
-{{ $mariadb := merge $mariadb .Values.job (dict "extraVolumes" $extraVolumes "extraVolumeMounts" $extraVolumeMounts) }}
+{{ $mariadb := merge $mariadb .Values.job (dict "extraVolumes" (list $extraVolumes) "extraVolumeMounts" (list $extraVolumeMounts)) }}
 {{ $jobs := list $mariadb }}
 {{ range $jobs }}
 {{- $vars := dict "Release" $.Release "Chart" $.Chart "Files" $.Files "Template" $.Template "Values" (merge . (dict "global" $.Values.global)) }}
