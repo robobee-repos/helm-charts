@@ -22,4 +22,4 @@ dependencies:
     repository: https://robobee-repos.github.io/helm-charts-charts/
     tags:
       - kube-resources
-    version: 1.0.x
+    version: 1.0.6

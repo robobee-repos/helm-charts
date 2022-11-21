@@ -1,0 +1,27 @@
+{{ $databasesCommand := include "mariadbjobs.databasesCommand" . }}
+{{ $usersCommand := include "mariadbjobs.usersCommand" . }}
+#
+# A ConfigMap spec that contains the MariaDB script.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "res.fullname" . }}-script
+  labels:
+  {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.extraLabels }}
+  {{ toYaml .Values.extraLabels | indent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  namespace: {{ .Release.Namespace }}
+data:
+  script.sh: |
+    #!/bin/bash
+    set -e
+    set -x
+    {{ $databasesCommand }}
+    {{ $usersCommand }}

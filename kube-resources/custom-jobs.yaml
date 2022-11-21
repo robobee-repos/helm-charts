@@ -1,0 +1,18 @@
+jobs:
+  - name: test-a
+    restartPolicy: OnFailure
+    image:
+      registry: docker.io
+      repository: foo/bar
+      tag: 1.0.0
+    command:
+      - sleep
+      - 1h
+    extraVolumes:
+      - name: script
+        configMap:
+          name: script
+    extraVolumeMounts:
+      - name: script
+        mountPath: /script.sh
+        subPath: script.sh

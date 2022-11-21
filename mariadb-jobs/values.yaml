@@ -33,6 +33,9 @@ commonLabels: {}
 ## @param commonAnnotations Annotations to add to all deployed objects
 ##
 commonAnnotations: {}
+## @param name Char name.
+##
+name: "mariadb"
 
 db:
   #host:
