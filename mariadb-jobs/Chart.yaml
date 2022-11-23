@@ -11,7 +11,7 @@ name: mariadb-jobs
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://kubernetes.io/docs/concepts/workloads/controllers/job/
-version: 1.0.5
+version: 1.0.6
 dependencies:
   - name: common
     repository: https://charts.bitnami.com/bitnami

@@ -68,7 +68,7 @@ mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} 
 {{- $user := . -}}
 {{- range $user.hosts -}}
 {{- $host := . -}}
-mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE USER \`{{ $user.name }}\`@'{{ $host }}' IDENTIFIED BY '{{ $user.password }}';";
+mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE USER IF NOT EXISTS \`{{ $user.name }}\`@'{{ $host }}' IDENTIFIED BY '{{ $user.password }}';";
 {{- end -}}
 {{- range .databases -}}
 {{- $db := . -}}
