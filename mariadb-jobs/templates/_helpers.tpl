@@ -56,9 +56,7 @@ Create the name of the service account to use
 {{- define "mariadbjobs.databasesCommand" -}}
 {{- $values := .Values -}}
 {{- range .Values.databases -}}
-mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE DATABASE IF NOT EXISTS \`{{ . }}\`;"
-
-
+mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE DATABASE IF NOT EXISTS \`{{ . }}\`;";
 {{- end -}}
 {{- end -}}
 
@@ -67,12 +65,16 @@ mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} 
 {{- define "mariadbjobs.usersCommand" -}}
 {{- $values := .Values -}}
 {{- range .Values.users -}}
-mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE USER '{{ .name }}'@'{{ .host }}' IDENTIFIED BY '{{ .password }}';
-{{- $user := . }}
+{{- $user := . -}}
+{{- range $user.hosts -}}
+{{- $host := . -}}
+mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "CREATE USER '{{ $user.name }}'@'{{ $host }}' IDENTIFIED BY '{{ $user.password }}';";
+{{- end -}}
 {{- range .databases -}}
-mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -{{ $values.db.password }} -e "GRANT ALL PRIVILEGES ON \`{{ . }}\`.* TO '{{ $user.name }}'@'{{ $user.host }}';"
-
-
+{{- range $user.hosts -}}
+{{- $host := . -}}
+mysql -h {{ $values.db.host }} -P {{ $values.db.port }} -u{{ $values.db.user }} -p{{ include "mariadbjobs.rootPassword" $values }} -e "GRANT ALL PRIVILEGES ON \`{{ . }}\`.* TO '{{ $user.name }}'@'{{ $host }}';";
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
