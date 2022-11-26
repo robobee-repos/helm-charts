@@ -128,8 +128,8 @@ helm install my-release helm-charts-charts
 
 <tr>
 <td><code>mariadb-jobs</code></td>
-<td><code>1.0.6</code></td>
-<td><code>10.6.10</code></td>
+<td><code>%MARIADB_JOBS_VERSION%</code></td>
+<td><code>%MARIADB_JOBS_APP_VERSION%</code></td>
 </tr>
 
 <tr>
@@ -158,7 +158,7 @@ helm install my-release helm-charts-charts
 
 <tfoot>
 <tr>
-<td colspan="2">Updated Sat 26 Nov 2022 10:37:18 AM CET</td>
+<td colspan="2">Updated %TIME%</td>
 </tr>
 </tfoot>
 

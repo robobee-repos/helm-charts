@@ -49,6 +49,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 .PHONY: index
 index:
 	cd charts && helm repo index .
+	$(MAKE) -C mariadb-jobs update-index
 
 .PHONY: push
 push:
