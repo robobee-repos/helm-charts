@@ -21,7 +21,7 @@ publish:
 	$(MAKE) -C matomo publish
 	$(MAKE) -C ingress publish
 	$(MAKE) -C minio-kes publish
-	$(MAKE) -C gitea-helm-chart publish
+	$(MAKE) -C gitea publish
 	$(MAKE) -C kube-resources publish
 	$(MAKE) -C nexus-operator publish
 	$(MAKE) -C nexus publish
@@ -40,7 +40,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C matomo publish-harbor
 	$(MAKE) -C ingress publish-harbor
 	$(MAKE) -C minio-kes publish-harbor
-	$(MAKE) -C gitea-helm-chart publish-harbor
+	$(MAKE) -C gitea publish-harbor
 	$(MAKE) -C kube-resources publish
 	$(MAKE) -C nexus-operator publish-harbor
 	$(MAKE) -C nexus publish-harbor
@@ -50,6 +50,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 index:
 	cd charts && helm repo index .
 	$(MAKE) -C mariadb-jobs update-index
+	$(MAKE) -C gitea update-index
 
 .PHONY: push
 push:
