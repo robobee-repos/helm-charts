@@ -49,6 +49,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 .PHONY: index
 index:
 	cd charts && helm repo index .
+	cd charts && sed -e "s/%TIME%/`date`/" index.html.tpl > index.html
 	$(MAKE) -C mariadb-jobs update-index
 	$(MAKE) -C gitea update-index
 

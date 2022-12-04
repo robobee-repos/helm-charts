@@ -85,9 +85,9 @@ helm install my-release helm-charts-charts
 </tr>
 
 <tr>
-<td><code>gitea-helm-chart</code></td>
-<td><code>1.1.2</code></td>
-<td><code>1.16.3</code></td>
+<td><code>gitea</code></td>
+<td><code>%GITEA_VERSION%</code></td>
+<td><code>%GITEA_APP_VERSION%</code></td>
 </tr>
 
 <tr>

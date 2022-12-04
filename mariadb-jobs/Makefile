@@ -17,7 +17,6 @@ package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
 
 .PHONY: update-index
 update-index:
-	cd ../charts && sed -e "s/%TIME%/`date`/" index.html.tpl > index.html
 	cd ../charts && sed -i -e "s/%MARIADB_JOBS_VERSION%/$(VERSION)/" index.html
 	cd ../charts && sed -i -e "s/%MARIADB_JOBS_APP_VERSION%/$(APP_VERSION)/" index.html
 
