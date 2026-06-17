@@ -17,7 +17,7 @@ keywords:
 maintainers:
   - email: erwin@muellerpublic.de
     name: Erwin Müller
-name: openldap
+name: self-service-password
 sources:
   - https://github.com/robobee-repos/helm-charts/
 version: 1.0.0
