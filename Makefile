@@ -1,6 +1,10 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := publish-all
 
+EXECUTABLES = yq
+K := $(foreach exec,$(EXECUTABLES),\
+        $(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
+
 .PHONY: readme
 readme: ##@targets Updates the README.md from the README.textile
 	pandoc -f textile -t markdown_mmd -o README.md README.textile
@@ -15,7 +19,6 @@ publish:
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish
 	$(MAKE) -C certs-issuers publish
 	$(MAKE) -C certs publish
-	$(MAKE) -C openldap publish
 	$(MAKE) -C nextcloud-helm/charts/nextcloud publish
 	$(MAKE) -C jenkins publish
 	$(MAKE) -C matomo publish
@@ -26,6 +29,8 @@ publish:
 	$(MAKE) -C nexus-operator publish
 	$(MAKE) -C nexus publish
 	$(MAKE) -C mariadb-jobs publish
+	$(MAKE) -C openldap publish
+	$(MAKE) -C self-service-password publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -34,7 +39,6 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish-harbor
 	$(MAKE) -C certs-issuers publish-harbor
 	$(MAKE) -C certs publish-harbor
-	$(MAKE) -C openldap publish-harbor
 	$(MAKE) -C nextcloud-helm/charts/nextcloud publish-harbor
 	$(MAKE) -C jenkins publish-harbor
 	$(MAKE) -C matomo publish-harbor
@@ -45,13 +49,16 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C nexus-operator publish-harbor
 	$(MAKE) -C nexus publish-harbor
 	$(MAKE) -C mariadb-jobs publish-harbor
+	$(MAKE) -C self-service-password publish-harbor
 
 .PHONY: index
 index:
 	cd charts && helm repo index .
 	cd charts && sed -e "s/%TIME%/`date`/" index.html.tpl > index.html
-	$(MAKE) -C mariadb-jobs update-index
 	$(MAKE) -C gitea update-index
+	$(MAKE) -C mariadb-jobs update-index
+	$(MAKE) -C openldap update-index
+	$(MAKE) -C self-service-password update-index
 
 .PHONY: push
 push:

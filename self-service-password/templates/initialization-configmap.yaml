@@ -1,0 +1,22 @@
+{{- if and (or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScripts) (not .Values.initdbScriptsConfigMap) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.names.fullname" . }}-init-scripts
+  labels:
+  {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  namespace: {{ .Release.Namespace }}
+data:
+{{- with .Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}" }}
+{{ .AsConfig | indent 2 }}
+{{- end }}
+{{- if .Values.initdbScripts }}
+{{- include "common.tplvalues.render" (dict "value" .Values.initdbScripts "context" .) | nindent 2 }}
+{{- end }}
+{{- end }}

@@ -152,8 +152,14 @@ helm install my-release helm-charts-charts
 
 <tr>
 <td><code>openldap</code></td>
-<td><code>1.1.2</code></td>
-<td><code>2.6.3</code></td>
+<td><code>%OPENLDAP_VERSION%</code></td>
+<td><code>%OPENLDAP_APP_VERSION%</code></td>
+</tr>
+
+<tr>
+<td><code>self-service-password</code></td>
+<td><code>%SELF_SERVICE_PASSWORD_VERSION%</code></td>
+<td><code>%SELF_SERVICE_PASSWORD_APP_VERSION%</code></td>
 </tr>
 
 <tfoot>

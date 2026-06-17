@@ -3,35 +3,35 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "openldap.name" -}}
+{{- define "tlb.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Return the proper OpenLDAP image name
 */}}
-{{- define "openldap.image" -}}
+{{- define "tlb.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
 {{- end -}}
 
 {{/*
 Return the proper OpenLDAP metrics image name
 */}}
-{{- define "openldap.metrics.image" -}}
+{{- define "tlb.metrics.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.metrics.image "global" .Values.global) }}
 {{- end -}}
 
 {{/*
 Return the proper OpenLDAP Docker Image Registry Secret Names
 */}}
-{{- define "openldap.imagePullSecrets" -}}
+{{- define "tlb.imagePullSecrets" -}}
 {{- include "common.images.pullSecrets" (dict "images" (list .Values.image .Values.metrics.image) "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
  Create the name of the service account to use
  */}}
-{{- define "openldap.serviceAccountName" -}}
+{{- define "tlb.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
     {{ default (include "common.names.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
@@ -42,8 +42,8 @@ Return the proper OpenLDAP Docker Image Registry Secret Names
 {{/*
 Generate chart secret name
 */}}
-{{- define "openldap.secretName" -}}
-{{ default (include "openldap.name" .) .Values.existingSecret }}
+{{- define "tlb.secretName" -}}
+{{ default (include "tlb.name" .) .Values.existingSecret }}
 {{- end -}}
 
 {{/*
@@ -63,33 +63,33 @@ otherwise it generates a random value.
 {{/*
 Return OpenLDAP password
 */}}
-{{- define "openldap.password" -}}
-{{- if .Values.global.openldap.openldapPassword }}
-    {{- .Values.global.openldap.openldapPassword -}}
-{{- else if .Values.openldapPassword -}}
-    {{- .Values.openldapPassword -}}
+{{- define "tlb.password" -}}
+{{- if .Values.global.tlb.tlbPassword }}
+    {{- .Values.global.tlb.tlbPassword -}}
+{{- else if .Values.tlbPassword -}}
+    {{- .Values.tlbPassword -}}
 {{- else -}}
-    {{- include "getValueFromSecret" (dict "Namespace" .Release.Namespace "Name" (include "common.names.fullname" .) "Length" 10 "Key" "openldap-password")  -}}
+    {{- include "getValueFromSecret" (dict "Namespace" .Release.Namespace "Name" (include "common.names.fullname" .) "Length" 10 "Key" "tlb-password")  -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return OpenLDAP replication password
 */}}
-{{- define "openldap.replication.password" -}}
-{{- if .Values.global.openldap.replicationPassword }}
-    {{- .Values.global.openldap.replicationPassword -}}
+{{- define "tlb.replication.password" -}}
+{{- if .Values.global.tlb.replicationPassword }}
+    {{- .Values.global.tlb.replicationPassword -}}
 {{- else if .Values.replication.password -}}
     {{- .Values.replication.password -}}
 {{- else -}}
-    {{- include "getValueFromSecret" (dict "Namespace" .Release.Namespace "Name" (include "common.names.fullname" .) "Length" 10 "Key" "openldap-replication-password")  -}}
+    {{- include "getValueFromSecret" (dict "Namespace" .Release.Namespace "Name" (include "common.names.fullname" .) "Length" 10 "Key" "tlb-replication-password")  -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return true if we should use an existingSecret.
 */}}
-{{- define "openldap.useExistingSecret" -}}
+{{- define "tlb.useExistingSecret" -}}
 {{- if .Values.existingSecret -}}
     {{- true -}}
 {{- end -}}
@@ -98,8 +98,8 @@ Return true if we should use an existingSecret.
 {{/*
 Return true if a secret object should be created
 */}}
-{{- define "openldap.createSecret" -}}
-{{- if not (include "openldap.useExistingSecret" .) -}}
+{{- define "tlb.createSecret" -}}
+{{- if not (include "tlb.useExistingSecret" .) -}}
     {{- true -}}
 {{- end -}}
 {{- end -}}
@@ -107,7 +107,7 @@ Return true if a secret object should be created
 {{/*
 Get the configuration ConfigMap name.
 */}}
-{{- define "openldap.configurationCM" -}}
+{{- define "tlb.configurationCM" -}}
 {{- if .Values.configurationConfigMap -}}
 {{- printf "%s" (tpl .Values.configurationConfigMap $) -}}
 {{- else -}}
@@ -118,7 +118,7 @@ Get the configuration ConfigMap name.
 {{/*
 Get the extended configuration ConfigMap name.
 */}}
-{{- define "openldap.extendedConfigurationCM" -}}
+{{- define "tlb.extendedConfigurationCM" -}}
 {{- if .Values.extendedConfConfigMap -}}
 {{- printf "%s" (tpl .Values.extendedConfConfigMap $) -}}
 {{- else -}}
@@ -129,8 +129,8 @@ Get the extended configuration ConfigMap name.
 {{/*
 Return true if a configmap should be mounted with OpenLDAP configuration
 */}}
-{{- define "openldap.mountConfigurationCM" -}}
-{{- if or (.Files.Glob "files/openldap.conf") (.Files.Glob "files/pg_hba.conf") .Values.openldapConfiguration .Values.pgHbaConfiguration .Values.configurationConfigMap }}
+{{- define "tlb.mountConfigurationCM" -}}
+{{- if or (.Files.Glob "files/tlb.conf") (.Files.Glob "files/pg_hba.conf") .Values.tlbConfiguration .Values.pgHbaConfiguration .Values.configurationConfigMap }}
     {{- true -}}
 {{- end -}}
 {{- end -}}
@@ -138,7 +138,7 @@ Return true if a configmap should be mounted with OpenLDAP configuration
 {{/*
 Get the initialization scripts ConfigMap name.
 */}}
-{{- define "openldap.initdbScriptsCM" -}}
+{{- define "tlb.initdbScriptsCM" -}}
 {{- if .Values.initdbScriptsConfigMap -}}
 {{- printf "%s" (tpl .Values.initdbScriptsConfigMap $) -}}
 {{- else -}}
@@ -149,39 +149,39 @@ Get the initialization scripts ConfigMap name.
 {{/*
 Get the initialization scripts Secret name.
 */}}
-{{- define "openldap.initdbScriptsSecret" -}}
+{{- define "tlb.initdbScriptsSecret" -}}
 {{- printf "%s" (tpl .Values.initdbScriptsSecret $) -}}
 {{- end -}}
 
 {{/*
 Get the metrics ConfigMap name.
 */}}
-{{- define "openldap.metricsCM" -}}
+{{- define "tlb.metricsCM" -}}
 {{- printf "%s-metrics" (include "common.names.fullname" .) -}}
 {{- end -}}
 
 {{/*
 Get the readiness probe command
 */}}
-{{- define "openldap.readinessProbeCommand" -}}
+{{- define "tlb.readinessProbeCommand" -}}
 - |
-{{- if (include "openldap.database" .) }}
-  exec pg_isready -U {{ include "openldap.username" . | quote }} -d "dbname={{ include "openldap.database" . }} {{- if .Values.tls.enabled }} sslcert={{ include "openldap.tlsCert" . }} sslkey={{ include "openldap.tlsCertKey" . }}{{- end }}" -h 127.0.0.1 -p {{ .Values.containerPorts.openldap }}
+{{- if (include "tlb.database" .) }}
+  exec pg_isready -U {{ include "tlb.username" . | quote }} -d "dbname={{ include "tlb.database" . }} {{- if .Values.tls.enabled }} sslcert={{ include "tlb.tlsCert" . }} sslkey={{ include "tlb.tlsCertKey" . }}{{- end }}" -h 127.0.0.1 -p {{ .Values.containerPorts.tlb }}
 {{- else }}
-  exec pg_isready -U {{ include "openldap.username" . | quote }} {{- if .Values.tls.enabled }} -d "sslcert={{ include "openldap.tlsCert" . }} sslkey={{ include "openldap.tlsCertKey" . }}"{{- end }} -h 127.0.0.1 -p {{ .Values.containerPorts.openldap }}
+  exec pg_isready -U {{ include "tlb.username" . | quote }} {{- if .Values.tls.enabled }} -d "sslcert={{ include "tlb.tlsCert" . }} sslkey={{ include "tlb.tlsCertKey" . }}"{{- end }} -h 127.0.0.1 -p {{ .Values.containerPorts.tlb }}
 {{- end }}
 {{- if contains "bitnami/" .Values.image.repository }}
-  [ -f /opt/bitnami/openldap/tmp/.initialized ] || [ -f /bitnami/openldap/.initialized ]
+  [ -f /opt/bitnami/tlb/tmp/.initialized ] || [ -f /bitnami/tlb/.initialized ]
 {{- end -}}
 {{- end -}}
 
 {{/*
 Compile all warnings into a single message, and call fail.
 */}}
-{{- define "openldap.validateValues" -}}
+{{- define "tlb.validateValues" -}}
 {{- $messages := list -}}
-{{- $messages := append $messages (include "openldap.validateValues.psp" .) -}}
-{{- $messages := append $messages (include "openldap.validateValues.tls" .) -}}
+{{- $messages := append $messages (include "tlb.validateValues.psp" .) -}}
+{{- $messages := append $messages (include "tlb.validateValues.tls" .) -}}
 {{- $messages := without $messages "" -}}
 {{- $message := join "\n" $messages -}}
 
@@ -193,9 +193,9 @@ Compile all warnings into a single message, and call fail.
 {{/*
 Validate values of OpenLDAP - If PSP is enabled RBAC should be enabled too
 */}}
-{{- define "openldap.validateValues.psp" -}}
+{{- define "tlb.validateValues.psp" -}}
 {{- if and .Values.psp.create (not .Values.rbac.create) }}
-openldap: psp.create, rbac.create
+tlb: psp.create, rbac.create
     RBAC should be enabled if PSP is enabled in order for PSP to work.
     More info at https://kubernetes.io/docs/concepts/policy/pod-security-policy/#authorizing-policies
 {{- end -}}
@@ -204,9 +204,9 @@ openldap: psp.create, rbac.create
 {{/*
 Validate values of OpenLDAP TLS - When TLS is enabled, so must be VolumePermissions
 */}}
-{{- define "openldap.validateValues.tls" -}}
+{{- define "tlb.validateValues.tls" -}}
 {{- if and .Values.tls.enabled (not .Values.volumePermissions.enabled) }}
-openldap: tls.enabled, volumePermissions.enabled
+tlb: tls.enabled, volumePermissions.enabled
     When TLS is enabled you must enable volumePermissions as well to ensure certificates files have
     the right permissions.
 {{- end -}}
@@ -215,49 +215,49 @@ openldap: tls.enabled, volumePermissions.enabled
 {{/*
 Return the path to the cert file.
 */}}
-{{- define "openldap.tlsCert" -}}
+{{- define "tlb.tlsCert" -}}
 {{- if .Values.tls.autoGenerated }}
-    {{- printf "/opt/bitnami/openldap/certs/tls.crt" -}}
+    {{- printf "/opt/bitnami/tlb/certs/tls.crt" -}}
 {{- else -}}
-    {{- required "Certificate filename is required when TLS in enabled" .Values.tls.certFilename | printf "/opt/bitnami/openldap/certs/%s" -}}
+    {{- required "Certificate filename is required when TLS in enabled" .Values.tls.certFilename | printf "/opt/bitnami/tlb/certs/%s" -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return the path to the cert key file.
 */}}
-{{- define "openldap.tlsCertKey" -}}
+{{- define "tlb.tlsCertKey" -}}
 {{- if .Values.tls.autoGenerated }}
-    {{- printf "/opt/bitnami/openldap/certs/tls.key" -}}
+    {{- printf "/opt/bitnami/tlb/certs/tls.key" -}}
 {{- else -}}
-{{- required "Certificate Key filename is required when TLS in enabled" .Values.tls.certKeyFilename | printf "/opt/bitnami/openldap/certs/%s" -}}
+{{- required "Certificate Key filename is required when TLS in enabled" .Values.tls.certKeyFilename | printf "/opt/bitnami/tlb/certs/%s" -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return the path to the CA cert file.
 */}}
-{{- define "openldap.tlsCACert" -}}
+{{- define "tlb.tlsCACert" -}}
 {{- if .Values.tls.autoGenerated }}
-    {{- printf "/opt/bitnami/openldap/certs/ca.crt" -}}
+    {{- printf "/opt/bitnami/tlb/certs/ca.crt" -}}
 {{- else -}}
-    {{- printf "/opt/bitnami/openldap/certs/%s" .Values.tls.certCAFilename -}}
+    {{- printf "/opt/bitnami/tlb/certs/%s" .Values.tls.certCAFilename -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return the path to the CRL file.
 */}}
-{{- define "openldap.tlsCRL" -}}
+{{- define "tlb.tlsCRL" -}}
 {{- if .Values.tls.crlFilename -}}
-{{- printf "/opt/bitnami/openldap/certs/%s" .Values.tls.crlFilename -}}
+{{- printf "/opt/bitnami/tlb/certs/%s" .Values.tls.crlFilename -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Return true if a TLS credentials secret object should be created
 */}}
-{{- define "openldap.createTlsSecret" -}}
+{{- define "tlb.createTlsSecret" -}}
 {{- if and .Values.tls.autoGenerated (not .Values.tls.certificatesSecret) }}
     {{- true -}}
 {{- end -}}
@@ -266,7 +266,7 @@ Return true if a TLS credentials secret object should be created
 {{/*
 Return the path to the CA cert file.
 */}}
-{{- define "openldap.tlsSecretName" -}}
+{{- define "tlb.tlsSecretName" -}}
 {{- if .Values.tls.autoGenerated }}
     {{- printf "%s-crt" (include "common.names.fullname" .) -}}
 {{- else -}}
@@ -277,7 +277,7 @@ Return the path to the CA cert file.
 {{/*
 Check if there are rolling tags in the images
 */}}
-{{- define "openldap.checkRollingTags" -}}
+{{- define "tlb.checkRollingTags" -}}
 {{- include "common.warnings.rollingTag" .Values.image }}
 {{- include "common.warnings.rollingTag" .Values.metrics.image }}
 {{- end -}}

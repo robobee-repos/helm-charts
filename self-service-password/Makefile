@@ -15,14 +15,14 @@ publish-harbor:
 .PHONY: package
 package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
 
-.PHONY: update-index
-update-index:
-	cd ../charts && sed -i -e "s/%MARIADB_JOBS_VERSION%/$(VERSION)/" index.html
-	cd ../charts && sed -i -e "s/%MARIADB_JOBS_APP_VERSION%/$(APP_VERSION)/" index.html
-
 $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 	helm package .
 	mv $(NAME)-$(VERSION).tgz $(BASE_DIR)/charts
+
+.PHONY: update-index
+update-index:
+	cd ../charts && sed -i -e "s/%SELF_SERVICE_PASSWORD_VERSION%/$(VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%SELF_SERVICE_PASSWORD_APP_VERSION%/$(APP_VERSION)/" index.html
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions

@@ -80,23 +80,23 @@ diagnosticMode:
   args:
     - infinity
 
-## @section OpenLDAP parameters
+## @section ltbproject/self-service-password parameters
 ##
 
-## Bitnami OpenLDAP image version
-## ref: https://hub.docker.com/r/bitnami/openldap/tags
-## @param image.registry OpenLDAP image registry
-## @param image.repository OpenLDAP image repository
-## @param image.tag OpenLDAP image tag (immutable tags are recommended)
-## @param image.digest Apache image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
-## @param image.pullPolicy OpenLDAP image pull policy
+## Bitnami ltbproject/self-service-password image version
+## ref: https://hub.docker.com/r/ltbproject/self-service-password/tags
+## @param image.registry ltbproject/self-service-password image registry
+## @param image.repository ltbproject/self-service-password image repository
+## @param image.tag ltbproject/self-service-password image tag (immutable tags are recommended)
+## @param image.digest image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy ltbproject/self-service-password image pull policy
 ## @param image.pullSecrets Specify image pull secrets
 ## @param image.debug Specify if debug values should be set
 ##
 image:
-  registry: harbor.anrisoftware.com
-  repository: docker.io/robobeerun/bitnami-openldap
-  tag: 2.6
+  registry: docker.io
+  repository: ltbproject/self-service-password
+  tag: alpine-1.8.1
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -119,7 +119,21 @@ image:
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
 schedulerName: ""
-## @param lifecycleHooks for the OpenLDAP container to automate configuration before or after startup
+## Configure Pods Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param podSecurityContext.enabled Enabled Apache Server pods' Security Context
+## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
+## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
+## @param podSecurityContext.supplementalGroups Set filesystem extra groups
+## @param podSecurityContext.fsGroup Set Apache Server pod's Security Context fsGroup
+##
+podSecurityContext:
+  enabled: true
+  fsGroupChangePolicy: Always
+  sysctls: []
+  supplementalGroups: []
+  fsGroup: 1001
+## @param lifecycleHooks for the ltbproject/self-service-password container to automate configuration before or after startup
 ##
 lifecycleHooks: {}
 ## Pod Security Context
@@ -203,7 +217,7 @@ env:
   LDAP_TLS_CA_FILE: ""
   LDAP_TLS_DH_PARAMS_FILE: ""
 
-## @param existingSecret Name of existing secret to use for OpenLDAP passwords
+## @param existingSecret Name of existing secret to use for ltbproject/self-service-password passwords
 ## The value is evaluated as a template.
 ## The expected key are LDAP_ADMIN_PASSWORD and LDAP_CONFIG_PASSWORD.
 ## e.g:
@@ -452,10 +466,10 @@ extraEnvVarsCM: ""
 ## @param extraEnvVarsSecret Name of a Secret containing extra environment variables
 ##
 extraEnvVarsSecret: ""
-## @param configurationConfigMap ConfigMap with OpenLDAP configuration
+## @param configurationConfigMap ConfigMap with ltbproject/self-service-password configuration
 ##
 configurationConfigMap: ""
-## @param extendedConfConfigMap ConfigMap with OpenLDAP extended configuration
+## @param extendedConfConfigMap ConfigMap with ltbproject/self-service-password extended configuration
 ##
 extendedConfConfigMap: ""
 ## @param initdbScripts Dictionary of initdb scripts
@@ -475,7 +489,7 @@ initdbScriptsConfigMap: ""
 ##
 initdbScriptsSecret: ""
 
-## @param containerPorts OpenLDAP container port
+## @param containerPorts ltbproject/self-service-password container port
 ##
 containerPorts:
   ldap: 1389
@@ -486,7 +500,7 @@ containerPorts:
 ## terminationGracePeriodSeconds: 30
 ##
 terminationGracePeriodSeconds: ""
-## OpenLDAP service configuration
+## ltbproject/self-service-password service configuration
 ##
 service:
   ## @param service.type Kubernetes Service type
@@ -497,18 +511,18 @@ service:
   ## clusterIP: None
   ##
   clusterIP: ""
-  ## OpenLDAP service ports.
+  ## ltbproject/self-service-password service ports.
   ##
   ports:
     ldap: 1389
     sslLdap: 1636
-  ## OpenLDAP service node ports.
+  ## ltbproject/self-service-password service node ports.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts: {}
    # ldap: 1389
    # sslLdap: 1636
-  ## @param service.annotations Annotations for OpenLDAP service
+  ## @param service.annotations Annotations for ltbproject/self-service-password service
   ##
   annotations: {}
   ## @param service.loadBalancerIP Load balancer IP if service type is `LoadBalancer`
@@ -538,14 +552,14 @@ persistence:
   ##
   existingClaim: ""
   ## @param persistence.mountPath The path the volume will be mounted at, useful when using different
-  ## OpenLDAP images.
+  ## ltbproject/self-service-password images.
   ##
   mountPath: /bitnami/openldap
   ## @param persistence.subPath The subdirectory of the volume to mount to
   ## Useful in dev environments and one PV for multiple services
   ##
   subPath: ""
-  ## @param persistence.storageClass PVC Storage Class for OpenLDAP volume
+  ## @param persistence.storageClass PVC Storage Class for ltbproject/self-service-password volume
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
@@ -553,7 +567,7 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ##
   storageClass: ""
-  ## @param persistence.accessModes PVC Access Mode for OpenLDAP volume
+  ## @param persistence.accessModes PVC Access Mode for ltbproject/self-service-password volume
   ##
   accessModes:
     - ReadWriteOnce
@@ -562,7 +576,7 @@ persistence:
   ## ref: https://kubernetes.io/docs/concepts/storage/volume-snapshots/
   ##
   snapshotName: ""
-  ## @param persistence.size PVC Storage Request for OpenLDAP volume
+  ## @param persistence.size PVC Storage Request for ltbproject/self-service-password volume
   ##
   size: 8Gi
   ## @param persistence.annotations Annotations for the PVC
@@ -574,49 +588,49 @@ persistence:
   ##     app: my-app
   ##
   selector: {}
-## @param updateStrategy.type updateStrategy for OpenLDAP StatefulSet and its reads StatefulSets
+## @param updateStrategy.type updateStrategy for ltbproject/self-service-password StatefulSet and its reads StatefulSets
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 ##
 updateStrategy:
   type: RollingUpdate
 
-## @param podAffinityPreset OpenLDAP pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## @param podAffinityPreset ltbproject/self-service-password pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
 podAffinityPreset: ""
-## @param podAntiAffinityPreset OpenLDAP pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## @param podAntiAffinityPreset ltbproject/self-service-password pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
 podAntiAffinityPreset: soft
-## OpenLDAP Primary node affinity preset
+## ltbproject/self-service-password Primary node affinity preset
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 ##
 nodeAffinityPreset:
-  ## @param nodeAffinityPreset.type OpenLDAP node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ## @param nodeAffinityPreset.type ltbproject/self-service-password node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ##
   type: ""
-  ## @param nodeAffinityPreset.key OpenLDAP node label key to match Ignored if `affinity` is set.
+  ## @param nodeAffinityPreset.key ltbproject/self-service-password node label key to match Ignored if `affinity` is set.
   ## E.g.
   ## key: "kubernetes.io/e2e-az-name"
   ##
   key: ""
-  ## @param nodeAffinityPreset.values OpenLDAP node label values to match. Ignored if `affinity` is set.
+  ## @param nodeAffinityPreset.values ltbproject/self-service-password node label values to match. Ignored if `affinity` is set.
   ## E.g.
   ## values:
   ##   - e2e-az1
   ##   - e2e-az2
   ##
   values: []
-## @param affinity Affinity for OpenLDAP pods assignment
+## @param affinity Affinity for ltbproject/self-service-password pods assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
 ##
 affinity: {}
-## @param nodeSelector Node labels for OpenLDAP pods assignment
+## @param nodeSelector Node labels for ltbproject/self-service-password pods assignment
 ## ref: https://kubernetes.io/docs/user-guide/node-selection/
 ##
 nodeSelector: {}
-## @param tolerations Tolerations for OpenLDAP pods assignment
+## @param tolerations Tolerations for ltbproject/self-service-password pods assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
@@ -626,7 +640,7 @@ extraPodSpec: {}
 ## @param labels Map of labels to add to the statefulset
 ##
 labels: {}
-## @param annotations Annotations for OpenLDAP pods
+## @param annotations Annotations for ltbproject/self-service-password pods
 ##
 annotations: {}
 ## @param podLabels Map of labels to add to the pods
@@ -657,7 +671,7 @@ pdb:
   create: false
   minAvailable: ""
   maxUnavailable: 1
-## OpenLDAP Autoscaling parameters
+## ltbproject/self-service-password Autoscaling parameters
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ## @param autoscaling.enabled Enable Horizontal POD autoscaling for Apache
 ## @param autoscaling.minReplicas Minimum number of Apache replicas
@@ -831,7 +845,7 @@ tls:
   ##
   certKeyFilename: ""
   ## @param tls.certCAFilename CA Certificate filename
-  ## If provided, OpenLDAP will authenticate TLS/SSL clients by requesting them a certificate
+  ## If provided, ltbproject/self-service-password will authenticate TLS/SSL clients by requesting them a certificate
   ##
   certCAFilename: ""
   ## @param tls.crlFilename File containing a Certificate Revocation List
@@ -895,14 +909,14 @@ metrics:
     ##     labels:
     ##       severity: critical
     ##     annotations:
-    ##       description: replication for {{ template "common.names.fullname" . }} OpenLDAP is lagging by {{ "{{ $value }}" }} hour(s).
-    ##       summary: OpenLDAP replication is lagging by {{ "{{ $value }}" }} hour(s).
+    ##       description: replication for {{ template "common.names.fullname" . }} ltbproject/self-service-password is lagging by {{ "{{ $value }}" }} hour(s).
+    ##       summary: ltbproject/self-service-password replication is lagging by {{ "{{ $value }}" }} hour(s).
     ##
     rules: []
-  ## @param metrics.image.registry OpenLDAP Exporter image registry
-  ## @param metrics.image.repository OpenLDAP Exporter image repository
-  ## @param metrics.image.tag OpenLDAP Exporter image tag (immutable tags are recommended)
-  ## @param metrics.image.pullPolicy OpenLDAP Exporter image pull policy
+  ## @param metrics.image.registry ltbproject/self-service-password Exporter image registry
+  ## @param metrics.image.repository ltbproject/self-service-password Exporter image repository
+  ## @param metrics.image.tag ltbproject/self-service-password Exporter image tag (immutable tags are recommended)
+  ## @param metrics.image.pullPolicy ltbproject/self-service-password Exporter image pull policy
   ## @param metrics.image.pullSecrets Specify image pull secrets
   ##
   image:

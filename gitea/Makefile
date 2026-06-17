@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 BASE_DIR := ..
-VERSION := $(shell yq e ".version" Chart.yaml)
-APP_VERSION := $(shell yq e ".appVersion" Chart.yaml)
-NAME := $(shell yq e ".name" Chart.yaml)
+VERSION := $(shell yq -r ".version" Chart.yaml)
+APP_VERSION := $(shell yq -r ".appVersion" Chart.yaml)
+NAME := $(shell yq -r ".name" Chart.yaml)
 .DEFAULT_GOAL := publish
 
 .PHONY: publish

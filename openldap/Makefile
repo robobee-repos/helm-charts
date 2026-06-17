@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 BASE_DIR := ..
-VERSION := $(shell yq e ".version" Chart.yaml)
-NAME := $(shell yq e ".name" Chart.yaml)
+APP_VERSION := $(shell yq -r ".appVersion" Chart.yaml)
+VERSION := $(shell yq -r ".version" Chart.yaml)
+NAME := $(shell yq -r ".name" Chart.yaml)
 .DEFAULT_GOAL := publish
 
 .PHONY: publish
@@ -17,6 +18,11 @@ package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
 $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 	helm package .
 	mv $(NAME)-$(VERSION).tgz $(BASE_DIR)/charts
+
+.PHONY: update-index
+update-index:
+	cd ../charts && sed -i -e "s/%OPENLDAP_VERSION%/$(VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%OPENLDAP_APP+VERSION%/$(APP_VERSION)/" index.html
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions
