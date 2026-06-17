@@ -22,7 +22,7 @@ $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 .PHONY: update-index
 update-index:
 	cd ../charts && sed -i -e "s/%OPENLDAP_VERSION%/$(VERSION)/" index.html
-	cd ../charts && sed -i -e "s/%OPENLDAP_APP+VERSION%/$(APP_VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%OPENLDAP_APP_VERSION%/$(APP_VERSION)/" index.html
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions
