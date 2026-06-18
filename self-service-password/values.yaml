@@ -492,8 +492,8 @@ initdbScriptsSecret: ""
 ## @param containerPorts ltbproject/self-service-password container port
 ##
 containerPorts:
-  ldap: 1389
-  sslLdap: 1636
+  http: 8080
+  https: 8443
 ## @param terminationGracePeriodSeconds Seconds the pod needs to terminate gracefully
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 ## e.g:
@@ -514,14 +514,14 @@ service:
   ## ltbproject/self-service-password service ports.
   ##
   ports:
-    ldap: 1389
-    sslLdap: 1636
+    http: 8080
+    https: 8443
   ## ltbproject/self-service-password service node ports.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts: {}
-   # ldap: 1389
-   # sslLdap: 1636
+   # http: 1389
+   # https: 1636
   ## @param service.annotations Annotations for ltbproject/self-service-password service
   ##
   annotations: {}
@@ -765,9 +765,12 @@ networkPolicy:
   ##
   ingressNSMatchLabels: {}
   ingressNSPodMatchLabels: {}
-## Configure extra options for startup probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+## Configure extra options for containers' liveness and readiness probes
+## Configure extra options for Apache server containers' liveness, readiness and startup probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
 ## @param startupProbe.enabled Enable startupProbe
+## @param startupProbe.path Path to access on the HTTP server
+## @param startupProbe.port Port for startupProbe
 ## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
 ## @param startupProbe.periodSeconds Period seconds for startupProbe
 ## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
@@ -776,14 +779,15 @@ networkPolicy:
 ##
 startupProbe:
   enabled: false
-  initialDelaySeconds: 30
-  periodSeconds: 15
+  path: "/"
+  port: http
+  initialDelaySeconds: 180
+  periodSeconds: 20
   timeoutSeconds: 5
-  failureThreshold: 10
+  failureThreshold: 6
   successThreshold: 1
-## Configure extra options for liveness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe
+## @param livenessProbe.enabled Enable liveness probe
+## @param livenessProbe.port Port for livenessProbe
 ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
 ## @param livenessProbe.periodSeconds Period seconds for livenessProbe
 ## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
@@ -792,14 +796,15 @@ startupProbe:
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 30
-  periodSeconds: 10
+  port: http
+  initialDelaySeconds: 180
+  periodSeconds: 20
   timeoutSeconds: 5
   failureThreshold: 6
   successThreshold: 1
-## Configure extra options for readiness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param readinessProbe.enabled Enable readinessProbe
+## @param readinessProbe.enabled Enable readiness probe
+## @param readinessProbe.path Path to access on the HTTP server
+## @param readinessProbe.port Port for readinessProbe
 ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
 ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
 ## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
@@ -808,7 +813,9 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 5
+  path: "/"
+  port: http
+  initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 6
