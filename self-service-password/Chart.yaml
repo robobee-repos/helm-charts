@@ -7,7 +7,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     version: 2.x.x
 description: Community developed self-service-password software
-engine: gotpl
 home: https://github.com/robobee-repos/helm-charts/
 keywords:
   - ldap
@@ -20,4 +19,4 @@ maintainers:
 name: self-service-password
 sources:
   - https://github.com/robobee-repos/helm-charts/
-version: 1.0.1
+version: 1.0.2

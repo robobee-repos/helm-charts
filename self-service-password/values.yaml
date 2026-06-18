@@ -472,22 +472,6 @@ configurationConfigMap: ""
 ## @param extendedConfConfigMap ConfigMap with ltbproject/self-service-password extended configuration
 ##
 extendedConfConfigMap: ""
-## @param initdbScripts Dictionary of initdb scripts
-## Specify dictionary of scripts to be run at first boot
-## Alternatively, you can put your scripts under the files/docker-entrypoint-initdb.d directory
-## e.g:
-## initdbScripts:
-##   my_init_script.sh: |
-##      #!/bin/sh
-##      echo "Do something."
-##
-initdbScripts: {}
-## @param initdbScriptsConfigMap ConfigMap with scripts to be run at first boot
-##
-initdbScriptsConfigMap: ""
-## @param initdbScriptsSecret Secret with scripts to be run at first boot (in case it contains sensitive information)
-##
-initdbScriptsSecret: ""
 
 ## @param containerPorts ltbproject/self-service-password container port
 ##
@@ -520,8 +504,8 @@ service:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts: {}
-   # http: 1389
-   # https: 1636
+   # http: 8080
+   # https: 8443
   ## @param service.annotations Annotations for ltbproject/self-service-password service
   ##
   annotations: {}
