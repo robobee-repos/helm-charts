@@ -173,6 +173,14 @@ replicaCount: 1
 
 # Default configuration for openldap as environment variables. These get injected directly in the container.
 env:
+  LDAP_ORGANISATION: "muellerpublic.de"
+  LDAP_DOMAIN: "muellerpublic.de"
+  LDAP_BASE_DN: ""
+  LDAP_READONLY_USER: false
+  LDAP_READONLY_USER_USERNAME: "readonly"
+  LDAP_READONLY_USER_PASSWORD: "readonly"
+  LDAP_RFC2307BIS_SCHEMA: false
+  LDAP_BACKEND: "mdb"
   LDAP_PORT_NUMBER: "1389"
   LDAP_ROOT: "dc=example,dc=org"
   LDAP_ROOT_DC: "example"
@@ -192,10 +200,14 @@ env:
   LDAP_ENABLE_TLS: "no"
   LDAP_LDAPS_PORT_NUMBER: "1636"
   # TLS
-  LDAP_TLS_CERT_FILE: ""
-  LDAP_TLS_KEY_FILE: ""
-  LDAP_TLS_CA_FILE: ""
-  LDAP_TLS_DH_PARAMS_FILE: ""
+  LDAP_TLS: false
+  LDAP_TLS_CRT_FILENAME: "ldap.crt"
+  LDAP_TLS_KEY_FILENAME: "ldap.key"
+  LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
+  LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+  LDAP_TLS_ENFORCE: false
+  LDAP_TLS_CIPHER_SUITE: "SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC"
+  LDAP_TLS_VERIFY_CLIENT: "demand"
 
 ## @param existingSecret Name of existing secret to use for OpenLDAP passwords
 ## The value is evaluated as a template.
