@@ -67,6 +67,8 @@ push:
 .PHONY: publish-charts-all
 publish-charts-all: ##@targets Publish all helm charts to the Github repository helm-chars-charts.
 	cp charts/* ../helm-charts-charts/
+	cd ../helm-charts-charts
+	git add .;git commit -a -m "Update"; git push github main
 
 include Makefile.help
 include Makefile.functions
