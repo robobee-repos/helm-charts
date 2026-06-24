@@ -36,9 +36,9 @@ spec:
     {{- end }}
   ingress:
     - ports:
-        - port: {{ .Values.containerPorts.http }}
-        {{- if .Values.containerPorts.https }}
-        - port: {{ .Values.containerPorts.https }}
+        - port: {{ .Values.containerPorts.ldap }}
+        {{- if .Values.containerPorts.ldaps }}
+        - port: {{ .Values.containerPorts.ldaps }}
         {{- end }}
         {{- if .Values.metrics.enabled }}
         - port: {{ .Values.metrics.containerPort }}

@@ -1,24 +1,19 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
 apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
 kind: StatefulSet
 metadata:
-  name: {{ template "openldap.name" . }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.labels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.labels "context" $ ) | nindent 4 }}
-  {{- end }}
-  annotations:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- if .Values.commonAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- with .Values.annotations }}
-  {{- toYaml . | nindent 4 }}
-  {{- end }}
-  namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: {{ template "openldap.name" . }}-headless
+  serviceName: {{ template "common.names.fullname" . }}-headless
   replicas: {{ .Values.replicaCount }}
   updateStrategy:
     type: {{ .Values.updateStrategy.type }}
@@ -240,7 +235,7 @@ spec:
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "openldap.secretName" . }}
+                  name: {{ include "common.names.fullname" . }}-secret
                   key: openldap-password
             {{- end }}
             - name: DATA_SOURCE_USER
@@ -309,14 +304,14 @@ spec:
         {{- range .Values.customFileSets }}
         - name: {{ .name }}
           configMap:
-            name: {{ template "openldap.name" $ }}-fs-{{ .name }}
+            name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
         {{- end }}
         {{- range .Values.predefinedFileSets }}
         {{- if (get $.Values.enableOptional .name) }}
         {{- range .fileSets }}
         - name: {{ .name }}
           configMap:
-            name: {{ template "openldap.name" $ }}-fs-{{ .name }}
+            name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
         {{- end }}
         {{- end }}
         {{- end }}

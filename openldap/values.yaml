@@ -37,12 +37,6 @@ global:
     ##
     allowInsecureImages: false
 
-phpldapadmin:
-  enabled: false
-
-ltb-passwd:
-  enabled: false
-
 ## @section Common parameters
 ##
 
@@ -94,9 +88,9 @@ diagnosticMode:
 ## @param image.debug Specify if debug values should be set
 ##
 image:
-  registry: harbor.anrisoftware.com
-  repository: docker.io/robobeerun/bitnami-openldap
-  tag: 2.6
+  registry: docker.io
+  repository: robobeerun/osixia-openldap
+  tag: 1.5.0-bookworm-1
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -230,7 +224,7 @@ readonlyPasswordEncrypted: "{SSHA}KTb34Sc227XpFNeXitQQK8LOXgXnT4AY"
 # Custom files with provided contents to be added in container.
 customFileSets: {}
 #- name: memberof
-  #targetPath: /ldifs
+  #targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
   #files:
   #- filename: 03-memberOf.ldif
     #content: |
@@ -257,7 +251,7 @@ predefinedFileSets:
 - name: memberof
   fileSets:
   - name: memberof
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 03-memberOf.config.ldif
       content: |
@@ -314,7 +308,7 @@ predefinedFileSets:
 - name: syncprov-schema
   fileSets:
   - name: syncprov-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 06-syncprov.config.ldif
       content: |
@@ -327,7 +321,7 @@ predefinedFileSets:
 - name: defaulttree
   fileSets:
   - name: defaulttree
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 10-default-tree.ldif
       content: |
@@ -344,7 +338,7 @@ predefinedFileSets:
 - name: readonlyuser
   fileSets:
   - name: readonlyuser
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-readonly-user.ldif
       content: |
@@ -367,7 +361,7 @@ predefinedFileSets:
 - name: openssh-lpk-schema
   fileSets:
   - name: openssh-lpk-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-openssh-lpk-schema.config.ldif
       content: |
@@ -379,7 +373,7 @@ predefinedFileSets:
 - name: matomo-schema
   fileSets:
   - name: matomo-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-matomo-schema.config.ldif
       content: |
@@ -393,7 +387,7 @@ predefinedFileSets:
 - name: wordpress-schema
   fileSets:
   - name: wordpress-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-wordpress-schema.config.ldif
       content: |
@@ -405,7 +399,7 @@ predefinedFileSets:
 - name: minio-schema
   fileSets:
   - name: minio-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-minio-schema.config.ldif
       content: |
@@ -417,7 +411,7 @@ predefinedFileSets:
 - name: jenkins-schema
   fileSets:
   - name: jenkins-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-jenkins-schema.config.ldif
       content: |
@@ -429,7 +423,7 @@ predefinedFileSets:
 - name: sonarqube-schema
   fileSets:
   - name: sonarqube-schema
-    targetPath: /ldifs
+    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-sonarqube-schema.config.ldif
       content: |
@@ -540,7 +534,7 @@ persistence:
   ## @param persistence.mountPath The path the volume will be mounted at, useful when using different
   ## OpenLDAP images.
   ##
-  mountPath: /bitnami/openldap
+  mountPath: /var/lib/ldap
   ## @param persistence.subPath The subdirectory of the volume to mount to
   ## Useful in dev environments and one PV for multiple services
   ##
