@@ -176,10 +176,10 @@ env:
   LDAP_ORGANISATION: "muellerpublic.de"
   LDAP_DOMAIN: "muellerpublic.de"
   LDAP_BASE_DN: ""
-  LDAP_READONLY_USER: false
+  LDAP_READONLY_USER: "false"
   LDAP_READONLY_USER_USERNAME: "readonly"
   LDAP_READONLY_USER_PASSWORD: "readonly"
-  LDAP_RFC2307BIS_SCHEMA: false
+  LDAP_RFC2307BIS_SCHEMA: "false"
   LDAP_BACKEND: "mdb"
   LDAP_PORT_NUMBER: "1389"
   LDAP_ROOT: "dc=example,dc=org"
@@ -200,7 +200,7 @@ env:
   LDAP_ENABLE_TLS: "no"
   LDAP_LDAPS_PORT_NUMBER: "1636"
   # TLS
-  LDAP_TLS: false
+  LDAP_TLS: "false"
   LDAP_TLS_CRT_FILENAME: "ldap.crt"
   LDAP_TLS_KEY_FILENAME: "ldap.key"
   LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
