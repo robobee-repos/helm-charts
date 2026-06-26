@@ -95,20 +95,33 @@ spec:
           env:
             - name: BITNAMI_DEBUG
               value: {{ ternary "true" "false" (or .Values.image.debug .Values.diagnosticMode.enabled) | quote }}
-
             {{- if (not (empty .Values.existingSecret)) }}
-            - name: LDAP_ADMIN_PASSWORD
+            - name: OPENLDAP_BOOTSTRAP_CONFIG_ROOT_PASSWORD_HASHED
               valueFrom:
                 secretKeyRef:
                   name: {{ template "openldap.secretName" . }}
-                  key: openldap-ldap-password
+                  key: openldap-ldap-config-password
             {{- end }}
             {{- if (not (empty .Values.existingSecret)) }}
-            - name: LDAP_CONFIG_PASSWORD
+            - name: OPENLDAP_BOOTSTRAP_DATA_ROOT_PASSWORD_HASHED
               valueFrom:
                 secretKeyRef:
                   name: {{ template "openldap.secretName" . }}
-                  key: openldap-ldap-password
+                  key: openldap-ldap-root-password
+            {{- end }}
+            {{- if (not (empty .Values.existingSecret)) }}
+            - name: OPENLDAP_BOOTSTRAP_DATA_READONLY_PASSWORD_HASHED
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "openldap.secretName" . }}
+                  key: openldap-ldap-readonly-password
+            {{- end }}
+            {{- if (not (empty .Values.existingSecret)) }}
+            - name: OPENLDAP_BOOTSTRAP_MONITOR_READONLY_PASSWORD_HASHED
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "openldap.secretName" . }}
+                  key: openldap-ldap-monitor-password
             {{- end }}
 
           envFrom:
@@ -168,19 +181,11 @@ spec:
           {{- end }}
           {{- end }}
           volumeMounts:
-            {{- if or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
-            - name: custom-init-scripts
-              mountPath: /docker-entrypoint-initdb.d/
-            {{- end }}
-            {{- if .Values.initdbScriptsSecret }}
-            - name: custom-init-scripts-secret
-              mountPath: /docker-entrypoint-initdb.d/secret
-            {{- end }}
             {{- range .Values.customFileSets }}
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $fs.targetPath }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
@@ -190,7 +195,7 @@ spec:
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $fs.targetPath }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
@@ -201,93 +206,16 @@ spec:
               mountPath: {{ .Values.persistence.mountPath }}
               subPath: {{ .Values.persistence.subPath }}
             {{- end }}
+            {{- if .Values.persistenceBackups.enabled }}
+            - name: backups
+              mountPath: {{ .Values.persistenceBackups.mountPath }}
+              subPath: {{ .Values.persistenceBackups.subPath }}
+            {{- end }}
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}
 {{- if .Values.sidecars }}
 {{- include "common.tplvalues.render" ( dict "value" .Values.sidecars "context" $ ) | nindent 8 }}
-{{- end }}
-{{- if .Values.metrics.enabled }}
-        - name: metrics
-          image: {{ template "openldap.metrics.image" . }}
-          imagePullPolicy: {{ .Values.metrics.image.pullPolicy | quote }}
-          {{- if .Values.metrics.securityContext.enabled }}
-          securityContext: {{- omit .Values.metrics.securityContext "enabled" | toYaml | nindent 12 }}
-          {{- end }}
-          {{- if .Values.diagnosticMode.enabled }}
-          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
-          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
-          {{- end }}
-          env:
-            {{- $database := required "In order to enable metrics you need to specify a database (.Values.openldapDatabase or .Values.global.openldap.openldapDatabase)" (include "openldap.database" .) }}
-            {{- $sslmode := ternary "require" "disable" .Values.tls.enabled }}
-            {{- if and .Values.tls.enabled .Values.tls.certCAFilename }}
-            - name: DATA_SOURCE_NAME
-              value: {{ printf "host=127.0.0.1 port=%d user=%s sslmode=%s sslcert=%s sslkey=%s" (int (include "openldap.servicePort" .)) (include "openldap.username" .) $sslmode (include "openldap.tlsCert" .) (include "openldap.tlsCertKey" .) }}
-            {{- else }}
-            - name: DATA_SOURCE_URI
-              value: {{ printf "127.0.0.1:%d/%s?sslmode=%s" (int (include "openldap.servicePort" .)) $database $sslmode }}
-            {{- end }}
-            {{- if .Values.usePasswordFile }}
-            - name: DATA_SOURCE_PASS_FILE
-              value: "/opt/bitnami/openldap/secrets/openldap-password"
-            {{- else }}
-            - name: DATA_SOURCE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-secret
-                  key: openldap-password
-            {{- end }}
-            - name: DATA_SOURCE_USER
-              value: {{ template "openldap.username" . }}
-            {{- if .Values.metrics.extraEnvVars }}
-            {{- include "common.tplvalues.render" (dict "value" .Values.metrics.extraEnvVars "context" $) | nindent 12 }}
-            {{- end }}
-          {{- if not .Values.diagnosticMode.enabled }}
-          {{- if .Values.livenessProbe.enabled }}
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http-metrics
-            initialDelaySeconds: {{ .Values.metrics.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.metrics.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.metrics.livenessProbe.timeoutSeconds }}
-            successThreshold: {{ .Values.metrics.livenessProbe.successThreshold }}
-            failureThreshold: {{ .Values.metrics.livenessProbe.failureThreshold }}
-          {{- end }}
-          {{- if .Values.readinessProbe.enabled }}
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http-metrics
-            initialDelaySeconds: {{ .Values.metrics.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.metrics.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.metrics.readinessProbe.timeoutSeconds }}
-            successThreshold: {{ .Values.metrics.readinessProbe.successThreshold }}
-            failureThreshold: {{ .Values.metrics.readinessProbe.failureThreshold }}
-          {{- end }}
-          {{- end }}
-          volumeMounts:
-            {{- if .Values.usePasswordFile }}
-            - name: openldap-password
-              mountPath: /opt/bitnami/openldap/secrets/
-            {{- end }}
-            {{- if .Values.tls.enabled }}
-            - name: openldap-certificates
-              mountPath: /opt/bitnami/openldap/certs
-              readOnly: true
-            {{- end }}
-            {{- if .Values.metrics.customMetrics }}
-            - name: custom-metrics
-              mountPath: /conf
-              readOnly: true
-            {{- end }}
-          ports:
-            - name: http-metrics
-              containerPort: 9187
-          {{- if .Values.metrics.resources }}
-          resources: {{- toYaml .Values.metrics.resources | nindent 12 }}
-          {{- end }}
 {{- end }}
       volumes:
         {{- if  or (.Files.Glob "files/docker-entrypoint-initdb.d/*.{sh}") .Values.initdbScriptsConfigMap .Values.initdbScripts }}
@@ -318,11 +246,9 @@ spec:
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" ( dict "value" .Values.extraVolumes "context" $ ) | nindent 8 }}
         {{- end }}
-        {{- if and .Values.metrics.enabled .Values.metrics.customMetrics }}
-        - name: custom-metrics
-          configMap:
-            name: {{ template "openldap.metricsCM" . }}
-        {{- end }}
+      {{- if .Values.extraPodSpec }}
+      {{- include "common.tplvalues.render" (dict "value" .Values.extraPodSpec "context" $) | nindent 6 }}
+      {{- end }}
 {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
         - name: data
           persistentVolumeClaim:
@@ -332,11 +258,19 @@ spec:
 {{- else if not .Values.persistence.enabled }}
         - name: data
           emptyDir: {}
-      {{- if .Values.extraPodSpec }}
-      {{- include "common.tplvalues.render" (dict "value" .Values.extraPodSpec "context" $) | nindent 6 }}
-      {{- end }}
-{{- else if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+{{- end }}
+{{- if and .Values.persistenceBackups.enabled .Values.persistenceBackups.existingClaim }}
+        - name: data
+          persistentVolumeClaim:
+{{- with .Values.persistenceBackups.existingClaim }}
+            claimName: {{ tpl . $ }}
+{{- end }}
+{{- else if not .Values.persistenceBackups.enabled }}
+        - name: backups
+          emptyDir: {}
+{{- end }}
   volumeClaimTemplates:
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
     - metadata:
         name: data
       {{- with .Values.persistence.annotations }}
@@ -362,5 +296,33 @@ spec:
         {{ include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) }}
         {{- if .Values.persistence.selector }}
         selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
+        {{- end -}}
+{{- end }}
+{{- if and .Values.persistenceBackups.enabled (not .Values.persistenceBackups.existingClaim) }}
+    - metadata:
+        name: backups
+      {{- with .Values.persistenceBackups.annotations }}
+        annotations:
+        {{- range $key, $value := . }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+      {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistenceBackups.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if .Values.persistenceBackups.snapshotName }}
+        dataSource:
+          name: {{ .Values.persistenceBackups.snapshotName }}
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistenceBackups.size | quote }}
+        {{ include "common.storage.class" (dict "persistence" .Values.persistenceBackups "global" .Values.global) }}
+        {{- if .Values.persistenceBackups.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistenceBackups.selector "context" $) | nindent 10 }}
         {{- end -}}
 {{- end }}

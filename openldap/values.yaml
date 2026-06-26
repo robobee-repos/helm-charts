@@ -88,9 +88,9 @@ diagnosticMode:
 ## @param image.debug Specify if debug values should be set
 ##
 image:
-  registry: docker.io
-  repository: robobeerun/osixia-openldap
-  tag: 1.5.0-bookworm-1
+  registry: "docker.io"
+  repository: "robobeerun/osixia-openldap"
+  tag: "2.0.0-develop-1"
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -173,41 +173,51 @@ replicaCount: 1
 
 # Default configuration for openldap as environment variables. These get injected directly in the container.
 env:
-  LDAP_ORGANISATION: "muellerpublic.de"
-  LDAP_DOMAIN: "muellerpublic.de"
-  LDAP_BASE_DN: ""
-  LDAP_READONLY_USER: "false"
-  LDAP_READONLY_USER_USERNAME: "readonly"
-  LDAP_READONLY_USER_PASSWORD: "readonly"
-  LDAP_RFC2307BIS_SCHEMA: "false"
-  LDAP_BACKEND: "mdb"
-  LDAP_PORT_NUMBER: "1389"
-  LDAP_ROOT: "dc=example,dc=org"
-  LDAP_ROOT_DC: "example"
-  LDAP_ROOT_O: "example"
-  LDAP_ADMIN_USERNAME: "admin"
-  LDAP_CONFIG_ADMIN_ENABLED: "yes"
-  LDAP_CONFIG_ADMIN_USERNAME: "admin"
-  LDAP_USERS: "user01,user02"
-  LDAP_USER_DC: "users"
-  LDAP_GROUP: "readers"
-  LDAP_EXTRA_SCHEMAS: "cosine, inetorgperson, nis"
-  LDAP_SKIP_DEFAULT_TREE: "no"
-  LDAP_CUSTOM_LDIF_DIR: "/ldifs"
-  LDAP_CUSTOM_SCHEMA_FILE: "/schema/custom.ldif"
-  LDAP_ULIMIT_NOFILES: "1024"
-  LDAP_ALLOW_ANON_BINDING: "yes"
-  LDAP_ENABLE_TLS: "no"
-  LDAP_LDAPS_PORT_NUMBER: "1636"
+  OPENLDAP_CONF_DIR: "/etc/openldap/slapd.d"
+  OPENLDAP_DATA_DIR: "/var/lib/openldap/openldap-data"
+  OPENLDAP_BACKUP_DIR: "/var/lib/openldap/openldap-backups"
+  OPENLDAP_MODULES_DIR: "/usr/lib/openldap"
+  OPENLDAP_SCHEMAS_DIR: "/etc/openldap/schema"
+  OPENLDAP_CUSTOM_MODULES_DIR: "/container/services/openldap/assets/module"
+  OPENLDAP_CUSTOM_SCHEMAS_DIR: "/container/services/openldap/assets/schema"
+  OPENLDAP_NOFILE: "65536"
+  # -1 any enable all debugging
+  # 0 no debugging
+  # 1   (0x1 trace)   trace function calls
+  # 2   (0x2 packets)   debug packet handling
+  # 4   (0x4 args)   heavy trace debugging
+  # 8   (0x8 conns)   connection management
+  # 16   (0x10 BER)   print out packets sent and received
+  # 32   (0x20 filter)   search filter processing
+  # 64   (0x40 config)   configuration processing
+  # 128   (0x80 ACL)   access control list processing
+  # 256   (0x100 stats)   stats log connections/operations/results
+  # 512   (0x200 stats2)   stats log entries sent
+  # 1024   (0x400 shell)   print communication with shell backends
+  # 2048   (0x800 parse)   print entry parsing debugging
+  # 16384   (0x4000 sync)   syncrepl consumer processing
+  # 32768   (0x8000 none)   only messages that get logged whatever log level is set 
+  OPENLDAP_DEBUG_LEVEL: "256"
+  OPENLDAP_BOOTSTRAP_ORGANIZATION: "muellerpublic.de"
+  OPENLDAP_BOOTSTRAP_SUFFIX: "dc=muellerpublic,dc=de"
+  OPENLDAP_BOOTSTRAP_DATA_READONLY: "true"
+  OPENLDAP_BOOTSTRAP_MONITOR_ENABLED: "true"
+  OPENLDAP_BOOTSTRAP_MONITOR_READONLY: "true"
   # TLS
-  LDAP_TLS: "false"
-  LDAP_TLS_CRT_FILENAME: "ldap.crt"
-  LDAP_TLS_KEY_FILENAME: "ldap.key"
-  LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
-  LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
-  LDAP_TLS_ENFORCE: "false"
-  LDAP_TLS_CIPHER_SUITE: "SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC"
-  LDAP_TLS_VERIFY_CLIENT: "demand"
+  OPENLDAP_BOOTSTRAP_TLS: "false"
+  OPENLDAP_BOOTSTRAP_TLS_CERT: "/container/services/openldap/assets/certs/tls.crt"
+  OPENLDAP_BOOTSTRAP_TLS_CERT_KEY: "/container/services/openldap/assets/certs/tls.key"
+  OPENLDAP_BOOTSTRAP_TLS_CA_CERT: "/container/services/openldap/assets/certs/ca.crt"
+  OPENLDAP_BOOTSTRAP_TLS_VERIFY_CLIENT: "allow"
+  OPENLDAP_BOOTSTRAP_TLS_PROTOCOL_MIN: "3.4"
+  OPENLDAP_BOOTSTRAP_TLS_REQUIRED: "false"
+
+# docker run --rm docker.io/robobeerun/osixia-openldap:2.0.0-develop-1 run -- openldap-ctl password hash passw0rd
+passwordsSecrets:
+  OPENLDAP_BOOTSTRAP_CONFIG_ROOT_PASSWORD_HASHED: ""
+  OPENLDAP_BOOTSTRAP_DATA_ROOT_PASSWORD_HASHED: ""
+  OPENLDAP_BOOTSTRAP_DATA_READONLY_PASSWORD_HASHED: ""
+  OPENLDAP_BOOTSTRAP_MONITOR_READONLY_PASSWORD_HASHED: ""
 
 ## @param existingSecret Name of existing secret to use for OpenLDAP passwords
 ## The value is evaluated as a template.
@@ -216,17 +226,6 @@ env:
 ## existingSecret: secret
 ##
 existingSecret: ""
-
-# Default Passwords to use, stored as a secret. Not used if existingSecret is set.
-# You can override these at install time with
-# helm install openldap --set openldap.adminPassword=<passwd>,openldap.configPassword=<passwd>
-adminPassword: "Not@SecurePassw0rd"
-configPassword: "Not@SecurePassw0rd"
-usersPasswords: "bitnami1,bitnami2"
-readonlyUser: "readonly"
-# docker run --rm bitnami/openldap:latest -- bash -c 'echo "1234" | slappasswd -n -T /dev/stdin'
-# "1234"
-readonlyPasswordEncrypted: "{SSHA}KTb34Sc227XpFNeXitQQK8LOXgXnT4AY"
 
 # Custom openldap configuration files used to override default settings
 # customLdifFiles:
@@ -263,7 +262,6 @@ predefinedFileSets:
 - name: memberof
   fileSets:
   - name: memberof
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 03-memberOf.config.ldif
       content: |
@@ -320,7 +318,6 @@ predefinedFileSets:
 - name: syncprov-schema
   fileSets:
   - name: syncprov-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 06-syncprov.config.ldif
       content: |
@@ -333,7 +330,6 @@ predefinedFileSets:
 - name: defaulttree
   fileSets:
   - name: defaulttree
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 10-default-tree.ldif
       content: |
@@ -350,7 +346,6 @@ predefinedFileSets:
 - name: readonlyuser
   fileSets:
   - name: readonlyuser
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-readonly-user.ldif
       content: |
@@ -373,7 +368,6 @@ predefinedFileSets:
 - name: openssh-lpk-schema
   fileSets:
   - name: openssh-lpk-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-openssh-lpk-schema.config.ldif
       content: |
@@ -385,7 +379,6 @@ predefinedFileSets:
 - name: matomo-schema
   fileSets:
   - name: matomo-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-matomo-schema.config.ldif
       content: |
@@ -399,7 +392,6 @@ predefinedFileSets:
 - name: wordpress-schema
   fileSets:
   - name: wordpress-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-wordpress-schema.config.ldif
       content: |
@@ -411,7 +403,6 @@ predefinedFileSets:
 - name: minio-schema
   fileSets:
   - name: minio-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-minio-schema.config.ldif
       content: |
@@ -423,7 +414,6 @@ predefinedFileSets:
 - name: jenkins-schema
   fileSets:
   - name: jenkins-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-jenkins-schema.config.ldif
       content: |
@@ -435,7 +425,6 @@ predefinedFileSets:
 - name: sonarqube-schema
   fileSets:
   - name: sonarqube-schema
-    targetPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
     files:
     - filename: 20-sonarqube-schema.config.ldif
       content: |
@@ -484,8 +473,8 @@ initdbScriptsSecret: ""
 ## @param containerPorts OpenLDAP container port
 ##
 containerPorts:
-  ldap: 1389
-  sslLdap: 1636
+  ldap: 3890
+  sslLdap: 6360
 ## @param terminationGracePeriodSeconds Seconds the pod needs to terminate gracefully
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 ## e.g:
@@ -506,14 +495,14 @@ service:
   ## OpenLDAP service ports.
   ##
   ports:
-    ldap: 1389
-    sslLdap: 1636
+    ldap: 3890
+    sslLdap: 6360
   ## OpenLDAP service node ports.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts: {}
-   # ldap: 1389
-   # sslLdap: 1636
+   # ldap: 3890
+   # sslLdap: 6360
   ## @param service.annotations Annotations for OpenLDAP service
   ##
   annotations: {}
@@ -546,7 +535,53 @@ persistence:
   ## @param persistence.mountPath The path the volume will be mounted at, useful when using different
   ## OpenLDAP images.
   ##
-  mountPath: /var/lib/ldap
+  mountPath: /var/lib/openldap/openldap-data
+  ## @param persistence.subPath The subdirectory of the volume to mount to
+  ## Useful in dev environments and one PV for multiple services
+  ##
+  subPath: ""
+  ## @param persistence.storageClass PVC Storage Class for OpenLDAP volume
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: ""
+  ## @param persistence.accessModes PVC Access Mode for OpenLDAP volume
+  ##
+  accessModes:
+    - ReadWriteOnce
+  ## @param persistence.snapshotName Provide a VolumeSnapshot name which to create the PVC
+  ## The same snapshot will be used for the primary and any read replicas
+  ## ref: https://kubernetes.io/docs/concepts/storage/volume-snapshots/
+  ##
+  snapshotName: ""
+  ## @param persistence.size PVC Storage Request for OpenLDAP volume
+  ##
+  size: 8Gi
+  ## @param persistence.annotations Annotations for the PVC
+  ##
+  annotations: {}
+  ## @param persistence.selector Selector to match an existing Persistent Volume (this value is evaluated as a template)
+  ## selector:
+  ##   matchLabels:
+  ##     app: my-app
+  ##
+  selector: {}
+persistenceBackups:
+  ## @param persistence.enabled Enable persistence using PVC
+  ##
+  enabled: false
+  ## @param persistence.existingClaim Provide an existing `PersistentVolumeClaim`, the value is evaluated as a template.
+  ## If defined, PVC must be created manually before volume will be bound
+  ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
+  ##
+  existingClaim: ""
+  ## @param persistence.mountPath The path the volume will be mounted at, useful when using different
+  ## OpenLDAP images.
+  ##
+  mountPath: /var/lib/openldap/openldap-backups
   ## @param persistence.subPath The subdirectory of the volume to mount to
   ## Useful in dev environments and one PV for multiple services
   ##

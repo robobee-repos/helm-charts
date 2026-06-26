@@ -1,7 +1,7 @@
 annotations:
   category: iam
 apiVersion: v2
-appVersion: 1.5.0-bookworm-1
+appVersion: 2.0.0-develop-1
 dependencies:
   - name: common
     repository: https://charts.bitnami.com/bitnami
@@ -20,4 +20,4 @@ name: openldap
 sources:
   - https://github.com/robobee-repos/helm-charts/
   - https://github.com/osixia/container-openldap
-version: 2.0.5
+version: 2.0.6
