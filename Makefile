@@ -58,6 +58,7 @@ index:
 	$(MAKE) -C gitea update-index
 	$(MAKE) -C mariadb-jobs update-index
 	$(MAKE) -C openldap update-index
+	$(MAKE) -C certs-issuers update-index
 	$(MAKE) -C self-service-password update-index
 
 .PHONY: push
