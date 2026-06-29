@@ -1,3 +1,39 @@
+defaultsAcmeStaging:
+  name: letsencrypt-staging
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  solvers:
+  - http01:
+      gatewayHTTPRoute:
+        podTemplate:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: robobeerun.com/edge
+                      operator: In 
+                      values:
+                      - required   
+
+defaultsAcmeProd:
+  name: letsencrypt-production
+  server: https://acme-v02.api.letsencrypt.org/directory
+  solvers:
+  - http01:
+      gatewayHTTPRoute:
+        podTemplate:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: robobeerun.com/edge
+                      operator: In 
+                      values:
+                      - required   
+
 acmeStagingIssuers:
 - name: letsencrypt-staging
   email: erwin@muellerpublic.de

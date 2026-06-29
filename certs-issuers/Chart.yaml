@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v0.1.0
+appVersion: v1.20.3
 description: A Helm chart for cert issuer.
 keywords:
   - cert-manager
@@ -13,4 +13,4 @@ name: certs-issuers
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://github.com/jetstack/cert-manager
-version: 1.0.1
+version: 1.0.2

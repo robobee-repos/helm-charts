@@ -52,5 +52,23 @@ https://cert-manager.io/docs/reference/api-docs/#acme.cert-manager.io/v1.ACMECha
     ingress:
       class: {{ .http01.ingress.class }}
 {{- end }}
+  {{- if .http01.gatewayHTTPRoute }}
+    gatewayHTTPRoute:
+      {{- if .http01.gatewayHTTPRoute.serviceType }}
+      serviceType: {{ .http01.gatewayHTTPRoute.serviceType }}
+      {{- end }}
+      {{- if .http01.gatewayHTTPRoute.labels }}
+      labels:
+        {{- toYaml .http01.gatewayHTTPRoute.labels | nindent 8 }}
+      {{- end }}
+      {{- if .http01.gatewayHTTPRoute.parentRefs }}
+      parentRefs:
+        {{- toYaml .http01.gatewayHTTPRoute.parentRefs | nindent 8 }}
+      {{- end }}
+      {{- if .http01.gatewayHTTPRoute.podTemplate }}
+      podTemplate:
+        {{- toYaml .http01.gatewayHTTPRoute.podTemplate | nindent 8 }}
+      {{- end }}
+{{- end }}
 {{- end }}
 {{- end -}}
