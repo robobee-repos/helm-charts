@@ -123,7 +123,7 @@ lifecycleHooks: {}
 ##
 securityContext:
   enabled: true
-  fsGroup: 1001
+  fsGroup: 911
 ## Container Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 ## @param containerSecurityContext.enabled Enable container security context
@@ -131,7 +131,7 @@ securityContext:
 ##
 containerSecurityContext:
   enabled: true
-  runAsUser: 1001
+  runAsUser: 911
 ## Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
