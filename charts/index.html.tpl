@@ -80,8 +80,8 @@ helm install my-release helm-charts-charts
 
 <tr>
 <td><code>certs-issuers</code></td>
-<td><code>1.0.1</code></td>
-<td><code>v0.1.0</code></td>
+<td><code>%CERTS_ISSUERS_VERSION%</code></td>
+<td><code>%CERTS_ISSUERS_APP_VERSION%</code></td>
 </tr>
 
 <tr>
