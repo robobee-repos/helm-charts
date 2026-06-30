@@ -89,7 +89,7 @@ diagnosticMode:
 ##
 image:
   registry: docker.io
-  repository: ldap-manager
+  repository: vibhuvioio/ldap-manager
   tag: 1.0.0
   digest: ""
   ## Specify a imagePullPolicy
