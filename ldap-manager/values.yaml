@@ -74,23 +74,23 @@ diagnosticMode:
   ##
   args:
     - infinity
-## @section WordPress Image parameters
+## @section LDAP-Manager Image parameters
 ##
 
-## Bitnami WordPress image
+## Bitnami LDAP-Manager image
 ## ref: https://hub.docker.com/r/bitnami/wordpress/tags/
-## @param image.registry [default: REGISTRY_NAME] WordPress image registry
-## @param image.repository [default: REPOSITORY_NAME/wordpress] WordPress image repository
-## @skip image.tag WordPress image tag (immutable tags are recommended)
-## @param image.digest WordPress image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
-## @param image.pullPolicy WordPress image pull policy
-## @param image.pullSecrets WordPress image pull secrets
+## @param image.registry [default: REGISTRY_NAME] LDAP-Manager image registry
+## @param image.repository [default: REPOSITORY_NAME/wordpress] LDAP-Manager image repository
+## @skip image.tag LDAP-Manager image tag (immutable tags are recommended)
+## @param image.digest LDAP-Manager image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy LDAP-Manager image pull policy
+## @param image.pullSecrets LDAP-Manager image pull secrets
 ## @param image.debug Specify if debug values should be set
 ##
 image:
   registry: docker.io
-  repository: bitnami/wordpress
-  tag: 6.8.2-debian-12-r4
+  repository: ldap-manager
+  tag: 1.0.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -106,78 +106,41 @@ image:
   pullSecrets: []
   ## Enable debug mode
   ##
-  debug: false
-## @section WordPress Configuration parameters
-## WordPress settings based on environment variables
-## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress#environment-variables
+  debug:
+    logLevel: INFO
+    jsonLogs: true
+## @section LDAP-Manager Configuration parameters
+## LDAP-Manager settings
+## ref: https://hub.docker.com/r/vibhuvioio/ldap-manager
 ##
+ldapManagerConfiguration:
+  # Basic Setup
+  # ldapManagerConfiguration: |-
+  #   clusters:
+  #     - name: "Production LDAP"
+  #       host: "ldap.example.com"
+  #       port: 389
+  #       bind_dn: "cn=Manager,dc=example,dc=com"
+  # Multi-Master Cluster
+  # ldapManagerConfiguration: |-
+  #   clusters:
+  #     - name: "LDAP Cluster"
+  #       nodes:
+  #         - host: "ldap1.company.com"
+  #           port: 389
+  #         - host: "ldap2.company.com"
+  #           port: 389
+  #       bind_dn: "cn=Manager,dc=company,dc=com"
 
-## @param wordpressUsername WordPress username
-##
-wordpressUsername: user
-## @param wordpressPassword WordPress user password
-## Defaults to a random 10-character alphanumeric string if not set
-##
-wordpressPassword: ""
-## @param existingSecret Name of existing secret containing WordPress credentials
+## @param existingSecret Name of existing secret containing LDAP-Manager credentials
 ## NOTE: Must contain key `wordpress-password`
 ## NOTE: When it's set, the `wordpressPassword` parameter is ignored
 ##
 existingSecret: ""
-## @param wordpressEmail WordPress user email
-##
-wordpressEmail: user@example.com
-## @param wordpressFirstName WordPress user first name
-##
-wordpressFirstName: FirstName
-## @param wordpressLastName WordPress user last name
-##
-wordpressLastName: LastName
-## @param wordpressBlogName Blog name
-##
-wordpressBlogName: User's Blog!
-## @param wordpressTablePrefix Prefix to use for WordPress database tables
-##
-wordpressTablePrefix: wp_
-## @param wordpressScheme Scheme to use to generate WordPress URLs
-##
-wordpressScheme: http
-## @param wordpressSkipInstall Skip wizard installation
-## NOTE: useful if you use an external database that already contains WordPress data
-## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress#connect-wordpress-docker-container-to-an-existing-database
-##
-wordpressSkipInstall: false
-## @param wordpressExtraConfigContent Add extra content to the default wp-config.php file
-## e.g:
-## wordpressExtraConfigContent: |
-##   @ini_set( 'post_max_size', '128M');
-##   @ini_set( 'memory_limit', '256M' );
-##
-wordpressExtraConfigContent: ""
-## @param wordpressConfiguration The content for your custom wp-config.php file (advanced feature)
-## NOTE: This will override configuring WordPress based on environment variables (including those set by the chart)
-## NOTE: Currently only supported when `wordpressSkipInstall=true`
-##
-wordpressConfiguration: ""
 ## @param existingWordPressConfigurationSecret The name of an existing secret with your custom wp-config.php file (advanced feature)
 ## NOTE: When it's set the `wordpressConfiguration` parameter is ignored
 ##
-existingWordPressConfigurationSecret: ""
-## @param wordpressConfigureCache Enable W3 Total Cache plugin and configure cache settings
-## NOTE: useful if you deploy Memcached for caching database queries or you use an external cache server
-##
-wordpressConfigureCache: false
-## @param wordpressPlugins Array of plugins to install and activate. Can be specified as `all` or `none`.
-## NOTE: If set to all, only plugins that are already installed will be activated, and if set to none, no plugins will be activated
-##
-wordpressPlugins: none
-## @param apacheConfiguration The content for your custom httpd.conf file (advanced feature)
-##
-apacheConfiguration: ""
-## @param existingApacheConfigurationConfigMap The name of an existing secret with your custom httpd.conf file (advanced feature)
-## NOTE: When it's set the `apacheConfiguration` parameter is ignored
-##
-existingApacheConfigurationConfigMap: ""
+existingLdapManagerConfigurationSecret: ""
 ## @param customPostInitScripts Custom post-init.d user scripts
 ## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress
 ## NOTE: supported formats are `.sh`, `.sql` or `.php`
@@ -187,7 +150,7 @@ existingApacheConfigurationConfigMap: ""
 ##   enable-multisite.sh: |
 ##     #!/bin/bash
 ##     chmod +w /bitnami/wordpress/wp-config.php
-##     wp core multisite-install --url=example.com --title="Welcome to the WordPress Multisite" --admin_user="doesntmatternotreallyused" --admin_password="doesntmatternotreallyused" --admin_email="user@example.com"
+##     wp core multisite-install --url=example.com --title="Welcome to the LDAP-Manager Multisite" --admin_user="doesntmatternotreallyused" --admin_password="doesntmatternotreallyused" --admin_email="user@example.com"
 ##     cat /docker-entrypoint-init.d/.htaccess > /bitnami/wordpress/.htaccess
 ##     chmod -w bitnami/wordpress/wp-config.php
 ##   .htaccess: |
@@ -196,54 +159,13 @@ existingApacheConfigurationConfigMap: ""
 ##     ...
 ##
 customPostInitScripts: {}
-## SMTP mail delivery configuration
-## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress/#smtp-configuration
-## @param smtpHost SMTP server host
-## @param smtpPort SMTP server port
-## @param smtpUser SMTP username
-## @param smtpPassword SMTP user password
-## @param smtpProtocol SMTP protocol
-## @param smtpFromEmail SMTP from email (default is `smtpUser`)
-## @param smtpFromName SMTP from name  (default is `wordpressFirstName` and `wordpressLastName`)
-##
-smtpHost: ""
-smtpPort: ""
-smtpUser: ""
-smtpPassword: ""
-smtpProtocol: ""
-smtpFromEmail: ""
-smtpFromName: ""
-## @param smtpExistingSecret The name of an existing secret with SMTP credentials
-## NOTE: Must contain key `smtp-password`
-## NOTE: When it's set, the `smtpPassword` parameter is ignored
-##
-smtpExistingSecret: ""
-## @param allowEmptyPassword Allow the container to be started with blank passwords
-##
-allowEmptyPassword: true
-## @param allowOverrideNone Configure Apache to prohibit overriding directives with htaccess files
-##
-allowOverrideNone: false
-## @param overrideDatabaseSettings Allow overriding the database settings persisted in wp-config.php
-##
-overrideDatabaseSettings: false
-## @param htaccessPersistenceEnabled Persist custom changes on htaccess files
-## If `allowOverrideNone` is `false`, it will persist `/opt/bitnami/wordpress/wordpress-htaccess.conf`
-## If `allowOverrideNone` is `true`, it will persist `/opt/bitnami/wordpress/.htaccess`
-##
-htaccessPersistenceEnabled: false
-## @param customHTAccessCM The name of an existing ConfigMap with custom htaccess rules
-## NOTE: Must contain key `wordpress-htaccess.conf` with the file content
-## NOTE: Requires setting `allowOverrideNone=false`
-##
-customHTAccessCM: ""
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
-## @param extraEnvVars Array with extra environment variables to add to the WordPress container
+## @param extraEnvVars Array with extra environment variables to add to the LDAP-Manager container
 ## e.g:
 ## extraEnvVars:
 ##   - name: FOO
@@ -256,28 +178,15 @@ extraEnvVarsCM: ""
 ## @param extraEnvVarsSecret Name of existing Secret containing extra env vars
 ##
 extraEnvVarsSecret: ""
-## @section WordPress Multisite Configuration parameters
+## @section LDAP-Manager Multisite Configuration parameters
 ## ref: https://github.com/bitnami/containers/tree/main/bitnami/wordpress#multisite-configuration
 ##
 
-## @param multisite.enable Whether to enable WordPress Multisite configuration.
-## @param multisite.host WordPress Multisite hostname/address. This value is mandatory when enabling Multisite mode.
-## @param multisite.networkType WordPress Multisite network type to enable. Allowed values: `subfolder`, `subdirectory` or `subdomain`.
-## @param multisite.enableNipIoRedirect Whether to enable IP address redirection to nip.io wildcard DNS. Useful when running on an IP address with subdomain network type.
-##
-multisite:
-  enable: false
-  host: ""
-  networkType: subdomain
-  enableNipIoRedirect: false
-## @section WordPress deployment parameters
-##
-
-## @param replicaCount Number of WordPress replicas to deploy
+## @param replicaCount Number of LDAP-Manager replicas to deploy
 ## NOTE: ReadWriteMany PVC(s) are required if replicaCount > 1
 ##
 replicaCount: 1
-## @param updateStrategy.type WordPress deployment strategy type
+## @param updateStrategy.type LDAP-Manager deployment strategy type
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
 ## NOTE: Set it to `Recreate` if you use a PV that cannot be mounted on multiple pods
 ## e.g:
@@ -293,7 +202,7 @@ updateStrategy:
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
 schedulerName: ""
-## @param terminationGracePeriodSeconds In seconds, time given to the WordPress pod to terminate gracefully
+## @param terminationGracePeriodSeconds In seconds, time given to the LDAP-Manager pod to terminate gracefully
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 ##
 terminationGracePeriodSeconds: ""
@@ -301,14 +210,14 @@ terminationGracePeriodSeconds: ""
 ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods
 ##
 topologySpreadConstraints: []
-## @param priorityClassName Name of the existing priority class to be used by WordPress pods, priority class needs to be created beforehand
+## @param priorityClassName Name of the existing priority class to be used by LDAP-Manager pods, priority class needs to be created beforehand
 ## Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##
 priorityClassName: ""
 ## @param automountServiceAccountToken Mount Service Account token in pod
 ##
 automountServiceAccountToken: false
-## @param hostAliases [array] WordPress pod host aliases
+## @param hostAliases [array] LDAP-Manager pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
 hostAliases:
@@ -317,13 +226,13 @@ hostAliases:
   - ip: "127.0.0.1"
     hostnames:
       - "status.localhost"
-## @param extraVolumes Optionally specify extra list of additional volumes for WordPress pods
+## @param extraVolumes Optionally specify extra list of additional volumes for LDAP-Manager pods
 ##
 extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for WordPress container(s)
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for LDAP-Manager container(s)
 ##
 extraVolumeMounts: []
-## @param sidecars Add additional sidecar containers to the WordPress pod
+## @param sidecars Add additional sidecar containers to the LDAP-Manager pod
 ## e.g:
 ## sidecars:
 ##   - name: your-image-name
@@ -334,7 +243,7 @@ extraVolumeMounts: []
 ##         containerPort: 1234
 ##
 sidecars: []
-## @param initContainers Add additional init containers to the WordPress pods
+## @param initContainers Add additional init containers to the LDAP-Manager pods
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 ## e.g:
 ## initContainers:
@@ -344,11 +253,11 @@ sidecars: []
 ##    command: ['sh', '-c', 'copy themes and plugins from git and push to /bitnami/wordpress/wp-content. Should work with extraVolumeMounts and extraVolumes']
 ##
 initContainers: []
-## @param podLabels Extra labels for WordPress pods
+## @param podLabels Extra labels for LDAP-Manager pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 podLabels: {}
-## @param podAnnotations Annotations for WordPress pods
+## @param podAnnotations Annotations for LDAP-Manager pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}
@@ -390,12 +299,6 @@ nodeSelector: {}
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
-## WordPress containers' resource requests and limits
-## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
-## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-##
-resourcesPreset: "micro"
 ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
 ## Example:
 ## resources:
@@ -408,13 +311,12 @@ resourcesPreset: "micro"
 ##
 resources: {}
 ## Container ports
-## @param containerPorts.http WordPress HTTP container port
-## @param containerPorts.https WordPress HTTPS container port
+## @param containerPorts.http LDAP-Manager HTTP container port
+## @param containerPorts.https LDAP-Manager HTTPS container port
 ##
 containerPorts:
   http: 8080
-  https: 8443
-## @param extraContainerPorts Optionally specify extra list of additional ports for WordPress container(s)
+## @param extraContainerPorts Optionally specify extra list of additional ports for LDAP-Manager container(s)
 ## e.g:
 ## extraContainerPorts:
 ##   - name: myservice
@@ -423,11 +325,11 @@ containerPorts:
 extraContainerPorts: []
 ## Configure Pods Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enabled WordPress pods' Security Context
+## @param podSecurityContext.enabled Enabled LDAP-Manager pods' Security Context
 ## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
 ## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
 ## @param podSecurityContext.supplementalGroups Set filesystem extra groups
-## @param podSecurityContext.fsGroup Set WordPress pod's Security Context fsGroup
+## @param podSecurityContext.fsGroup Set LDAP-Manager pod's Security Context fsGroup
 ##
 podSecurityContext:
   enabled: true
@@ -461,9 +363,9 @@ containerSecurityContext:
     drop: ["ALL"]
   seccompProfile:
     type: "RuntimeDefault"
-## Configure extra options for WordPress containers' liveness, readiness and startup probes
+## Configure extra options for LDAP-Manager containers' liveness, readiness and startup probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe on WordPress containers
+## @param livenessProbe.enabled Enable livenessProbe on LDAP-Manager containers
 ## @skip livenessProbe.tcpSocket
 ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
 ## @param livenessProbe.periodSeconds Period seconds for livenessProbe
@@ -480,7 +382,7 @@ livenessProbe:
   timeoutSeconds: 5
   failureThreshold: 6
   successThreshold: 1
-## @param readinessProbe.enabled Enable readinessProbe on WordPress containers
+## @param readinessProbe.enabled Enable readinessProbe on LDAP-Manager containers
 ## @skip readinessProbe.httpGet
 ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
 ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
@@ -491,9 +393,9 @@ livenessProbe:
 readinessProbe:
   enabled: true
   httpGet:
-    path: /wp-login.php
-    port: '{{ .Values.wordpressScheme }}'
-    scheme: '{{ .Values.wordpressScheme | upper }}'
+    path: /health
+    port: http
+    scheme: HTTP
     ## If using an HTTPS-terminating load-balancer, the probes may need to behave
     ## like the balancer to prevent HTTP 302 responses. According to the Kubernetes
     ## docs, 302 should be considered "successful", but this issue on GitHub
@@ -509,7 +411,7 @@ readinessProbe:
   timeoutSeconds: 5
   failureThreshold: 6
   successThreshold: 1
-## @param startupProbe.enabled Enable startupProbe on WordPress containers
+## @param startupProbe.enabled Enable startupProbe on LDAP-Manager containers
 ## @skip startupProbe.httpGet
 ## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
 ## @param startupProbe.periodSeconds Period seconds for startupProbe
@@ -520,9 +422,9 @@ readinessProbe:
 startupProbe:
   enabled: false
   httpGet:
-    path: /wp-login.php
-    port: '{{ .Values.wordpressScheme }}'
-    scheme: '{{ .Values.wordpressScheme | upper }}'
+    path: /
+    port: http
+    scheme: HTTP
     ## If using an HTTPS-terminating load-balancer, the probes may need to behave
     ## like the balancer to prevent HTTP 302 responses. According to the Kubernetes
     ## docs, 302 should be considered "successful", but this issue on GitHub
@@ -547,27 +449,23 @@ customReadinessProbe: {}
 ## @param customStartupProbe Custom startupProbe that overrides the default one
 ##
 customStartupProbe: {}
-## @param lifecycleHooks for the WordPress container(s) to automate configuration before or after startup
+## @param lifecycleHooks for the LDAP-Manager container(s) to automate configuration before or after startup
 ##
 lifecycleHooks: {}
 ## @section Traffic Exposure Parameters
 ##
 
-## WordPress service parameters
+## LDAP-Manager service parameters
 ##
 service:
-  ## @param service.type WordPress service type
+  ## @param service.type LDAP-Manager service type
   ##
   type: LoadBalancer
-  ## @param service.ports.http WordPress service HTTP port
-  ## @param service.ports.https WordPress service HTTPS port
+  ## @param service.ports.http LDAP-Manager service HTTP port
+  ## @param service.ports.https LDAP-Manager service HTTPS port
   ##
   ports:
-    http: 80
-    https: 443
-  ## @param service.httpsTargetPort Target port for HTTPS
-  ##
-  httpsTargetPort: https
+    http: 8000
   ## Node ports to expose
   ## @param service.nodePorts.http Node port for HTTP
   ## @param service.nodePorts.https Node port for HTTPS
@@ -575,7 +473,6 @@ service:
   ##
   nodePorts:
     http: ""
-    https: ""
   ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
   ## Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -587,37 +484,37 @@ service:
   ##     timeoutSeconds: 300
   ##
   sessionAffinityConfig: {}
-  ## @param service.clusterIP WordPress service Cluster IP
+  ## @param service.clusterIP LDAP-Manager service Cluster IP
   ## e.g.:
   ## clusterIP: None
   ##
   clusterIP: ""
-  ## @param service.loadBalancerIP WordPress service Load Balancer IP
+  ## @param service.loadBalancerIP LDAP-Manager service Load Balancer IP
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
   ##
   loadBalancerIP: ""
-  ## @param service.loadBalancerSourceRanges WordPress service Load Balancer sources
+  ## @param service.loadBalancerSourceRanges LDAP-Manager service Load Balancer sources
   ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
   ## e.g:
   ## loadBalancerSourceRanges:
   ##   - 10.10.10.0/24
   ##
   loadBalancerSourceRanges: []
-  ## @param service.externalTrafficPolicy WordPress service external traffic policy
+  ## @param service.externalTrafficPolicy LDAP-Manager service external traffic policy
   ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   ##
   externalTrafficPolicy: Cluster
-  ## @param service.annotations Additional custom annotations for WordPress service
+  ## @param service.annotations Additional custom annotations for LDAP-Manager service
   ##
   annotations: {}
-  ## @param service.extraPorts Extra port to expose on WordPress service
+  ## @param service.extraPorts Extra port to expose on LDAP-Manager service
   ##
   extraPorts: []
-## Configure the ingress resource that allows you to access the WordPress installation
+## Configure the ingress resource that allows you to access the LDAP-Manager installation
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
-  ## @param ingress.enabled Enable ingress record generation for WordPress
+  ## @param ingress.enabled Enable ingress record generation for LDAP-Manager
   ##
   enabled: false
   ## @param ingress.pathType Ingress path type
@@ -725,12 +622,12 @@ ingress:
   ##
   extraRules: []
 
-## Configure second ingress resource that allows you to access the WordPress installation
+## Configure second ingress resource that allows you to access the LDAP-Manager installation
 ## This may be used to secure /wp-admin behind authentication or IP restrictions
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 secondaryIngress:
-  ## @param secondaryIngress.enabled Enable ingress record generation for WordPress
+  ## @param secondaryIngress.enabled Enable ingress record generation for LDAP-Manager
   ##
   enabled: false
   ## @param secondaryIngress.pathType Ingress path type
@@ -846,7 +743,7 @@ secondaryIngress:
 persistence:
   ## @param persistence.enabled Enable persistence using Persistent Volume Claims
   ##
-  enabled: true
+  enabled: false
   ## @param persistence.storageClass Persistent Volume storage class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -866,7 +763,7 @@ persistence:
   ## @param persistence.existingClaim The name of an existing PVC to use for persistence
   ##
   existingClaim: ""
-  ## @param persistence.selector Selector to match an existing Persistent Volume for WordPress data PVC
+  ## @param persistence.selector Selector to match an existing Persistent Volume for LDAP-Manager data PVC
   ## If set, the PVC can't have a PV dynamically provisioned for it
   ## E.g.
   ## selector:
@@ -936,11 +833,11 @@ volumePermissions:
 ## @section Other Parameters
 ##
 
-## WordPress Service Account
+## LDAP-Manager Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:
-  ## @param serviceAccount.create Enable creation of ServiceAccount for WordPress pod
+  ## @param serviceAccount.create Enable creation of ServiceAccount for LDAP-Manager pod
   ##
   create: true
   ## @param serviceAccount.name The name of the ServiceAccount to use.
@@ -954,7 +851,7 @@ serviceAccount:
   ## @param serviceAccount.annotations Additional custom annotations for the ServiceAccount
   ##
   annotations: {}
-## WordPress Pod Disruption Budget configuration
+## LDAP-Manager Pod Disruption Budget configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 ## @param pdb.create Enable a Pod Disruption Budget creation
 ## @param pdb.minAvailable Minimum number/percentage of pods that should remain scheduled
@@ -964,11 +861,11 @@ pdb:
   create: true
   minAvailable: ""
   maxUnavailable: ""
-## WordPress Autoscaling configuration
+## LDAP-Manager Autoscaling configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-## @param autoscaling.enabled Enable Horizontal POD autoscaling for WordPress
-## @param autoscaling.minReplicas Minimum number of WordPress replicas
-## @param autoscaling.maxReplicas Maximum number of WordPress replicas
+## @param autoscaling.enabled Enable Horizontal POD autoscaling for LDAP-Manager
+## @param autoscaling.minReplicas Minimum number of LDAP-Manager replicas
+## @param autoscaling.maxReplicas Maximum number of LDAP-Manager replicas
 ## @param autoscaling.targetCPU Target CPU utilization percentage
 ## @param autoscaling.targetMemory Target Memory utilization percentage
 ##
@@ -1216,150 +1113,3 @@ networkPolicy:
   ##
   ingressNSMatchLabels: {}
   ingressNSPodMatchLabels: {}
-
-## @section Database Parameters
-##
-
-## MariaDB chart configuration
-## ref: https://github.com/bitnami/charts/blob/main/bitnami/mariadb/values.yaml
-##
-mariadb:
-  ## @param mariadb.enabled Deploy a MariaDB server to satisfy the applications database requirements
-  ## To use an external database set this to false and configure the `externalDatabase.*` parameters
-  ##
-  enabled: true
-  ## @param mariadb.architecture MariaDB architecture. Allowed values: `standalone` or `replication`
-  ##
-  architecture: standalone
-  ## MariaDB Authentication parameters
-  ## @param mariadb.auth.rootPassword MariaDB root password
-  ## @param mariadb.auth.database MariaDB custom database
-  ## @param mariadb.auth.username MariaDB custom user name
-  ## @param mariadb.auth.password MariaDB custom user password
-  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mariadb#setting-the-root-password-on-first-run
-  ##      https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-on-first-run
-  ##      https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-user-on-first-run
-  ##
-  auth:
-    rootPassword: ""
-    database: bitnami_wordpress
-    username: bn_wordpress
-    password: ""
-  ## MariaDB Primary configuration
-  ##
-  primary:
-    ## MariaDB Primary Persistence parameters
-    ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-    ## @param mariadb.primary.persistence.enabled Enable persistence on MariaDB using PVC(s)
-    ## @param mariadb.primary.persistence.storageClass Persistent Volume storage class
-    ## @param mariadb.primary.persistence.accessModes [array] Persistent Volume access modes
-    ## @param mariadb.primary.persistence.size Persistent Volume size
-    ##
-    persistence:
-      enabled: true
-      storageClass: ""
-      accessModes:
-        - ReadWriteOnce
-      size: 8Gi
-    ## MariaDB primary container's resource requests and limits
-    ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    ## We usually recommend not to specify default resources and to leave this as a conscious
-    ## choice for the user. This also increases chances charts run on environments with little
-    ## resources, such as Minikube. If you do want to specify resources, uncomment the following
-    ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    ## @param mariadb.primary.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, small, medium, large, xlarge, 2xlarge). This is ignored if primary.resources is set (primary.resources is recommended for production).
-    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-    ##
-    resourcesPreset: "micro"
-    ## @param mariadb.primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-    ## Example:
-    ## resources:
-    ##   requests:
-    ##     cpu: 2
-    ##     memory: 512Mi
-    ##   limits:
-    ##     cpu: 3
-    ##     memory: 1024Mi
-    ##
-    resources: {}
-## External Database Configuration
-## All of these values are only used if `mariadb.enabled=false`
-##
-externalDatabase:
-  ## @param externalDatabase.host External Database server host
-  ##
-  host: localhost
-  ## @param externalDatabase.port External Database server port
-  ##
-  port: 3306
-  ## @param externalDatabase.user External Database username
-  ##
-  user: bn_wordpress
-  ## @param externalDatabase.password External Database user password
-  ##
-  password: ""
-  ## @param externalDatabase.database External Database database name
-  ##
-  database: bitnami_wordpress
-  ## @param externalDatabase.existingSecret The name of an existing secret with database credentials. Evaluated as a template
-  ## NOTE: Must contain key `mariadb-password`
-  ## NOTE: When it's set, the `externalDatabase.password` parameter is ignored
-  ##
-  existingSecret: ""
-## Memcached chart configuration
-## ref: https://github.com/bitnami/charts/blob/main/bitnami/memcached/values.yaml
-##
-memcached:
-  ## @param memcached.enabled Deploy a Memcached server for caching database queries
-  ##
-  enabled: false
-  ## Authentication parameters
-  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/memcached#creating-the-memcached-admin-user
-  ##
-  auth:
-    ## @param memcached.auth.enabled Enable Memcached authentication
-    ##
-    enabled: false
-    ## @param memcached.auth.username Memcached admin user
-    ##
-    username: ""
-    ## @param memcached.auth.password Memcached admin password
-    ##
-    password: ""
-    ## @param memcached.auth.existingPasswordSecret Existing secret with Memcached credentials (must contain a value for `memcached-password` key)
-    ##
-    existingPasswordSecret: ""
-  ## Service parameters
-  ##
-  service:
-    ## @param memcached.service.port Memcached service port
-    ##
-    port: 11211
-  ## Memcached resource requests and limits
-  ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  ## @param memcached.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-  ##
-  resourcesPreset: "nano"
-  ## @param memcached.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-  ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
-  ##
-  resources: {}
-
-## External Memcached Configuration
-## All of these values are only used if `memcached.enabled=false`
-##
-externalCache:
-  ## @param externalCache.host External cache server host
-  ##
-  host: localhost
-  ## @param externalCache.port External cache server port
-  ##
-  port: 11211
