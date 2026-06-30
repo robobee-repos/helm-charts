@@ -206,6 +206,11 @@ spec:
               mountPath: {{ .Values.persistence.mountPath }}
               subPath: {{ .Values.persistence.subPath }}
             {{- end }}
+            {{- if .Values.persistenceConfig.enabled }}
+            - name: config
+              mountPath: {{ .Values.persistenceConfig.mountPath }}
+              subPath: {{ .Values.persistenceConfig.subPath }}
+            {{- end }}
             {{- if .Values.persistenceBackups.enabled }}
             - name: backups
               mountPath: {{ .Values.persistenceBackups.mountPath }}
@@ -259,6 +264,16 @@ spec:
         - name: data
           emptyDir: {}
 {{- end }}
+{{- if and .Values.persistenceConfig.enabled .Values.persistenceConfig.existingClaim }}
+        - name: config
+          persistentVolumeClaim:
+{{- with .Values.persistenceConfig.existingClaim }}
+            claimName: {{ tpl . $ }}
+{{- end }}
+{{- else if not .Values.persistenceConfig.enabled }}
+        - name: config
+          emptyDir: {}
+{{- end }}
 {{- if and .Values.persistenceBackups.enabled .Values.persistenceBackups.existingClaim }}
         - name: data
           persistentVolumeClaim:
@@ -296,6 +311,34 @@ spec:
         {{ include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) }}
         {{- if .Values.persistence.selector }}
         selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
+        {{- end -}}
+{{- end }}
+{{- if and .Values.persistenceConfig.enabled (not .Values.persistenceConfig.existingClaim) }}
+    - metadata:
+        name: config
+      {{- with .Values.persistenceConfig.annotations }}
+        annotations:
+        {{- range $key, $value := . }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+      {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistenceConfig.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if .Values.persistenceConfig.snapshotName }}
+        dataSource:
+          name: {{ .Values.persistenceConfig.snapshotName }}
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistenceConfig.size | quote }}
+        {{ include "common.storage.class" (dict "persistence" .Values.persistenceConfig "global" .Values.global) }}
+        {{- if .Values.persistenceConfig.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistenceConfig.selector "context" $) | nindent 10 }}
         {{- end -}}
 {{- end }}
 {{- if and .Values.persistenceBackups.enabled (not .Values.persistenceBackups.existingClaim) }}
