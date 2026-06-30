@@ -77,7 +77,7 @@ spec:
       {{- end }}
       initContainers:
       containers:
-        - name: ldapManager
+        - name: ldap-manager
           image: {{ include "ldapManager.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.diagnosticMode.enabled }}
