@@ -162,6 +162,12 @@ helm install my-release helm-charts-charts
 <td><code>%SELF_SERVICE_PASSWORD_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>ldap-manager</code></td>
+<td><code>%LDAP_MANAGER_VERSION%</code></td>
+<td><code>%LDAP_MANAGER_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>

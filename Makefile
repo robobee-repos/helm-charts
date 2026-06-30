@@ -31,6 +31,7 @@ publish:
 	$(MAKE) -C mariadb-jobs publish
 	$(MAKE) -C openldap publish
 	$(MAKE) -C self-service-password publish
+	$(MAKE) -C ldap-manager publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -50,6 +51,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C nexus publish-harbor
 	$(MAKE) -C mariadb-jobs publish-harbor
 	$(MAKE) -C self-service-password publish-harbor
+	$(MAKE) -C ldap-manager publish
 
 .PHONY: index
 index:
@@ -60,6 +62,7 @@ index:
 	$(MAKE) -C openldap update-index
 	$(MAKE) -C certs-issuers update-index
 	$(MAKE) -C self-service-password update-index
+	$(MAKE) -C ldap-manager update-index
 
 .PHONY: push
 push:
