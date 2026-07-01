@@ -315,7 +315,7 @@ resources: {}
 ## @param containerPorts.https LDAP-Manager HTTPS container port
 ##
 containerPorts:
-  http: 8080
+  http: 8000
 ## @param extraContainerPorts Optionally specify extra list of additional ports for LDAP-Manager container(s)
 ## e.g:
 ## extraContainerPorts:
