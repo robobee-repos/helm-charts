@@ -1,0 +1,28 @@
+# Copyright Broadcom, Inc. All Rights Reserved.
+# SPDX-License-Identifier: APACHE-2.0
+
+annotations:
+  images: |
+    - name: gateway
+      image: https://gateway-api.sigs.k8s.io/
+  licenses: Apache-2.0
+  tanzuCategory: application
+apiVersion: v2
+appVersion: 1.0.0
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  tags:
+  - bitnami-common
+  version: 2.x.x
+description: Gateway API
+home: https://robobee-repos.github.io/helm-charts-charts/
+keywords:
+- gateway
+maintainers:
+- name: Erwin Müller
+  url: https://github.com/robobee-repos/helm-charts-charts
+name: gateway
+sources:
+- https://gateway-api.sigs.k8s.io/
+version: 1.0.0
