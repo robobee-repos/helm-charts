@@ -510,6 +510,38 @@ service:
   ## @param service.extraPorts Extra port to expose on LDAP-Manager service
   ##
   extraPorts: []
+## Configure the gateway resource that allows you to access the LDAP-Manager installation
+## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+##
+gateway:
+  gatewayName:
+  namespace:
+  gatewayClassName: nginx
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name:
+            namespace:
+  allowedRoutes:
+  ## @param gateway.hostnames Set here the hostnames for LDAP-Manager
+  ##
+  hostnames: []
+    # - ldapmanager.arisoftware.com
+  routes:
+    # - matches:
+    #     - path:
+    #         type: PathPrefix
+    #         value: /api
+    #   backendRefs:
+    #     - name: api-service
+    #       port: 8080
+    # Default backend service.
+    - backendRefs:
+        - port: 8000
 ## Configure the ingress resource that allows you to access the LDAP-Manager installation
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
@@ -530,7 +562,7 @@ ingress:
   ingressClassName: ""
   ## @param ingress.hostname Default host for the ingress record. The hostname is templated and thus can contain other variable references.
   ##
-  hostname: wordpress.local
+  hostname: ldapmanager.local
   ## @param ingress.path Default path for the ingress record
   ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
   ##
@@ -565,7 +597,7 @@ ingress:
   ## @param ingress.extraHosts An array with additional hostname(s) to be covered with the ingress record. The host names are templated and thus can contain other variable references.
   ## e.g:
   ## extraHosts:
-  ##   - name: wordpress.local
+  ##   - name: ldapmanager.local
   ##     path: /
   ##
   extraHosts: []
@@ -583,8 +615,8 @@ ingress:
   ## e.g:
   ## extraTls:
   ## - hosts:
-  ##     - wordpress.local
-  ##   secretName: wordpress.local-tls
+  ##     - ldapmanager.local
+  ##   secretName: ldapmanager.local-tls
   ##
   extraTls: []
   ## @param ingress.secrets Custom TLS certificates as secrets
@@ -596,7 +628,7 @@ ingress:
   ## Please see README.md for more information
   ## e.g:
   ## secrets:
-  ##   - name: wordpress.local-tls
+  ##   - name: ldapmanager.local-tls
   ##     key: |-
   ##       -----BEGIN RSA PRIVATE KEY-----
   ##       ...
@@ -611,7 +643,7 @@ ingress:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
   ## e.g:
   ## extraRules:
-  ## - host: wordpress.local
+  ## - host: ldapmanager.local
   ##     http:
   ##       path: /
   ##       backend:
@@ -643,7 +675,7 @@ secondaryIngress:
   ingressClassName: ""
   ## @param secondaryIngress.hostname Default host for the ingress record. The hostname is templated and thus can contain other variable references.
   ##
-  hostname: wordpress.local
+  hostname: ldapmanager.local
   ## @param secondaryIngress.path Default path for the ingress record
   ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
   ##
@@ -678,7 +710,7 @@ secondaryIngress:
   ## @param secondaryIngress.extraHosts An array with additional hostname(s) to be covered with the ingress record. The host names are templated and thus can contain other variable references.
   ## e.g:
   ## extraHosts:
-  ##   - name: wordpress.local
+  ##   - name: ldapmanager.local
   ##     path: /
   ##
   extraHosts: []
@@ -696,8 +728,8 @@ secondaryIngress:
   ## e.g:
   ## extraTls:
   ## - hosts:
-  ##     - wordpress.local
-  ##   secretName: wordpress.local-tls
+  ##     - ldapmanager.local
+  ##   secretName: ldapmanager.local-tls
   ##
   extraTls: []
   ## @param secondaryIngress.secrets Custom TLS certificates as secrets
@@ -709,7 +741,7 @@ secondaryIngress:
   ## Please see README.md for more information
   ## e.g:
   ## secrets:
-  ##   - name: wordpress.local-tls
+  ##   - name: ldapmanager.local-tls
   ##     key: |-
   ##       -----BEGIN RSA PRIVATE KEY-----
   ##       ...
@@ -724,7 +756,7 @@ secondaryIngress:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
   ## e.g:
   ## extraRules:
-  ## - host: wordpress.local
+  ## - host: ldapmanager.local
   ##     http:
   ##       path: /
   ##       backend:
