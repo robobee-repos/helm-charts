@@ -514,6 +514,7 @@ service:
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 gateway:
+  enabled: false
   gatewayName:
   namespace:
   gatewayClassName: nginx

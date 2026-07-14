@@ -1,0 +1,21 @@
+# templates/resourcequota.yaml
+{{- if .Values.resourceQuota.enabled }}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ include "common.names.fullname" . }}-quota
+  namespace: {{ include "myapp.namespaceName" . }}
+  labels:
+    {{- include "myapp.labels" . | nindent 4 }}
+spec:
+  hard:
+    {{- toYaml .Values.resourceQuota.hard | nindent 4 }}
+  {{- with .Values.resourceQuota.scopes }}
+  scopes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.resourceQuota.scopeSelector }}
+  scopeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,35 @@
+# templates/limitrange.yaml
+{{- if and .Values.limitRange.enabled }}
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "common.names.fullname" . }}-limits
+  namespace: {{ include "myapp.namespaceName" . }}
+  labels:
+    {{- include "myapp.labels" . | nindent 4 }}
+spec:
+  limits:
+  {{- range .Values.limitRange.limits }}
+  - type: {{ .type }}
+    {{- with .default }}
+    default:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .defaultRequest }}
+    defaultRequest:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .max }}
+    max:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .min }}
+    min:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .maxLimitRequestRatio }}
+    maxLimitRequestRatio:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

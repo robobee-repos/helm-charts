@@ -47,6 +47,8 @@ spec:
       {{- end }}
   {{- end }}
 ---
+{{- if .Values.httproute.enabled }}
+{{- $fullName := include "common.names.fullname" . }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -111,4 +113,5 @@ spec:
         {{- end }}
       {{- end }}
 
+{{- end }}
 {{- end }}

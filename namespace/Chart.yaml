@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: CC-BY-4.0
+
+annotations:
+  licenses: CC-BY-4.0 license
+  tanzuCategory: application
+apiVersion: v2
+appVersion: 1.0.0
+description: Define namespace.
+home: https://robobee-repos.github.io/helm-charts-charts/
+keywords:
+- namespace
+maintainers:
+- name: Erwin Müller
+  url: https://github.com/robobee-repos/helm-charts-charts
+name: namespace
+sources:
+- https://github.com/oneuptime/blog/tree/master/posts/2026-02-09-helm-namespace-creation-labeling
+version: 1.0.0
