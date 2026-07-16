@@ -27,4 +27,4 @@ maintainers:
 name: ldap-manager
 sources:
 - https://vibhuvioio.com/ldap-manager/
-version: 1.0.5
+version: 1.0.6

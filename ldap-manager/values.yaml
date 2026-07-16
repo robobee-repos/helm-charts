@@ -515,9 +515,10 @@ service:
 ##
 gateway:
   enabled: false
-  gatewayName:
-  namespace:
-  gatewayClassName: nginx
+  name: {}
+  namespace: {}
+  annotations: {}
+  gatewayClassName: internet-public
   listeners:
     - name: https
       port: 443
@@ -525,9 +526,20 @@ gateway:
       tls:
         mode: Terminate
         certificateRefs:
-          - name:
-            namespace:
-  allowedRoutes:
+          - name: {}
+            namespace: {}
+      allowedRoutes:
+        namespaces:
+          from: All
+    
+## Configure the HTTPRoute resource that allows you to access the LDAP-Manager installation
+## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+##
+httproute:
+  enabled: false
+  name: {}
+  namespace: {}
+  annotations: {}
   ## @param gateway.hostnames Set here the hostnames for LDAP-Manager
   ##
   hostnames: []
