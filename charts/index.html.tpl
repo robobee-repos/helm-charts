@@ -175,7 +175,7 @@ helm install my-release helm-charts-charts
 </tr>
 
 <tr>
-<td><code>namespace</code></td>
+<td><code>consul-registrar</code></td>
 <td><code>%CONSUL_REGISTRAR_VERSION%</code></td>
 <td><code>%CONSUL_REGISTRAR_APP_VERSION%</code></td>
 </tr>
