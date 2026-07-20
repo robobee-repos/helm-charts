@@ -143,6 +143,9 @@ spec:
             - name: empty-dir
               mountPath: /.cache
               subPath: cache
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp
             - name: script
               mountPath: /opt/consul
           {{- if .Values.extraVolumeMounts }}
