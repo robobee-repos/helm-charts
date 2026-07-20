@@ -140,6 +140,9 @@ spec:
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: empty-dir
+              mountPath: /.cache
+              subPath: cache
             - name: script
               mountPath: /opt/consul
           {{- if .Values.extraVolumeMounts }}
@@ -149,6 +152,8 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
+        - name: empty-dir
+          emptyDir: {}
         - name: script
           configMap:
             name: {{ include "common.names.fullname" . }}
