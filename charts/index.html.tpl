@@ -174,6 +174,12 @@ helm install my-release helm-charts-charts
 <td><code>%NAMESPACE_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>namespace</code></td>
+<td><code>%CONSUL_REGISTRAR_VERSION%</code></td>
+<td><code>%CONSUL_REGISTRAR_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>

@@ -33,6 +33,7 @@ publish:
 	$(MAKE) -C self-service-password publish
 	$(MAKE) -C ldap-manager publish
 	$(MAKE) -C namespace publish
+	$(MAKE) -C consul-registrar publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -54,6 +55,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C self-service-password publish-harbor
 	$(MAKE) -C ldap-manager publish-harbor
 	$(MAKE) -C namespace publish-harbor
+	$(MAKE) -C consul-registrar publish-harbor
 
 .PHONY: index
 index:
@@ -66,6 +68,7 @@ index:
 	$(MAKE) -C self-service-password update-index
 	$(MAKE) -C ldap-manager update-index
 	$(MAKE) -C namespace update-index
+	$(MAKE) -C consul-registrar update-index
 
 .PHONY: push
 push:
