@@ -14,6 +14,7 @@ publish-harbor:
 
 .PHONY: package
 package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
+	$(MAKE) -C docker
 
 $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 	helm package .

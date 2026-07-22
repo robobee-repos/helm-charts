@@ -21,6 +21,10 @@ DRY_RUN="${DRY_RUN:-false}"
 log() { printf '%s %s\n' "$(date -Is)" "$*"; }
 debug() { [[ "${LOG_LEVEL}" == "DEBUG" ]] && log "DEBUG: $*"; }
 
+if [[ "${LOG_LEVEL}" == "DEBUG" ]]; then
+  set -x
+fi
+
 # wait_for_consul: poll the Consul HTTP API until available or timeout
 wait_for_consul() {
   if [[ "${WAIT_FOR_CONSUL}" != "true" ]]; then
