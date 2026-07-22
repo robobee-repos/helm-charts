@@ -29,7 +29,6 @@ spec:
         {{- if .Values.podAnnotations }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
-        checksum/consul-registrar-cm: {{ include (print $.Template.BasePath "/consul-registrar-cm.yaml") . | sha256sum }}
     spec:
       {{- include "consulRegistrar.imagePullSecrets" . | nindent 6 }}
       automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
@@ -93,17 +92,17 @@ spec:
           {{- end }}
           env:
             - name: LOG_LEVEL
-              value: {{ .Values.image.debug.logLevel | quote }}
-            - name: JSON_LOGS
-              value: {{ .Values.image.debug.jsonLogs | quote }}
+              value: {{ .Values.consulRegistrar.logLevel | quote }}
+            - name: DRY_RUN
+              value: {{ .Values.consulRegistrar.dryRun | quote }}
             - name: LABEL_SELECTOR
-              value: {{ .Values.consulRegistrar | quote }}
+              value: {{ .Values.consulRegistrar.labelRegistrar | quote }}
             - name: ANNOTATION_KEY
-              value: {{ .Values.annotationKey | quote }}
+              value: {{ .Values.consulRegistrar.annotationKey | quote }}
             - name: CONSUL_HTTP
-              value: {{ .Values.consulHttp | quote }}
+              value: {{ .Values.consulRegistrar.consulHttp | quote }}
             - name: SERVICE_NAME_PREFIX
-              value: {{ .Values.serviceNamePrefix | quote }}
+              value: {{ .Values.consulRegistrar.serviceNamePrefix | quote }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -140,14 +139,6 @@ spec:
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: empty-dir
-              mountPath: /.cache
-              subPath: cache
-            - name: empty-dir
-              mountPath: /tmp
-              subPath: tmp
-            - name: script
-              mountPath: /opt/consul
           {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}
@@ -155,11 +146,6 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
-        - name: empty-dir
-          emptyDir: {}
-        - name: script
-          configMap:
-            name: {{ include "common.names.fullname" . }}
         {{- if or .Values.customPostInitScripts }}
         - name: custom-postinit
           configMap:

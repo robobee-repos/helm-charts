@@ -1,5 +1,7 @@
 # values.yaml
 consulRegistrar:
+  logLevel: "INFO"
+  dryRun: "false"
   labelRegistrar: "haproxy-enabled=true"
   annotationKey: "haproxy.example.com/backend"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
@@ -107,11 +109,6 @@ image:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
-  ## Enable debug mode
-  ##
-  debug:
-    logLevel: INFO
-    jsonLogs: true
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
