@@ -76,16 +76,11 @@ spec:
           command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
           {{- else if .Values.command }}
           command: {{- include "common.tplvalues.render" ( dict "value" .Values.command "context" $) | nindent 12 }}
-          {{- else }}
-          command: ["/bin/sh","-c"]
           {{- end }}
           {{- if .Values.diagnosticMode.enabled }}
           args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
           {{- else if .Values.args }}
           args: {{- include "common.tplvalues.render" ( dict "value" .Values.args "context" $) | nindent 12 }}
-          {{- else }}
-          args:
-            - pip install kubernetes requests && python /opt/consul/consul_k8s_registrar.py
           {{- end }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
