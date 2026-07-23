@@ -6,6 +6,7 @@ consulRegistrar:
   annotationKey: "haproxy.example.com/backend"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
   serviceNamePrefix: "haproxy-"
+  watchNamespace: ""
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -166,7 +167,7 @@ topologySpreadConstraints: []
 priorityClassName: ""
 ## @param automountServiceAccountToken Mount Service Account token in pod
 ##
-automountServiceAccountToken: false
+automountServiceAccountToken: true
 ## @param hostAliases [array] Consul-Registrar pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##

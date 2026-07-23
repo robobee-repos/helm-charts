@@ -69,7 +69,7 @@ spec:
       {{- end }}
       initContainers:
       containers:
-        - name: ldap-manager
+        - name: consul-registrar
           image: {{ include "consulRegistrar.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.diagnosticMode.enabled }}
@@ -98,6 +98,8 @@ spec:
               value: {{ .Values.consulRegistrar.consulHttp | quote }}
             - name: SERVICE_NAME_PREFIX
               value: {{ .Values.consulRegistrar.serviceNamePrefix | quote }}
+            - name: WATCH_NAMESPACE
+              value: {{ .Values.consulRegistrar.watchNamespace | quote }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

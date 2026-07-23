@@ -21,4 +21,4 @@ maintainers:
 - name: Erwin Müller
   url: https://github.com/robobee-repos/helm-charts-charts
 name: consul-registrar
-version: 1.0.5
+version: 1.0.7
