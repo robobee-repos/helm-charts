@@ -134,10 +134,10 @@ def get_consul_name_and_meta(svc):
     Prefer an annotation 'haproxy.example.com/display-name' for human label,
     otherwise use the k8s service name. Return (name_for_consul, meta_dict).
     """
-    anns = svc.metadata.annotations or {}
+    anns = svc_annotations(svc)
     display = anns.get(ANNOTATION_KEY_NAME)
     # fallback to the k8s service name (without namespace)
-    base_name = svc.metadata.name
+    base_name = svc_name_field(svc) or "service"
     # you may optionally include namespace in the name if you need global uniqueness:
     # base_name = f"{svc.metadata.namespace}-{svc.metadata.name}"
     name = sanitize_consul_name(display if display else base_name)
