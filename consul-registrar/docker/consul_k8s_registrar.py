@@ -191,6 +191,62 @@ def svc_resource_version(svc):
         return svc.get("metadata", {}).get("resourceVersion")
     return getattr(svc.metadata, "resource_version", None)
 
+# --- Extract external IP from Service (returns ip, port or (None,None)) ---
+def extract_external_ip_and_port(svc):
+    # Try status.loadBalancer.ingress[*].ip
+    if _is_dict(svc):
+        status = svc.get("status", {}) or {}
+        lb = status.get("loadBalancer", {}) or {}
+        ingress_list = lb.get("ingress") or []
+        for ing in ingress_list:
+            if not ing:
+                continue
+            if isinstance(ing, dict):
+                ip = ing.get("ip") or ing.get("hostname")
+                if ip:
+                    return parse_addrport(str(ip))
+    else:
+        # model object
+        try:
+            ingress_list = getattr(svc.status, "load_balancer", None) or getattr(svc.status, "loadBalancer", None)
+        except Exception:
+            ingress_list = None
+        if ingress_list:
+            # try .ingress
+            il = getattr(ingress_list, "ingress", None)
+            if il:
+                for ing in il:
+                    ip = getattr(ing, "ip", None) or getattr(ing, "hostname", None)
+                    if ip:
+                        return parse_addrport(str(ip))
+
+    # Try spec.externalIPs
+    if _is_dict(svc):
+        spec = svc.get("spec", {}) or {}
+        ext_ips = spec.get("externalIPs") or []
+        if ext_ips:
+            return parse_addrport(str(ext_ips[0]))
+        # Try spec.loadBalancerIP
+        lb_ip = spec.get("loadBalancerIP")
+        if lb_ip:
+            return parse_addrport(str(lb_ip))
+    else:
+        spec = getattr(svc, "spec", None)
+        if spec:
+            ext_ips = getattr(spec, "external_i_ps", None) or getattr(spec, "externalIPs", None) or getattr(spec, "external_ips", None)
+            if ext_ips:
+                # may be list-like
+                try:
+                    return parse_addrport(str(ext_ips[0]))
+                except Exception:
+                    pass
+            lb_ip = getattr(spec, "loadBalancerIP", None) or getattr(spec, "load_balancer_ip", None)
+            if lb_ip:
+                return parse_addrport(str(lb_ip))
+
+    # nothing found
+    return None, None
+
 # --- Main watch loop ---
 def run_loop():
     # load kube config (in-cluster or kubeconfig)
@@ -230,19 +286,23 @@ def run_loop():
                 id = svc_id(ns, name)
                 try:
                     if typ in ("ADDED", "MODIFIED"):
+                        backend_ip, backend_port = (None, None)
                         if ann:
-                            addr, port = parse_addrport(ann)
-                            if not addr:
-                                log.warning("Annotation present but parse failed for %s: %s", fullname, ann)
-                                continue
+                            backend_ip, backend_port = parse_addrport(ann)
+                        else:
+                            # annotation absent: try external IPs
+                            backend_ip, backend_port = extract_external_ip_and_port(svc)
+
+                        if backend_ip:
                             # register/update
                             try:
                                 consul_name, consul_meta = get_consul_name_and_meta(svc)
-                                consul_register(id=id, name=consul_name, addr=addr, port=port, tags=["k8s"], meta=consul_meta)
+                                consul_register(id=id, name=consul_name, addr=backend_ip, port=backend_port, tags=["k8s"], meta=consul_meta)
                             except Exception as e:
-                                log.error("Failed to register %s -> %s:%s: %s", fullname, addr, port, e)
+                                log.error("Failed to register %s -> %s:%s: %s", fullname, backend_ip, backend_port, e)
                         else:
-                            # annotation removed -> deregister
+                            # no backend info found: deregister if previously registered
+                            log.info("No backend IP found for %s (annotation missing and no external IP). Deregistering if exists.", fullname)
                             try:
                                 consul_deregister(id)
                             except Exception as e:
