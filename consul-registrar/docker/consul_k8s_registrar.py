@@ -166,6 +166,31 @@ def svc_id(ns, name):
     safe_name = name.replace("/", "_")
     return f"{SERVICE_NAME_PREFIX}{safe_ns}-{safe_name}"
 
+# --- Helpers to handle both dict and model objects ---
+def _is_dict(o):
+    return isinstance(o, dict)
+
+def svc_namespace(svc):
+    if _is_dict(svc):
+        return svc.get("metadata", {}).get("namespace")
+    return getattr(svc.metadata, "namespace", None)
+
+def svc_name_field(svc):
+    if _is_dict(svc):
+        return svc.get("metadata", {}).get("name")
+    return getattr(svc.metadata, "name", None)
+
+def svc_annotations(svc):
+    if _is_dict(svc):
+        return svc.get("metadata", {}).get("annotations") or {}
+    anns = getattr(svc.metadata, "annotations", None)
+    return anns or {}
+
+def svc_resource_version(svc):
+    if _is_dict(svc):
+        return svc.get("metadata", {}).get("resourceVersion")
+    return getattr(svc.metadata, "resource_version", None)
+
 # --- Main watch loop ---
 def run_loop():
     # load kube config (in-cluster or kubeconfig)
@@ -193,12 +218,12 @@ def run_loop():
                     log.debug("Received empty event object")
                     continue
 
-                print(str(svc))
-                ns = svc.metadata.namespace
-                name = svc.metadata.name
+                # normalize metadata via accessors
+                ns = svc_namespace(svc)
+                name = svc_name_field(svc)
                 fullname = f"{ns}/{name}"
-                rv = svc.metadata.resource_version
-                anns = svc.metadata.annotations or {}
+                rv = svc_resource_version(svc)
+                anns = svc_annotations(svc)
                 ann = anns.get(ANNOTATION_KEY_BACKEND)
                 log.debug("Event %s for %s (rv=%s) annotations=%s", typ, fullname, rv, {ANNOTATION_KEY_BACKEND: ann})
 
