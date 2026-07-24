@@ -98,7 +98,7 @@ def consul_put(path, data=None, attempts=RETRY_ATTEMPTS):
             else:
                 raise
 
-def consul_register(id, name, addr, port, tags=None):
+def consul_register(id, name, addr, port, tags=None, meta=None):
     payload = {
         "ID": id,
         "Name": name,
@@ -106,10 +106,13 @@ def consul_register(id, name, addr, port, tags=None):
         "Port": int(port),
         "Tags": tags or []
     }
+    if meta:
+        payload["Meta"] = meta
     if DRY_RUN:
-        log.info("DRY-RUN register id=%s name=%s addr=%s port=%s tags=%s", id, name, addr, port, tags)
+        log.info("DRY-RUN register id=%s name=%s addr=%s port=%s tags=%s meta=%s",
+                 id, name, addr, port, tags, meta)
         return
-    log.info("Registering Consul service id=%s name=%s -> %s:%s", id, name, addr, port)
+    log.info("Registering Consul service id=%s name=%s -> %s:%s (meta=%s)", id, name, addr, port, meta)
     consul_put("/v1/agent/service/register", payload)
 
 def consul_deregister(id):
