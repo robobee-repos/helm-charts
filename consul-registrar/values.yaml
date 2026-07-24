@@ -3,10 +3,12 @@ consulRegistrar:
   logLevel: "INFO"
   dryRun: "false"
   labelRegistrar: "haproxy-enabled=true"
-  annotationKey: "haproxy.example.com/backend"
+  annotationKeyBackend: "haproxy.example.com/backend"
+  annotationKeyName: "haproxy.example.com/display-name"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
   serviceNamePrefix: "haproxy-"
   watchNamespace: ""
+  consulToken: ""
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -312,9 +314,11 @@ containerSecurityContext:
 ## @param livenessProbe.successThreshold Success threshold for livenessProbe
 ##
 livenessProbe:
-  enabled: false
-  tcpSocket:
-    port: http
+  enabled: true
+  httpGet:
+    path: /health
+    port: http-health
+    scheme: HTTP
   initialDelaySeconds: 120
   periodSeconds: 10
   timeoutSeconds: 5
@@ -329,10 +333,10 @@ livenessProbe:
 ## @param readinessProbe.successThreshold Success threshold for readinessProbe
 ##
 readinessProbe:
-  enabled: false
+  enabled: true
   httpGet:
-    path: /health
-    port: http
+    path: /ready
+    port: http-health
     scheme: HTTP
     ## If using an HTTPS-terminating load-balancer, the probes may need to behave
     ## like the balancer to prevent HTTP 302 responses. According to the Kubernetes
@@ -361,7 +365,7 @@ startupProbe:
   enabled: false
   httpGet:
     path: /
-    port: http
+    port: http-health
     scheme: HTTP
     ## If using an HTTPS-terminating load-balancer, the probes may need to behave
     ## like the balancer to prevent HTTP 302 responses. According to the Kubernetes

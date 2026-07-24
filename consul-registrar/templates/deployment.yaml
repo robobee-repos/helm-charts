@@ -85,6 +85,11 @@ spec:
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
+          {{- if or .Values.livenessProbe.enabled .Values.readinessProbe.enabled }}
+          ports:
+            - containerPort: 8080
+              name: http-health
+          {{- end }}
           env:
             - name: LOG_LEVEL
               value: {{ .Values.consulRegistrar.logLevel | quote }}
@@ -92,14 +97,27 @@ spec:
               value: {{ .Values.consulRegistrar.dryRun | quote }}
             - name: LABEL_SELECTOR
               value: {{ .Values.consulRegistrar.labelRegistrar | quote }}
-            - name: ANNOTATION_KEY
-              value: {{ .Values.consulRegistrar.annotationKey | quote }}
+            - name: ANNOTATION_KEY_BACKEND
+              value: {{ .Values.consulRegistrar.annotationKeyBackend | quote }}
+            - name: ANNOTATION_KEY_NAME
+              value: {{ .Values.consulRegistrar.annotationKeyName | quote }}
             - name: CONSUL_HTTP
               value: {{ .Values.consulRegistrar.consulHttp | quote }}
             - name: SERVICE_NAME_PREFIX
               value: {{ .Values.consulRegistrar.serviceNamePrefix | quote }}
             - name: WATCH_NAMESPACE
               value: {{ .Values.consulRegistrar.watchNamespace | quote }}
+            {{- if .Values.consulRegistrar.consulToken }}
+            - name: CONSUL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: consul-token
+                  key: token
+            {{- end }}
+            {{- if or .Values.livenessProbe.enabled .Values.readinessProbe.enabled }}
+            - name: HEALTH_PORT
+              value: "8080"
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
