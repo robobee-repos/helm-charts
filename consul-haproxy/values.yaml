@@ -3,8 +3,6 @@ consulRegistrar:
   logLevel: "INFO"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
   consulAddr: "consul.default.svc.cluster.local:8500"
-  serviceNamePrefix: "haproxy-"
-  watchNamespace: ""
   consulToken: ""
 ## @section Global parameters
 ## Global Docker image parameters
