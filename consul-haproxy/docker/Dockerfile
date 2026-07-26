@@ -2,7 +2,7 @@ FROM haproxy:3.4
 
 USER root
 
-ARG CONSUL_TEMPLATE_VERSION=0.39.0
+ARG CONSUL_TEMPLATE_VERSION=0.42.1
 
 # Install required tools and create non-root user/group 1001
 RUN apt-get update \
