@@ -22,7 +22,7 @@ data:
       timeout server 30s
 
     resolvers consul
-      {{`nameserver consul {{ env "CONSUL_ADDR" }}`}}
+      nameserver consul {{ "{{" }} env "CONSUL_ADDR" }}
       parse-resolv-conf
       resolve_retries 3
       timeout resolve 1s
@@ -31,10 +31,10 @@ data:
 
     frontend public-http
       bind 0.0.0.0:80
-      {{`default_backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend`}}
+      default_backend {{ "{{" }} $svc := service "ldap" }}{{ "{{" }} if $svc.Meta.display_name }}{{ "{{" }} lower (replace $svc.Meta.display_name " " "-") }}{{ "{{" }} else }}{{ "{{" }} $svc.Name }}{{ "{{" }} end }}-backend
 
-    {{`backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend`}}
+    backend {{ "{{" }} $svc := service "ldap" }}{{ "{{" }} if $svc.Meta.display_name }}{{ "{{" }} lower (replace $svc.Meta.display_name " " "-") }}{{ "{{" }} else }}{{ "{{" }} $svc.Name }}{{ "{{" }} end }}-backend
       mode tcp
       balance roundrobin
       option ssl-hello-chk
-      {{`server-template {{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }} 5 {{ $svc.Name }}.service.consul:80 resolvers consul init-addr none check`}}
+      server-template {{ "{{" }} if $svc.Meta.display_name }}{{ "{{" }} lower (replace $svc.Meta.display_name " " "-") }}{{ "{{" }} else }}{{ "{{" }} $svc.Name }}{{ "{{" }} end }} 5 {{ "{{" }} $svc.Name }}.service.consul:80 resolvers consul init-addr none check
