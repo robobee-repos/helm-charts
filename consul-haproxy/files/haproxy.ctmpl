@@ -1,0 +1,29 @@
+global
+  log stdout format raw local0
+  maxconn 2000
+  stats socket /var/run/haproxy.sock mode 660 level admin
+  daemon
+
+defaults
+  mode tcp
+  timeout connect 5s
+  timeout client 30s
+  timeout server 30s
+
+resolvers consul
+  nameserver consul {{ env "CONSUL_ADDR" }}
+  parse-resolv-conf
+  resolve_retries 3
+  timeout resolve 1s
+  hold valid 10s
+  resolve_prefer ipv4
+
+frontend public-http
+  bind 0.0.0.0:80
+  default_backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend
+
+backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend
+  mode tcp
+  balance roundrobin
+  option ssl-hello-chk
+  server-template {{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }} 5 {{ $svc.Name }}.service.consul:80 resolvers consul init-addr none check
