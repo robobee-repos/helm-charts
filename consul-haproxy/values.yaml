@@ -1,5 +1,5 @@
 # values.yaml
-consulRegistrar:
+consulHaproxy:
   logLevel: "INFO"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
   consulAddr: "consul.default.svc.cluster.local:8500"

@@ -31,7 +31,7 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "consulRegistrar.imagePullSecrets" . | nindent 6 }}
+      {{- include "consulHaproxy.imagePullSecrets" . | nindent 6 }}
       automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       {{- if .Values.hostAliases }}
       # yamllint disable rule:indentation
@@ -61,7 +61,9 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.podSecurityContext "context" $) | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "consulRegistrar.serviceAccountName" .}}
+      {{- if serviceAccount.create }}
+      serviceAccountName: {{ include "consulHaproxy.serviceAccountName" .}}
+      {{- end }}
       {{- if .Values.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- end }}
@@ -71,7 +73,7 @@ spec:
       initContainers:
       containers:
         - name: consul-registrar
-          image: {{ include "consulRegistrar.image" . }}
+          image: {{ include "consulHaproxy.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.diagnosticMode.enabled }}
           command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
@@ -93,12 +95,12 @@ spec:
           {{- end }}
           env:
             - name: LOG_LEVEL
-              value: {{ .Values.consulRegistrar.logLevel | quote }}
+              value: {{ .Values.consulHaproxy.logLevel | quote }}
             - name: CONSUL_HTTP
-              value: {{ .Values.consulRegistrar.consulHttp | quote }}
+              value: {{ .Values.consulHaproxy.consulHttp | quote }}
             - name: CONSUL_ADDR
-              value: {{ .Values.consulRegistrar.consulAddr | quote }}
-            {{- if .Values.consulRegistrar.consulToken }}
+              value: {{ .Values.consulHaproxy.consulAddr | quote }}
+            {{- if .Values.consulHaproxy.consulToken }}
             - name: CONSUL_TOKEN
               valueFrom:
                 secretKeyRef:

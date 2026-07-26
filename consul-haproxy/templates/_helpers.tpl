@@ -44,9 +44,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Generate Consul-Registrar name
 */}}
-{{- define "myapp.consulRegistrarName" -}}
-{{- if .Values.consulRegistrar.name }}
-  {{- .Values.consulRegistrar.name }}
+{{- define "myapp.consulHaproxyName" -}}
+{{- if .Values.consulHaproxy.name }}
+  {{- .Values.consulHaproxy.name }}
 {{- else }}
   {{- .Release.Namespace }}
 {{- end }}
@@ -55,21 +55,21 @@ Generate Consul-Registrar name
 {{/*
 Return the proper Docker Image Registry Secret Names
 */}}
-{{- define "consulRegistrar.imagePullSecrets" -}}
+{{- define "consulHaproxy.imagePullSecrets" -}}
 {{- include "common.images.pullSecrets" (dict "images" (list .Values.image) "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
 Return the proper Consul-Registrar image name
 */}}
-{{- define "consulRegistrar.image" -}}
+{{- define "consulHaproxy.image" -}}
 {{- include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
  Create the name of the service account to use
  */}}
-{{- define "consulRegistrar.serviceAccountName" -}}
+{{- define "consulHaproxy.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
     {{ default (include "common.names.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
