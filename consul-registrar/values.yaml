@@ -5,6 +5,7 @@ consulRegistrar:
   labelRegistrar: "haproxy-enabled=true"
   annotationKeyBackend: "haproxy.example.com/backend"
   annotationKeyName: "haproxy.example.com/display-name"
+  annotationKeyVhost: "haproxy.example.com/vhost"
   consulHttp: "http://consul.default.svc.cluster.local:8500"
   serviceNamePrefix: "haproxy-"
   watchNamespace: ""
