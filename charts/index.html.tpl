@@ -180,6 +180,12 @@ helm install my-release helm-charts-charts
 <td><code>%CONSUL_REGISTRAR_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>consul-haproxy</code></td>
+<td><code>%CONSUL_HAPROXY_VERSION%</code></td>
+<td><code>%CONSUL_HAPROXY_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>

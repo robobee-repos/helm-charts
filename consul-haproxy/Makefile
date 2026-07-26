@@ -22,8 +22,8 @@ $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 
 .PHONY: update-index
 update-index:
-	cd ../charts && sed -i -e "s/%CONSUL_REGISTRAR_VERSION%/$(VERSION)/" index.html
-	cd ../charts && sed -i -e "s/%CONSUL_REGISTRAR_APP_VERSION%/$(APP_VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%CONSUL_HAPROXY_VERSION%/$(VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%CONSUL_HAPROXY_APP_VERSION%/$(APP_VERSION)/" index.html
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions

@@ -34,6 +34,7 @@ publish:
 	$(MAKE) -C ldap-manager publish
 	$(MAKE) -C namespace publish
 	$(MAKE) -C consul-registrar publish
+	$(MAKE) -C consul-haproxy publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -56,6 +57,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C ldap-manager publish-harbor
 	$(MAKE) -C namespace publish-harbor
 	$(MAKE) -C consul-registrar publish-harbor
+	$(MAKE) -C consul-haproxy publish-harbor
 
 .PHONY: index
 index:
@@ -69,6 +71,7 @@ index:
 	$(MAKE) -C ldap-manager update-index
 	$(MAKE) -C namespace update-index
 	$(MAKE) -C consul-registrar update-index
+	$(MAKE) -C consul-haproxy update-index
 
 .PHONY: push
 push:
