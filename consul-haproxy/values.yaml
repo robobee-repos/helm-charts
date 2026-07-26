@@ -164,7 +164,7 @@ topologySpreadConstraints: []
 priorityClassName: ""
 ## @param automountServiceAccountToken Mount Service Account token in pod
 ##
-automountServiceAccountToken: true
+automountServiceAccountToken: false
 ## @param hostAliases [array] Consul-Registrar pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
@@ -384,7 +384,7 @@ lifecycleHooks: {}
 serviceAccount:
   ## @param serviceAccount.create Enable creation of ServiceAccount for LDAP-Manager pod
   ##
-  create: true
+  create: false
   ## @param serviceAccount.name The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the common.names.fullname template
   ##
