@@ -5,7 +5,7 @@ global
   daemon
 
 defaults
-  mode tcp
+  mode http
   timeout connect 5s
   timeout client 30s
   timeout server 30s
@@ -19,11 +19,44 @@ resolvers consul
   resolve_prefer ipv4
 
 frontend public-http
-  bind 0.0.0.0:80
-  default_backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend
+  bind 0.0.0.0:8080
+  # default backend when no k8s-tagged services match
+  default_backend backend-default
 
-backend {{ $svc := service "ldap" }}{{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }}-backend
-  mode tcp
+  # generate ACLs & use_backend rules for every service tagged "k8s"
+  {{ range $name, $tags := services }}
+    {{ if has "k8s" $tags }}
+      {{ $svc := service $name }}
+      {{/* vhost for routing: prefer Meta.vhost, else service name */}}
+      {{ $vhost := default $name $svc.Meta.vhost }}
+      {{/* backend display name: prefer Meta.display_name else service name */}}
+      {{ $display := default $name $svc.Meta.display_name }}
+      {{/* sanitize backend identifier: replace non-alnum with '-' and lowercase */}}
+      {{ $san := $display | replaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+      acl host_{{ $san }} hdr(host) -i {{ $vhost }}
+      use_backend {{ $san }}-backend if host_{{ $san }}
+    {{ end }}
+  {{ end }}
+
+backend backend-default
+  mode http
   balance roundrobin
-  option ssl-hello-chk
-  server-template {{ if $svc.Meta.display_name }}{{ lower (replace $svc.Meta.display_name " " "-") }}{{ else }}{{ $svc.Name }}{{ end }} 5 {{ $svc.Name }}.service.consul:80 resolvers consul init-addr none check
+  timeout connect 1s
+  timeout server 1s
+
+{{/* Backend blocks for every k8s-tagged service */}}
+{{ range $name, $tags := services }}
+  {{ if has "k8s" $tags }}
+    {{ $svc := service $name }}
+    {{ $display := default $name $svc.Meta.display_name }}
+    {{ $san := $display | replaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+    {{ $port := default 80 $svc.Port }}
+backend {{ $san }}-backend
+  mode http
+  balance roundrobin
+  option httpchk GET /healthz
+  # create up to 5 servers from Consul DNS A records for '{{ $name }}'
+  server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
+
+  {{ end }}
+{{ end }}

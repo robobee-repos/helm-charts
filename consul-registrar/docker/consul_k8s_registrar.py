@@ -11,6 +11,7 @@ Env vars:
   LABEL_SELECTOR          (default: "haproxy-enabled=true")
   ANNOTATION_KEY_BACKEND  (default: "haproxy.example.com/backend")  # value "ip" or "ip:port"
   ANNOTATION_KEY_NAME     (default: "haproxy.example.com/name")  # value "ldap"
+  ANNOTATION_KEY_VHOST    (default: "haproxy.example.com/vhost")  # optional vhost to add as tag/meta
   CONSUL_HTTP             (default: "http://127.0.0.1:8500")
   CONSUL_TOKEN            (optional) -- Consul ACL token
   SERVICE_NAME_PREFIX     (default: "haproxy-") -- used to build unique Consul ID
@@ -36,6 +37,7 @@ WATCH_NAMESPACE = os.getenv("WATCH_NAMESPACE", "")
 LABEL_SELECTOR = os.getenv("LABEL_SELECTOR", "haproxy-enabled=true")
 ANNOTATION_KEY_BACKEND = os.getenv("ANNOTATION_KEY_BACKEND", "haproxy.example.com/backend")
 ANNOTATION_KEY_NAME = os.getenv("ANNOTATION_KEY_NAME", "haproxy.example.com/display-name")
+ANNOTATION_KEY_VHOST = os.getenv("ANNOTATION_KEY_VHOST", "haproxy.example.com/vhost")
 CONSUL_HTTP = os.getenv("CONSUL_HTTP", "http://127.0.0.1:8500")
 CONSUL_TOKEN = os.getenv("CONSUL_TOKEN", "")
 SERVICE_NAME_PREFIX = os.getenv("SERVICE_NAME_PREFIX", "haproxy-")
@@ -112,7 +114,7 @@ def consul_register(id, name, addr, port, tags=None, meta=None):
         log.info("DRY-RUN register id=%s name=%s addr=%s port=%s tags=%s meta=%s",
                  id, name, addr, port, tags, meta)
         return
-    log.info("Registering Consul service id=%s name=%s -> %s:%s (meta=%s)", id, name, addr, port, meta)
+    log.info("Registering Consul service id=%s name=%s -> %s:%s (meta=%s tags=%s)", id, name, addr, port, meta, tags)
     consul_put("/v1/agent/service/register", payload)
 
 def consul_deregister(id):
@@ -300,7 +302,16 @@ def run_loop():
                             # register/update
                             try:
                                 consul_name, consul_meta = get_consul_name_and_meta(svc)
-                                consul_register(id=id, name=consul_name, addr=backend_ip, port=backend_port, tags=["k8s"], meta=consul_meta)
+
+                                # collect tags and include vhost annotation if present
+                                tags = ["k8s"]
+                                vhost_ann = anns.get(ANNOTATION_KEY_VHOST)
+                                if vhost_ann:
+                                    # add vhost to tags and meta for convenience (so templates can use either)
+                                    tags.append(f"vhost={vhost_ann}")
+                                    consul_meta["vhost"] = vhost_ann
+
+                                consul_register(id=id, name=consul_name, addr=backend_ip, port=backend_port, tags=tags, meta=consul_meta)
                             except Exception as e:
                                 log.error("Failed to register %s -> %s:%s: %s", fullname, backend_ip, backend_port, e)
                         else:
