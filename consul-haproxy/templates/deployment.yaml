@@ -61,7 +61,7 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.podSecurityContext "context" $) | nindent 8 }}
       {{- end }}
-      {{- if serviceAccount.create }}
+      {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "consulHaproxy.serviceAccountName" .}}
       {{- end }}
       {{- if .Values.terminationGracePeriodSeconds }}
@@ -72,7 +72,7 @@ spec:
       {{- end }}
       initContainers:
       containers:
-        - name: consul-registrar
+        - name: consul-haproxy
           image: {{ include "consulHaproxy.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.diagnosticMode.enabled }}
@@ -88,11 +88,9 @@ spec:
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
-          {{- if or .Values.livenessProbe.enabled .Values.readinessProbe.enabled }}
           ports:
             - containerPort: 8080
               name: http
-          {{- end }}
           env:
             - name: LOG_LEVEL
               value: {{ .Values.consulHaproxy.logLevel | quote }}
@@ -106,10 +104,6 @@ spec:
                 secretKeyRef:
                   name: consul-token
                   key: token
-            {{- end }}
-            {{- if or .Values.livenessProbe.enabled .Values.readinessProbe.enabled }}
-            - name: HEALTH_PORT
-              value: "8080"
             {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
