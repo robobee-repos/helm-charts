@@ -10,6 +10,7 @@ consulRegistrar:
   serviceNamePrefix: "haproxy-"
   watchNamespace: ""
   consulToken: ""
+  watchAllNamespaces: true
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -99,7 +100,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: robobeerun/consul-registrar
-  tag: 1.0.8
+  tag: 1.1.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
