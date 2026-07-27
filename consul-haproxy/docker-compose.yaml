@@ -1,0 +1,66 @@
+services:
+  consul:
+    image: consul:1.15
+    command: agent -dev -client=0.0.0.0
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    volumes:
+      - ./consul-data:/consul/data
+
+  ldap-service:
+    image: hashicorp/http-echo:0.2.3
+    command: ["-listen=:80", "-text=Hello from LDAP"]
+    networks: ["default"]
+
+  api-service:
+    image: hashicorp/http-echo:0.2.3
+    command: ["-listen=:80", "-text=Hello from API"]
+    networks: ["default"]
+
+  register:
+    image: curlimages/curl:7.85.0
+    depends_on:
+      - consul
+      - ldap-service
+      - api-service
+    volumes:
+      - ./scripts:/scripts:ro
+    entrypoint: ["/bin/sh", "/scripts/register-services.sh"]
+    networks: ["default"]
+
+  consul-template:
+    image: hashicorp/consul-template:0.42.1
+    depends_on:
+      - consul
+      - register
+    volumes:
+      - ./files:/templates:ro
+      - ./output:/etc/haproxy
+    environment:
+      - CONSUL_HTTP_ADDR=http://consul:8500
+      - CONSUL_ADDR=consul:8600
+    # render once to /etc/haproxy/haproxy.cfg (shared with haproxy service)
+    command: -template "/templates/haproxy.ctmpl:/etc/haproxy/haproxy.cfg" -once
+    networks: ["default"]
+
+  haproxy:
+    image: haproxy:3.4
+    depends_on:
+      - consul-template
+    volumes:
+      # mount the rendered config into haproxy's default config location
+      - ./output:/usr/local/etc/haproxy:ro
+      - ./run:/var/run
+    ports:
+      - "8080:8080"
+    command: ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg", "-db"]
+    networks: ["default"]
+
+networks:
+  default:
+    driver: bridge
+
+volumes: 
+  runtime_volume:
+    driver: local

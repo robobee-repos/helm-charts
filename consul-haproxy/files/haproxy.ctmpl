@@ -4,6 +4,9 @@ global
   stats socket /var/run/haproxy.sock mode 660 level admin
   daemon
 
+traces
+  trace h1  sink stdout  level user  event +any  verbosity clean  start now
+
 defaults
   mode http
   timeout connect 5s
@@ -16,7 +19,6 @@ resolvers consul
   resolve_retries 3
   timeout resolve 1s
   hold valid 10s
-  resolve_prefer ipv4
 
 frontend public-http
   bind 0.0.0.0:8080
@@ -24,17 +26,14 @@ frontend public-http
   default_backend backend-default
 
   # generate ACLs & use_backend rules for every service tagged "k8s"
-  {{ range $name, $tags := services }}
-    {{ if $tags | contains "k8s"  }}
-      {{ $svc := service $name }}
-      {{/* vhost for routing: prefer Meta.vhost, else service name */}}
-      {{ $vhost := default $name $svc.Meta.vhost }}
-      {{/* backend display name: prefer Meta.display_name else service name */}}
-      {{ $display := default $name $svc.Meta.display_name }}
-      {{/* sanitize backend identifier: replace non-alnum with '-' and lowercase */}}
-      {{ $san := $display | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
-      acl host_{{ $san }} hdr(host) -i {{ $vhost }}
-      use_backend {{ $san }}-backend if host_{{ $san }}
+  {{ range services }}
+    {{ if .Tags | contains "k8s" }}
+      {{ range service .Name }}
+        {{ $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{ $vhost := index .ServiceMeta "vhost" }}
+  acl host_{{ $san }} hdr(host) -i {{ $vhost }}
+  use_backend {{ $san }}-backend if host_{{ $san }}
+      {{ end }}
     {{ end }}
   {{ end }}
 
@@ -45,18 +44,18 @@ backend backend-default
   timeout server 1s
 
 {{/* Backend blocks for every k8s-tagged service */}}
-{{ range $name, $tags := services }}
-  {{ if $tags | contains "k8s"  }}
-    {{ $svc := service $name }}
-    {{ $display := default $name $svc.Meta.display_name }}
-    {{ $san := $display | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
-    {{ $port := default 80 $svc.Port }}
+{{ range services }}
+  {{ if .Tags | contains "k8s" }}
+    {{ $name := .Name }}
+    {{ range service .Name }}
+      {{ $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+      {{ $port := .Port }}
 backend {{ $san }}-backend
   mode http
   balance roundrobin
-  option httpchk GET /healthz
+  option httpchk GET /
   # create up to 5 servers from Consul DNS A records for '{{ $name }}'
   server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
-
+    {{ end }}
   {{ end }}
 {{ end }}
