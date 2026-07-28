@@ -19,6 +19,15 @@ resolvers consul
   timeout resolve 1s
   hold valid 10s
 
+frontend stats
+  bind *:8404
+  mode http
+  stats enable
+  stats uri /;csv       # csv endpoint
+  stats refresh 10s
+  stats auth admin:StrongPasswordHere
+  stats hide-version
+
 frontend public-http
   bind 0.0.0.0:8080
   # default backend when no k8s-tagged services match
@@ -75,12 +84,3 @@ backend {{ $san }}-backend
     {{- end }}
   {{- end }}
 {{ end }}
-
-listen stats
-  bind *:8404
-  mode http
-  stats enable
-  stats uri /;csv       # csv endpoint
-  stats refresh 10s
-  stats auth admin:StrongPasswordHere
-  stats hide-version
