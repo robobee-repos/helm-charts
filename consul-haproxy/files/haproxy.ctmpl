@@ -4,9 +4,6 @@ global
   stats socket /var/run/haproxy.sock mode 660 level admin
   daemon
 
-traces
-  trace h1  sink stdout  level user  event +any  verbosity clean  start now
-
 defaults
   mode http
   timeout connect 5s
@@ -26,16 +23,20 @@ frontend public-http
   default_backend backend-default
 
   # generate ACLs & use_backend rules for every service tagged "k8s"
-  {{ range services }}
-    {{ if .Tags | contains "k8s" }}
-      {{ range service .Name }}
+{{- range services }}
+  {{- if .Tags | contains "k8s" }}
+    {{- $name := .Name }}
+    {{- $instances := service .Name }}
+    {{- if gt (len $instances) 0 }}
+      {{- with index $instances 0 }}
         {{ $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{ $vhost := index .ServiceMeta "vhost" }}
   acl host_{{ $san }} hdr(host) -i {{ $vhost }}
   use_backend {{ $san }}-backend if host_{{ $san }}
-      {{ end }}
-    {{ end }}
-  {{ end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 
 backend backend-default
   mode http
@@ -43,19 +44,30 @@ backend backend-default
   timeout connect 1s
   timeout server 1s
 
-{{/* Backend blocks for every k8s-tagged service */}}
 {{ range services }}
-  {{ if .Tags | contains "k8s" }}
-    {{ $name := .Name }}
-    {{ range service .Name }}
-      {{ $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
-      {{ $port := .Port }}
+# service: {{ . }}
+{{- range service .Name }}
+# {{ . }}
+{{- end }}
+{{- end }}
+
+{{/* Backend blocks for every k8s-tagged service */}}
+{{- range services }}
+  {{- if .Tags | contains "k8s" }}
+    {{- $name := .Name }}
+    {{- $instances := service .Name }}
+    {{- if gt (len $instances) 0 }}
+      {{- with index $instances 0 }}
+        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $port := .Port }}
+
 backend {{ $san }}-backend
   mode http
   balance roundrobin
   option httpchk GET /
   # create up to 5 servers from Consul DNS A records for '{{ $name }}'
   server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
-    {{ end }}
-  {{ end }}
-{{ end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
