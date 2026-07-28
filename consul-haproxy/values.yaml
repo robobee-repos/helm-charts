@@ -229,6 +229,61 @@ service:
   ## @param service.extraPorts Extra ports to expose in the HAProxy service
   ##
   extraPorts: []
+## HAProxy service parameters
+##
+serviceStats:
+  ## @param service.type HAProxy service type for /stats
+  ##
+  enabled: true
+  ## @param service.type HAProxy service type for /stats
+  ##
+  type: ClusterIP
+  ## @param service.ports.http HAProxy HTTP service port
+  ##
+  ports:
+    stats: 8404
+  ## Node ports to expose
+  ## NOTE: choose port between <30000-32767>
+  ## @param service.nodePorts.http Node port for HTTP
+  ##
+  nodePorts:
+  ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  ##
+  sessionAffinityConfig: {}
+  ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
+  ## Values: ClientIP or None
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
+  ##
+  sessionAffinity: None
+  ## @param service.clusterIP HAProxy service Cluster IP
+  ## e.g.:
+  ## clusterIP: None
+  ##
+  clusterIP: ""
+  ## @param service.loadBalancerIP HAProxy service Load Balancer IP
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.loadBalancerSourceRanges HAProxy service Load Balancer sources
+  ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## e.g:
+  ## loadBalancerSourceRanges:
+  ##   - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  ## @param service.externalTrafficPolicy HAProxy service external traffic policy
+  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param service.annotations Additional custom annotations for HAProxy service
+  ##
+  annotations: {}
+  ## @param service.extraPorts Extra ports to expose in the HAProxy service
+  ##
+  extraPorts: []
 ## Network Policies
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
 ##
