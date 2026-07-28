@@ -266,13 +266,20 @@ def run_loop():
                                 continue
 
                             # determine consul service name & meta
-                            # prefer annotation display name, then hostname, then gateway name
+                            # prefer annotation display name; if missing use gateway namespace/name as display_name
                             display_ann = anns.get(ANNOTATION_KEY_NAME)
-                            fallback_name = hostname or name
-                            consul_name = make_registration_name(display_ann, fallback_name)
-                            meta = {}
                             if display_ann:
-                                meta["display_name"] = display_ann
+                                display_value = display_ann
+                            else:
+                                # use namespace/name as the display name when no annotation is present
+                                display_value = f"{ns}/{name}"
+
+                            # consul service name (sanitized)
+                            consul_name = sanitize_consul_name(display_value)
+
+                            # prepare meta (always include display_name per request)
+                            meta = {"display_name": display_value}
+
                             # vhost: prefer hostname, else annotation ANNOTATION_KEY_VHOST if present
                             vhost_ann = anns.get(ANNOTATION_KEY_VHOST)
                             vhost_val = hostname or vhost_ann
