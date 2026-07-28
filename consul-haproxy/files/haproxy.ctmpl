@@ -23,7 +23,7 @@ frontend stats
   bind *:8404
   mode http
   stats enable
-  stats uri /;csv       # csv endpoint
+  stats uri /
   stats refresh 10s
   stats auth admin:StrongPasswordHere
   stats hide-version
