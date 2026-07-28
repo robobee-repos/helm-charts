@@ -1,0 +1,51 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- if .Values.serviceStats.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.fullname" . }}-stats
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.serviceStats.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.serviceStats.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.serviceStats.type }}
+  {{- if .Values.serviceStats.sessionAffinity }}
+  sessionAffinity: {{ .Values.serviceStats.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.serviceStats.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.serviceStats.sessionAffinityConfig "context" $) | nindent 4 }}
+  {{- end }}
+  {{- if and .Values.serviceStats.clusterIP (eq .Values.serviceStats.type "ClusterIP") }}
+  clusterIP: {{ .Values.serviceStats.clusterIP }}
+  {{- end }}
+  {{- if (and (eq .Values.serviceStats.type "LoadBalancer") (not (empty .Values.serviceStats.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.serviceStats.loadBalancerIP }}
+  {{- end }}
+  {{- if and (eq .Values.serviceStats.type "LoadBalancer") .Values.serviceStats.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.serviceStats.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if or (eq .Values.serviceStats.type "LoadBalancer") (eq .Values.serviceStats.type "NodePort") }}
+  externalTrafficPolicy: {{ .Values.serviceStats.externalTrafficPolicy | quote }}
+  {{- end }}
+  ports:
+    - name: stats
+      port: {{ coalesce .Values.serviceStats.ports.stats .Values.serviceStats.port }}
+      targetPort: stats
+      {{- if and (or (eq .Values.serviceStats.type "NodePort") (eq .Values.serviceStats.type "LoadBalancer")) (not (empty .Values.serviceStats.nodePorts.http)) }}
+      nodePort: {{ .Values.serviceStats.nodePorts.stats }}
+      {{- else if eq .Values.serviceStats.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    {{- if .Values.serviceStats.extraPorts }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.serviceStats.extraPorts "context" $) | nindent 4 }}
+    {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels ) "context" . ) }}
+  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
+{{- end }}
