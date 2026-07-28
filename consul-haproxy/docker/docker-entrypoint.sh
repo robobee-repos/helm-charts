@@ -42,6 +42,7 @@ consul-template ${CONSUL_ARGS} -template "${TEMPLATE_PATH}:${OUTPUT_CFG}:echo re
 
 # Validate generated config before starting haproxy
 log "Validating HAProxy config: ${OUTPUT_CFG}"
+debug "Generated HAProxy config: `cat ${OUTPUT_CFG}`"
 if ! haproxy -c -f "${OUTPUT_CFG}"; then
   log "ERROR: haproxy config validation failed, aborting"
   exit 2
