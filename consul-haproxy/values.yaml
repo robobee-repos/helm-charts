@@ -190,8 +190,8 @@ service:
   ## @param service.nodePorts.http Node port for HTTP
   ##
   nodePorts:
-    http: "30080"
-    https: "30443"
+    http: "30001"
+    https: "30002"
   ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity
   ## sessionAffinityConfig:
   ##   clientIP:
