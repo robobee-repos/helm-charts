@@ -326,16 +326,11 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: true
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - >
-        haproxy -c -f /etc/haproxy/haproxy.cfg >/dev/null 2>&1
-        && [ -f /var/run/haproxy.pid ] && kill -0 $(cat /var/run/haproxy.pid)
-  initialDelaySeconds: 5
+  tcpSocket:
+    port: 8080
+  initialDelaySeconds: 10
   periodSeconds: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 3
   failureThreshold: 3
 ## @param startupProbe.enabled Enable startupProbe on Consul-Registrar containers
 ## @skip startupProbe.httpGet
