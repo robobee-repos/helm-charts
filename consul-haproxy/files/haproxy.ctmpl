@@ -2,7 +2,6 @@ global
   log stdout format raw local0
   maxconn 2000
   stats socket /var/run/haproxy.sock mode 660 level admin
-  #daemon
 
 defaults
   log global
@@ -50,6 +49,7 @@ frontend public-http
 {{- end }}
 
 backend backend-default
+  log global
   mode http
   balance roundrobin
   timeout connect 1s
@@ -71,13 +71,12 @@ backend backend-default
       {{- with index $instances 0 }}
         {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $port := .Port }}
-
+        {{- $vhost := index .ServiceMeta "vhost" }}
 backend {{ $san }}-backend
-  option httplog  
   log global
   mode http
   balance roundrobin
-  option httpchk GET /
+  option httpchk GET / HTTP/1.1 {{ $vhost }}
   # create up to 5 servers from Consul DNS A records for '{{ $name }}'
   server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
       {{- end }}
