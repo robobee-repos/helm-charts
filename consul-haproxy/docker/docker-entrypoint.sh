@@ -39,9 +39,6 @@ if [ ! -f "${TEMPLATE_PATH}" ]; then
   exit 1
 fi
 
-chmod +x "${RELOAD_CMD}"
-log "Wrote reload helper at ${RELOAD_CMD}"
-
 log "Rendering template once: ${TEMPLATE_PATH} -> ${OUTPUT_CFG}"
 debug "Running: consul-template ${CONSUL_ARGS} -template \"${TEMPLATE_PATH}:${OUTPUT_CFG}:echo rendered\" -once ${CT_OPTS}"
 consul-template ${CONSUL_ARGS} -template "${TEMPLATE_PATH}:${OUTPUT_CFG}:echo rendered" -once ${CT_OPTS}
