@@ -34,8 +34,8 @@ frontend public-http
 
   # generate ACLs & use_backend rules for every service tagged "k8s"
 {{- range services }}
-  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
-    {{- range service .Name }}
+  {{- range service .Name }}
+    {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
       {{- $nameKey := printf "seen_acl_http_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
@@ -60,11 +60,12 @@ frontend public-https
 
   # generate ACLs & use_backend rules for every service tagged "k8s"
 {{- range services }}
-  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
-    {{- range service .Name }}
+  {{- range service .Name }}
+    {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
       {{- $nameKey := printf "seen_acl_https_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
+        {{ index .ServiceMeta "display_name" }}
         {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $vhost := index .ServiceMeta "vhost" }}
   acl sni_{{ $san }} req_ssl_sni -i {{ $vhost }}
@@ -90,9 +91,9 @@ backend backend-default-tcp
 
 {{/* Backend blocks for every k8s-tagged service */}}
 {{- range services }}
-  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
-    {{- $name := .Name }}
-    {{- range service .Name }}
+  {{- range service .Name }}
+    {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
+      {{- $name := .Name }}
       {{- $nameKey := printf "seen_backend_http_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
@@ -113,9 +114,9 @@ backend {{ $san }}-backend
 
 # # TCP backends for HTTPS/pass-through (no SSL on HAProxy -> keep TLS intact)
 {{- range services }}
-  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
-    {{- $name := .Name }}
-    {{- range service .Name }}
+  {{- range service .Name }}
+    {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
+      {{- $name := .Name }}
       {{- $nameKey := printf "seen_backend_https_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
@@ -128,7 +129,7 @@ backend {{ $san }}-ssl-backend
   balance roundrobin
   timeout check 3s
   # create up to 5 servers from Consul DNS A records for '{{ $name }}'
-  server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
+  server-template {{ $san }} 5 {{ $name }}.service.consul:{{ .Port }} resolvers consul init-addr none check
       {{- end }}
     {{- end }}
   {{- end }}
