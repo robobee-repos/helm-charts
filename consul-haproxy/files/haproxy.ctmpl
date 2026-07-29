@@ -65,7 +65,6 @@ frontend public-https
       {{- $nameKey := printf "seen_acl_https_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
-        {{ index .ServiceMeta "display_name" }}
         {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $vhost := index .ServiceMeta "vhost" }}
   acl sni_{{ $san }} req_ssl_sni -i {{ $vhost }}
