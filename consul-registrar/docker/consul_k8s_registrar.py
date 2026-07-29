@@ -376,6 +376,14 @@ def run_loop():
 
 # --- Entrypoint ---
 def main():
+    # load kube config (in-cluster or kubeconfig)
+    try:
+        config.load_incluster_config()
+        log.info("Loaded in-cluster Kubernetes configuration")
+    except Exception:
+        config.load_kube_config()
+        log.info("Loaded local kubeconfig")
+
     log.info("Starting consul-registrar-gateway (DRY_RUN=%s LOG_LEVEL=%s owner=%s)", DRY_RUN, LOG_LEVEL, MY_OWNER)
     health = start_health_server(HEALTH_PORT)
 
