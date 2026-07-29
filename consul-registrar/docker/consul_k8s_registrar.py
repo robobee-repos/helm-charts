@@ -9,6 +9,7 @@ Gateway.status.addresses for address/port/vhost information.
 
 Env vars (existing plus):
   ANNOTATION_KEY_VHOST    (default: "haproxy.example.com/vhost")  # optional vhost annotation
+  POD_NAME                (optional) used as owner id in Consul meta
 """
 import os
 import time
@@ -17,7 +18,8 @@ import logging
 import threading
 import requests
 import re
-
+import signal
+import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from kubernetes import client, config, watch
 from kubernetes.client import CustomObjectsApi
@@ -37,6 +39,9 @@ DRY_RUN = os.getenv("DRY_RUN", "false").lower() in ("1", "true", "yes")
 HEALTH_PORT = int(os.getenv("HEALTH_PORT", "8080"))
 RETRY_ATTEMPTS = int(os.getenv("RETRY_ATTEMPTS", "3"))
 RETRY_BACKOFF = float(os.getenv("RETRY_BACKOFF", "0.5"))  # seconds
+
+# Owner ID for registrations (helps reconciling which registrar created services)
+MY_OWNER = os.getenv("POD_NAME") or os.getenv("MY_POD_NAME") or socket.gethostname()
 
 # --- Logging setup ---
 logging.basicConfig(level=getattr(logging, LOG_LEVEL, logging.INFO),
@@ -118,6 +123,42 @@ def consul_deregister(id):
     log.info("Deregistering Consul service id=%s", id)
     consul_put(url, data=None)
 
+# --- Reconciliation helpers ---
+def reconcile_on_start():
+    """
+    Populate registered_ids from Consul services that look like ones this registrar manages.
+    We use SERVICE_NAME_PREFIX and the owner meta to identify relevant services.
+    """
+    if DRY_RUN:
+        log.info("DRY-RUN mode, skipping reconciliation")
+        return
+    try:
+        log.info("Reconciling existing Consul services for owner=%s prefix=%s", MY_OWNER, SERVICE_NAME_PREFIX)
+        r = session.get(CONSUL_HTTP.rstrip('/') + "/v1/agent/services", timeout=5)
+        r.raise_for_status()
+        svcs = r.json()
+        for sid, info in svcs.items():
+            if not sid.startswith(SERVICE_NAME_PREFIX):
+                continue
+            meta = (info.get("Meta") or {})
+            owner = meta.get("owner")
+            key = meta.get("registrar_key")
+            if owner and owner == MY_OWNER and key:
+                registered_ids[key] = sid
+                log.info("Imported registration from Consul: key=%s id=%s", key, sid)
+    except Exception:
+        log.exception("reconcile failed (continuing)")
+
+def deregister_all():
+    keys = list(registered_ids.keys())
+    for k in keys:
+        sid = registered_ids.pop(k, None)
+        if sid:
+            try:
+                consul_deregister(sid)
+            except Exception:
+                log.exception("Failed to deregister %s", sid)
+
 # --- Utility helpers ---
 def sanitize_consul_name(s: str) -> str:
     s = (s or "").strip().lower()
@@ -138,9 +179,9 @@ def parse_addrport(v):
     if ":" in v:
         ip, port = v.rsplit(":", 1)
     else:
-        ip, port = v, "80"
+        ip, port = v, None
     ip = ip.strip()
-    port = port.strip()
+    port = port.strip() if port else None
     if not ip:
         return None, None
     return ip, port
@@ -177,14 +218,6 @@ def status_addresses(obj):
 
 # --- Main watch loop for Gateways ---
 def run_loop():
-    # load kube config (in-cluster or kubeconfig)
-    try:
-        config.load_incluster_config()
-        log.info("Loaded in-cluster Kubernetes configuration")
-    except Exception:
-        config.load_kube_config()
-        log.info("Loaded local kubeconfig")
-
     custom = CustomObjectsApi()
     w = watch.Watch()
 
@@ -234,6 +267,7 @@ def run_loop():
                             listener_name = listener.get("name") or listener.get("protocol") or ""
                             hostname = listener.get("hostname")  # may be None
                             port = listener.get("port") or 80
+                            protocol = (listener.get("protocol") or "").lower()
 
                             # produce a listener identifier used in ID and tracking
                             listener_ident = listener_name if listener_name else (hostname or str(port))
@@ -242,7 +276,10 @@ def run_loop():
                             current_listener_keys.add(key)
 
                             # decide address to register: prefer status.addresses value; if not present skip
-                            reg_addr = addr_from_status
+                            reg_addr = None
+                            reg_port = None
+                            if addr_from_status:
+                                reg_addr, reg_port = parse_addrport(addr_from_status)
                             if not reg_addr:
                                 # try annotations for an explicit backend address (ANNOTATION_KEY_BACKEND) on the gateway metadata
                                 backend_ann = anns.get(ANNOTATION_KEY_BACKEND)
@@ -250,8 +287,10 @@ def run_loop():
                                     reg_addr, reg_port = parse_addrport(backend_ann)
                                 else:
                                     reg_addr = None
-                                    reg_port = port
-                            else:
+                                    reg_port = None
+
+                            # fallback to listener port if none provided by status/annotation
+                            if not reg_port:
                                 reg_port = port
 
                             if not reg_addr:
@@ -279,6 +318,9 @@ def run_loop():
 
                             # prepare meta (always include display_name per request)
                             meta = {"display_name": display_value}
+                            # record registrar key & owner to allow reconciliation later
+                            meta["registrar_key"] = key
+                            meta["owner"] = MY_OWNER
 
                             # vhost: prefer hostname, else annotation ANNOTATION_KEY_VHOST if present
                             vhost_ann = anns.get(ANNOTATION_KEY_VHOST)
@@ -286,10 +328,12 @@ def run_loop():
                             if vhost_val:
                                 meta["vhost"] = vhost_val
 
-                            # tags: include k8s, gateway, and vhost=...
+                            # tags: include k8s, gateway, vhost and protocol
                             tags = ["k8s", "gateway"]
                             if vhost_val:
                                 tags.append(f"vhost={vhost_val}")
+                            if protocol:
+                                tags.append(f"protocol={protocol}")
 
                             # build unique id per listener
                             cid = build_consul_id(ns, name, listener_ident)
@@ -301,7 +345,7 @@ def run_loop():
                                 log.error("Failed to register Gateway %s listener %s -> %s:%s: %s", fullname, listener_ident, reg_addr, reg_port, e)
 
                         # cleanup any registered listener IDs that are no longer present in the Gateway spec
-                        to_remove = [k for k in registered_ids.keys() if k.startswith(fullname + ":") and k not in current_listener_keys]
+                        to_remove = [k for k in list(registered_ids.keys()) if k.startswith(fullname + ":") and k not in current_listener_keys]
                         for k in to_remove:
                             old_id = registered_ids.pop(k, None)
                             if old_id:
@@ -332,13 +376,37 @@ def run_loop():
 
 # --- Entrypoint ---
 def main():
-    log.info("Starting consul-registrar-gateway (DRY_RUN=%s LOG_LEVEL=%s)", DRY_RUN, LOG_LEVEL)
+    log.info("Starting consul-registrar-gateway (DRY_RUN=%s LOG_LEVEL=%s owner=%s)", DRY_RUN, LOG_LEVEL, MY_OWNER)
     health = start_health_server(HEALTH_PORT)
+
+    # handle termination to perform cleanup
+    def _handle_term(signum, frame):
+        log.info("Received signal %s, deregistering services and exiting", signum)
+        try:
+            deregister_all()
+        except Exception:
+            log.exception("Error during deregistration")
+        try:
+            health.shutdown()
+        except Exception:
+            pass
+        raise SystemExit(0)
+
+    signal.signal(signal.SIGINT, _handle_term)
+    signal.signal(signal.SIGTERM, _handle_term)
+
+    # reconcile existing services created by this registrar
+    reconcile_on_start()
+
     try:
         run_loop()
     except KeyboardInterrupt:
         log.info("Interrupted, exiting")
     finally:
+        try:
+            deregister_all()
+        except Exception:
+            log.exception("Error during final deregistration")
         try:
             health.shutdown()
         except Exception:

@@ -34,11 +34,11 @@ frontend public-http
 
   # generate ACLs & use_backend rules for every service tagged "k8s"
 {{- range services }}
-  {{- if .Tags | contains "k8s" }}
-    {{- $name := .Name }}
-    {{- $instances := service .Name }}
-    {{- if gt (len $instances) 0 }}
-      {{- with index $instances 0 }}
+  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
+    {{- range service .Name }}
+      {{- $nameKey := printf "seen_acl_http_%s" .Name }}
+      {{- if not (scratch.Key $nameKey) }}
+        {{- scratch.Set $nameKey true }}
         {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $vhost := index .ServiceMeta "vhost" }}
   acl host_{{ $san }} hdr(host) -i {{ $vhost }}
@@ -48,6 +48,33 @@ frontend public-http
   {{- end }}
 {{- end }}
 
+# HTTPS passthrough via SNI (terminate at Gateway; HAProxy must not decrypt)
+frontend public-https
+  bind 0.0.0.0:8443
+  mode tcp
+  option tcplog
+  # wait for TLS ClientHello so req_ssl_sni is available
+  tcp-request inspect-delay 5s
+  tcp-request content accept if { req_ssl_hello_type 1 }
+  default_backend backend-default-tcp
+
+  # generate ACLs & use_backend rules for every service tagged "k8s"
+{{- range services }}
+  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
+    {{- range service .Name }}
+      {{- $nameKey := printf "seen_acl_https_%s" .Name }}
+      {{- if not (scratch.Key $nameKey) }}
+        {{- scratch.Set $nameKey true }}
+        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $vhost := index .ServiceMeta "vhost" }}
+  acl sni_{{ $san }} req_ssl_sni -i {{ $vhost }}
+  use_backend {{ $san }}-ssl-backend if sni_{{ $san }}
+      {{ end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+
 backend backend-default
   log global
   mode http
@@ -55,20 +82,20 @@ backend backend-default
   timeout connect 1s
   timeout server 1s
 
-{{ range services }}
-# service: {{ . }}
-{{- range service .Name }}
-# {{ . }}
-{{- end }}
-{{- end }}
+backend backend-default-tcp
+  mode tcp
+  balance roundrobin
+  option tcplog
+  timeout check 3s
 
 {{/* Backend blocks for every k8s-tagged service */}}
 {{- range services }}
-  {{- if .Tags | contains "k8s" }}
+  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=http") }}
     {{- $name := .Name }}
-    {{- $instances := service .Name }}
-    {{- if gt (len $instances) 0 }}
-      {{- with index $instances 0 }}
+    {{- range service .Name }}
+      {{- $nameKey := printf "seen_backend_http_%s" .Name }}
+      {{- if not (scratch.Key $nameKey) }}
+        {{- scratch.Set $nameKey true }}
         {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $port := .Port }}
         {{- $vhost := index .ServiceMeta "vhost" }}
@@ -83,3 +110,34 @@ backend {{ $san }}-backend
     {{- end }}
   {{- end }}
 {{ end }}
+
+# # TCP backends for HTTPS/pass-through (no SSL on HAProxy -> keep TLS intact)
+{{- range services }}
+  {{- if and (.Tags | contains "k8s") (.Tags | contains "protocol=https") }}
+    {{- $name := .Name }}
+    {{- range service .Name }}
+      {{- $nameKey := printf "seen_backend_https_%s" .Name }}
+      {{- if not (scratch.Key $nameKey) }}
+        {{- scratch.Set $nameKey true }}
+        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $port := .Port }}
+        {{- $vhost := index .ServiceMeta "vhost" }}
+backend {{ $san }}-ssl-backend
+  mode tcp
+  option tcplog
+  balance roundrobin
+  timeout check 3s
+  # create up to 5 servers from Consul DNS A records for '{{ $name }}'
+  server-template {{ $san }} 5 {{ $name }}.service.consul:{{ $port }} resolvers consul init-addr none check
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{ end }}
+
+{{ range services }}
+# service: {{ . }}
+{{- range service .Name }}
+# {{ . }}
+{{- end }}
+{{- end }}
+
