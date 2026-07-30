@@ -122,8 +122,8 @@ helm install my-release helm-charts-charts
 
 <tr>
 <td><code>postgrescluster</code></td>
-<td><code>1.1.0</code></td>
-<td><code>5.2.0</code></td>
+<td><code>%POSTGRESCLUSTER_VERSION%</code></td>
+<td><code>%POSTGRESCLUSTER_APP_VERSION%</code></td>
 </tr>
 
 <tr>

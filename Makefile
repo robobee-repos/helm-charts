@@ -15,7 +15,6 @@ publish-all: publish index push ##@targets Publish all helm charts.
 .PHONY: publish
 publish:
 	$(MAKE) -C haproxy publish
-	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish
 	$(MAKE) -C certs-issuers publish
 	$(MAKE) -C certs publish
@@ -39,7 +38,6 @@ publish:
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C haproxy publish-harbor
-	$(MAKE) -C kube-postgres-operator-crunchy/helm/install publish-harbor
 	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres publish-harbor
 	$(MAKE) -C certs-issuers publish-harbor
 	$(MAKE) -C certs publish-harbor
@@ -63,6 +61,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 index:
 	cd charts && helm repo index .
 	cd charts && sed -e "s/%TIME%/`date`/" index.html.tpl > index.html
+	$(MAKE) -C kube-postgres-operator-crunchy/helm/postgres update-index
 	$(MAKE) -C gitea update-index
 	$(MAKE) -C mariadb-jobs update-index
 	$(MAKE) -C openldap update-index
