@@ -186,6 +186,12 @@ helm install my-release helm-charts-charts
 <td><code>%CONSUL_HAPROXY_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>gateway</code></td>
+<td><code>%GATEWAY_VERSION%</code></td>
+<td><code>%GATEWAY_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>

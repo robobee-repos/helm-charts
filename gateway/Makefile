@@ -21,8 +21,8 @@ $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
 
 .PHONY: update-index
 update-index:
-	cd ../charts && sed -i -e "s/%LDAP_MANAGER_VERSION%/$(VERSION)/" index.html
-	cd ../charts && sed -i -e "s/%LDAP_MANAGER_APP_VERSION%/$(APP_VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%GATEWAY_VERSION%/$(VERSION)/" index.html
+	cd ../charts && sed -i -e "s/%GATEWAY_APP_VERSION%/$(APP_VERSION)/" index.html
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions
