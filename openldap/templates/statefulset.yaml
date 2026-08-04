@@ -187,7 +187,7 @@ spec:
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/custom/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
@@ -197,7 +197,7 @@ spec:
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/custom/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
