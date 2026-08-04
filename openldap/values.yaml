@@ -178,8 +178,7 @@ env:
   OPENLDAP_BACKUP_DIR: "/var/lib/openldap/openldap-backups"
   OPENLDAP_MODULES_DIR: "/usr/lib/openldap"
   OPENLDAP_SCHEMAS_DIR: "/etc/openldap/schema"
-  OPENLDAP_CUSTOM_MODULES_DIR: "/container/services/openldap/assets/module"
-  OPENLDAP_CUSTOM_SCHEMAS_DIR: "/container/services/openldap/assets/schema"
+  OPENLDAP_CUSTOM_SCHEMAS_DIR: "/container/services/openldap-bootstrap/assets/ldif/config/custom"
   OPENLDAP_NOFILE: "65536"
   # -1 any enable all debugging
   # 0 no debugging
