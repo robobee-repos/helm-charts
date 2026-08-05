@@ -368,7 +368,7 @@ predefinedFileSets:
   fileSets:
   - name: openssh-lpk-schema
     files:
-    - filename: 20-openssh-lpk-schema.config.ldif
+    - filename: 99-openssh-lpk-schema.config.ldif
       content: |
         dn: cn=openssh-lpk,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -379,7 +379,7 @@ predefinedFileSets:
   fileSets:
   - name: matomo-schema
     files:
-    - filename: 20-matomo-schema.config.ldif
+    - filename: 99-matomo-schema.config.ldif
       content: |
         dn: cn=matomo,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -392,7 +392,7 @@ predefinedFileSets:
   fileSets:
   - name: wordpress-schema
     files:
-    - filename: 20-wordpress-schema.config.ldif
+    - filename: 99-wordpress-schema.config.ldif
       content: |
         dn: cn=wordpress,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -403,7 +403,7 @@ predefinedFileSets:
   fileSets:
   - name: minio-schema
     files:
-    - filename: 20-minio-schema.config.ldif
+    - filename: 99-minio-schema.config.ldif
       content: |
         dn: cn=minio,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -414,7 +414,7 @@ predefinedFileSets:
   fileSets:
   - name: jenkins-schema
     files:
-    - filename: 20-jenkins-schema.config.ldif
+    - filename: 99-jenkins-schema.config.ldif
       content: |
         dn: cn=jenkins,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -425,7 +425,7 @@ predefinedFileSets:
   fileSets:
   - name: sonarqube-schema
     files:
-    - filename: 20-sonarqube-schema.config.ldif
+    - filename: 99-sonarqube-schema.config.ldif
       content: |
         dn: cn=sonarqube,cn=schema,cn=config
         objectClass: olcSchemaConfig
