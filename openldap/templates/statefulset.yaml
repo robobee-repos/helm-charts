@@ -92,7 +92,7 @@ spec:
           command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
           args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
           {{- else if .Values.image.debug }}
-          args: ["--log-level", "debug"]
+          args: ["--log-level", {{ .Values.logLevel | quote }}]
           {{- end }}
           env:
             - name: BITNAMI_DEBUG

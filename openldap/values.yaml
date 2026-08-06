@@ -109,6 +109,10 @@ image:
   ## It turns BASH and/or NAMI debugging in the image
   ##
   debug: false
+## @param logLevel
+## debug or trace
+##
+logLevel: "debug"
 ## @param schedulerName Use an alternate scheduler, e.g. "stork".
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
