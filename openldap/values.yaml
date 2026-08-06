@@ -262,7 +262,7 @@ predefinedFileSets:
   fileSets:
   - name: memberof
     files:
-    - filename: 03-memberOf.config.ldif
+    - filename: 901-memberOf.config.ldif
       content: |
         # Load memberof module
         dn: cn=module{0},cn=config
@@ -282,8 +282,7 @@ predefinedFileSets:
         olcMemberOfGroupOC: groupOfUniqueNames
         olcMemberOfMemberAD: uniqueMember
         olcMemberOfMemberOfAD: memberOf
-        
-    - filename: 04-refint.config.ldif
+    - filename: 902-refint.config.ldif
       content: |
         # Load refint module
         dn: cn=module{1},cn=config
@@ -303,8 +302,7 @@ predefinedFileSets:
         olcRefintAttribute: uniqueMember
         olcRefintAttribute: member
         olcRefintAttribute: memberOf
-        
-    - filename: 05-index.config.ldif
+    - filename: 903-index.config.ldif
       content: |
         # Add indexes
         dn: olcDatabase={2}mdb,cn=config
@@ -316,12 +314,11 @@ predefinedFileSets:
         olcDbIndex: entryCSN eq
         olcDbIndex: entryUUID eq
         olcDbIndex: objectClass eq
-        
 - name: syncprov-schema
   fileSets:
   - name: syncprov-schema
     files:
-    - filename: 06-syncprov.config.ldif
+    - filename: 904-syncprov.config.ldif
       content: |
         # Load syncprov module
         dn: cn=module{2},cn=config
@@ -329,12 +326,11 @@ predefinedFileSets:
         objectClass: olcModuleList
         cn: module{2}
         olcModuleLoad: syncprov
-        
 - name: defaulttree
   fileSets:
   - name: defaulttree
     files:
-    - filename: 10-default-tree.ldif
+    - filename: 905-default-tree.ldif
       content: |
         # Root creation
         dn: {{ .Values.env.LDAP_ROOT }}
@@ -346,12 +342,11 @@ predefinedFileSets:
         dn: ou={{ .Values.env.LDAP_USER_DC }},{{ .Values.env.LDAP_ROOT }}
         objectClass: organizationalUnit
         ou: users
-        
 - name: readonlyuser
   fileSets:
   - name: readonlyuser
     files:
-    - filename: 20-readonly-user.ldif
+    - filename: 906-readonly-user.ldif
       content: |
         # Paths
         dn: cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}
@@ -361,8 +356,7 @@ predefinedFileSets:
         objectClass: organizationalRole
         userPassword: {{ .Values.readonlyPasswordEncrypted }}
         description: LDAP read only user
-        
-    - filename: 21-readonly-user-acl.config.ldif
+    - filename: 907-readonly-user-acl.config.ldif
       content: |
         dn: olcDatabase={2}mdb,cn=config
         changetype: modify
@@ -370,24 +364,22 @@ predefinedFileSets:
         olcAccess: to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth manage by * break
         olcAccess: to attrs=userPassword,shadowLastChange by self write by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by anonymous auth by * none
         olcAccess: to * by self read by dn="cn=admin,{{ .Values.env.LDAP_ROOT }}" write by dn="cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}" read by * none
-        
 - name: openssh-lpk-schema
   fileSets:
   - name: openssh-lpk-schema
     files:
-    - filename: 99-openssh-lpk-schema.config.ldif
+    - filename: 1001-openssh-lpk-schema.config.ldif
       content: |
         dn: cn=openssh-lpk,cn=schema,cn=config
         objectClass: olcSchemaConfig
         cn: openssh-lpk
         olcAttributeTypes: {0}( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass'MAY ( sshPublicKey $ uid ) )
-        
 - name: matomo-schema
   fileSets:
   - name: matomo-schema
     files:
-    - filename: 99-matomo-schema.config.ldif
+    - filename: 1002-matomo-schema.config.ldif
       content: |
         dn: cn=matomo,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -396,55 +388,50 @@ predefinedFileSets:
         olcAttributeTypes: {1}( 1.3.6.1.4.1.58546.0.0.2 NAME 'matomoAdmin' DESC 'Determines which sites a user has admin access to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcAttributeTypes: {2}( 1.3.6.1.4.1.58546.0.0.3 NAME 'matomoSuperuser' DESC 'Determines whether a user is a superuser or not.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.0.0 NAME 'matomoUser' DESC 'matomoUser' SUP top AUXILIARY MAY  ( matomoView $ matomoAdmin $ matomoSuperuser ) )
-        
 - name: wordpress-schema
   fileSets:
   - name: wordpress-schema
     files:
-    - filename: 99-wordpress-schema.config.ldif
+    - filename: 1003-wordpress-schema.config.ldif
       content: |
         dn: cn=wordpress,cn=schema,cn=config
         objectClass: olcSchemaConfig
         cn: wordpress
         olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.1.1 NAME 'wordpressGroups' DESC 'Determines which Wordpress groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.1.0 NAME 'wordpressUser' DESC 'wordpressUser' SUP top AUXILIARY MAY  ( wordpressGroups ) )
-        
 - name: minio-schema
   fileSets:
   - name: minio-schema
     files:
-    - filename: 99-minio-schema.config.ldif
+    - filename: 1004-minio-schema.config.ldif
       content: |
         dn: cn=minio,cn=schema,cn=config
         objectClass: olcSchemaConfig
         cn: minio
         olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.2.1 NAME 'minioGroups' DESC 'Determines which MinIO groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.2.0 NAME 'minioUser' DESC 'minioUser' SUP top AUXILIARY MAY  ( minioGroups ) )
-        
 - name: jenkins-schema
   fileSets:
   - name: jenkins-schema
     files:
-    - filename: 99-jenkins-schema.config.ldif
+    - filename: 1005-jenkins-schema.config.ldif
       content: |
         dn: cn=jenkins,cn=schema,cn=config
         objectClass: olcSchemaConfig
         cn: jenkins
         olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.3.1 NAME 'jenkinsGroups' DESC 'Determines which Jenkins groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.3.0 NAME 'jenkinsUser' DESC 'jenkinsUser' SUP top AUXILIARY MAY  ( jenkinsGroups ) )
-        
 - name: sonarqube-schema
   fileSets:
   - name: sonarqube-schema
     files:
-    - filename: 99-sonarqube-schema.config.ldif
+    - filename: 1006-sonarqube-schema.config.ldif
       content: |
         dn: cn=sonarqube,cn=schema,cn=config
         objectClass: olcSchemaConfig
         cn: sonarqube
         olcAttributeTypes: {0}( 1.3.6.1.4.1.58546.0.4.1 NAME 'sonarqubeGroups' DESC 'Determines which SonarQube groups the user belongs to.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
         olcObjectClasses: {0}( 1.3.6.1.4.1.58546.0.4.0 NAME 'sonarqubeUser' DESC 'sonarqubeUser' SUP top AUXILIARY MAY  ( sonarqubeGroups ) )
-        
 
 ## @param extraEnv An array to add extra environment variables
 ## For example:
