@@ -90,7 +90,7 @@ diagnosticMode:
 image:
   registry: "docker.io"
   repository: "robobeerun/osixia-openldap"
-  tag: "2.0.0-develop-3"
+  tag: "2.0.0-develop-4"
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -266,7 +266,7 @@ predefinedFileSets:
   fileSets:
   - name: memberof
     files:
-    - filename: 81-memberOf.config.ldif
+    - filename: 200-memberOf.config.ldif
       content: |
         # Load memberof module
         dn: cn=module{0},cn=config
@@ -286,7 +286,7 @@ predefinedFileSets:
         olcMemberOfGroupOC: groupOfUniqueNames
         olcMemberOfMemberAD: uniqueMember
         olcMemberOfMemberOfAD: memberOf
-    - filename: 82-refint.config.ldif
+    - filename: 210-refint.config.ldif
       content: |
         # Load refint module
         dn: cn=module{1},cn=config
@@ -306,7 +306,7 @@ predefinedFileSets:
         olcRefintAttribute: uniqueMember
         olcRefintAttribute: member
         olcRefintAttribute: memberOf
-    - filename: 83-index.config.ldif
+    - filename: 220-index.config.ldif
       content: |
         # Add indexes
         dn: olcDatabase={2}mdb,cn=config
@@ -322,7 +322,7 @@ predefinedFileSets:
   fileSets:
   - name: syncprov-schema
     files:
-    - filename: 84-syncprov.config.ldif
+    - filename: 230-syncprov.config.ldif
       content: |
         # Load syncprov module
         dn: cn=module{2},cn=config
@@ -334,7 +334,7 @@ predefinedFileSets:
   fileSets:
   - name: defaulttree
     files:
-    - filename: 85-default-tree.ldif
+    - filename: 240-default-tree.ldif
       content: |
         # Root creation
         dn: {{ .Values.env.LDAP_ROOT }}
@@ -350,7 +350,7 @@ predefinedFileSets:
   fileSets:
   - name: readonlyuser
     files:
-    - filename: 86-readonly-user.ldif
+    - filename: 250-readonly-user.ldif
       content: |
         # Paths
         dn: cn={{ .Values.readonlyUser }},{{ .Values.env.LDAP_ROOT }}
@@ -360,7 +360,7 @@ predefinedFileSets:
         objectClass: organizationalRole
         userPassword: {{ .Values.readonlyPasswordEncrypted }}
         description: LDAP read only user
-    - filename: 87-readonly-user-acl.config.ldif
+    - filename: 260-readonly-user-acl.config.ldif
       content: |
         dn: olcDatabase={2}mdb,cn=config
         changetype: modify
@@ -372,7 +372,7 @@ predefinedFileSets:
   fileSets:
   - name: openssh-lpk-schema
     files:
-    - filename: 91-openssh-lpk-schema.config.ldif
+    - filename: 300-openssh-lpk-schema.config.ldif
       content: |
         dn: cn=openssh-lpk,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -383,7 +383,7 @@ predefinedFileSets:
   fileSets:
   - name: matomo-schema
     files:
-    - filename: 92-matomo-schema.config.ldif
+    - filename: 310-matomo-schema.config.ldif
       content: |
         dn: cn=matomo,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -396,7 +396,7 @@ predefinedFileSets:
   fileSets:
   - name: wordpress-schema
     files:
-    - filename: 93-wordpress-schema.config.ldif
+    - filename: 320-wordpress-schema.config.ldif
       content: |
         dn: cn=wordpress,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -407,7 +407,7 @@ predefinedFileSets:
   fileSets:
   - name: minio-schema
     files:
-    - filename: 94-minio-schema.config.ldif
+    - filename: 330-minio-schema.config.ldif
       content: |
         dn: cn=minio,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -418,7 +418,7 @@ predefinedFileSets:
   fileSets:
   - name: jenkins-schema
     files:
-    - filename: 95-jenkins-schema.config.ldif
+    - filename: 340-jenkins-schema.config.ldif
       content: |
         dn: cn=jenkins,cn=schema,cn=config
         objectClass: olcSchemaConfig
@@ -429,7 +429,7 @@ predefinedFileSets:
   fileSets:
   - name: sonarqube-schema
     files:
-    - filename: 96-sonarqube-schema.config.ldif
+    - filename: 350-sonarqube-schema.config.ldif
       content: |
         dn: cn=sonarqube,cn=schema,cn=config
         objectClass: olcSchemaConfig
