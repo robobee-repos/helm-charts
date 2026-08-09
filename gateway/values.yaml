@@ -92,3 +92,22 @@ httproute:
   enabled: false
   hostnames:
     - ldapmanager.anrisoftware.com
+
+# Istio CRDs
+destinationRule:
+  enabled: false
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+      sni: keycloak.keycloak.svc.cluster.local
+      insecureSkipVerify: true
+
+# 
+backendTLSPolicy:
+  enabled: false
+  insecureSkipVerify: false
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: keycloak-headless
+      namespace: kube-keycloak
