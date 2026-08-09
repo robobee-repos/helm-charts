@@ -13,8 +13,15 @@ metadata:
 spec:
   targetRefs:
   {{- range .Values.backendTLSPolicy.targetRefs }}
-    {{- toYaml . | nindent 4 }}
+    - group: {{ .group | quote }}
+      kind: {{ .kind }}
+      name: {{ .name }}
+      {{- if .namespace }}
+      namespace: {{ .namespace }}
+      {{- end }}
   {{- end }}
   validation:
-    insecureSkipVerify: {{ .Values.backendTLSPolicy.insecureSkipVerify }}
+    {{- if .Values.backendTLSPolicy.insecureSkipVerify }}
+    caCertificates: null
+    {{- end }}
 {{- end }}
