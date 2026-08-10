@@ -192,6 +192,12 @@ helm install my-release helm-charts-charts
 <td><code>%GATEWAY_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>bitnami-keycloak</code></td>
+<td><code>%BITNAMI_KEYCLOAK_VERSION%</code></td>
+<td><code>%BITNAMI_KEYCLOAK_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>
