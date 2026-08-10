@@ -102,12 +102,21 @@ destinationRule:
       sni: keycloak.keycloak.svc.cluster.local
       insecureSkipVerify: true
 
-# 
+# See https://gateway-api.sigs.k8s.io/reference/api-spec/1.5/spec/#backendtlspolicyspec
 backendTLSPolicy:
   enabled: false
-  insecureSkipVerify: false
   targetRefs:
     - group: ""
       kind: Service
       name: keycloak-headless
-      namespace: kube-keycloak
+      sectionName:
+  validation:
+    enabled: false
+    caCertificateRefs:
+      group: ""
+      kind: # Secret
+      name:
+    hostname:
+    subjectAltNames:
+
+

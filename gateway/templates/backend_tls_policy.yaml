@@ -16,12 +16,21 @@ spec:
     - group: {{ .group | quote }}
       kind: {{ .kind }}
       name: {{ .name }}
-      {{- if .namespace }}
-      namespace: {{ .namespace }}
+      {{- if .sectionName }}
+      sectionName: {{ .sectionName }}
       {{- end }}
   {{- end }}
+  {{- if .Values.backendTLSPolicy.validation.enabled }}
   validation:
-    {{- if .Values.backendTLSPolicy.insecureSkipVerify }}
-    caCertificates: null
+    {{- if .Values.backendTLSPolicy.validation.caCertificateRefs }}
+    caCertificateRefs:
+      group: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.group | quote }}
+      kind: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.kind }}
+      name: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.name }}
     {{- end }}
+    hostname: {{ .Values.backendTLSPolicy.validation.hostname }}
+    {{- if .Values.backendTLSPolicy.validation.subjectAltNames }}
+    subjectAltNames: {{ .Values.backendTLSPolicy.validation.subjectAltNames }}
+    {{- end }}
+  {{- end }}
 {{- end }}
