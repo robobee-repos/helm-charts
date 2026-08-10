@@ -113,10 +113,10 @@ backendTLSPolicy:
   validation:
     enabled: false
     caCertificateRefs:
-      group: ""
-      kind: ConfigMap
-      name:
+      - group: ""
+        kind: ConfigMap
+        name:
     hostname:
     subjectAltNames:
-
-
+      hostnames: []
+      uris: []

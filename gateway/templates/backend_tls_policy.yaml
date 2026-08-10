@@ -24,15 +24,26 @@ spec:
   validation:
     {{- if .Values.backendTLSPolicy.validation.caCertificateRefs }}
     caCertificateRefs:
-      group: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.group | quote }}
-      kind: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.kind }}
-      name: {{ .Values.backendTLSPolicy.validation.caCertificateRefs.name }}
+      {{- range .Values.backendTLSPolicy.validation.caCertificateRefs }}
+      - group: {{ .group | quote }}
+        kind: {{ .kind }}
+        name: {{ .name }}
+      {{- end }}
     {{- end }}
     hostname: {{ .Values.backendTLSPolicy.validation.hostname }}
     {{- if .Values.backendTLSPolicy.validation.subjectAltNames }}
     subjectAltNames:
-      {{- range .Values.backendTLSPolicy.validation.subjectAltNames }}
-      - {{ . | quote }}
+      {{- if .Values.backendTLSPolicy.validation.subjectAltNames.hostnames }}
+      {{- range .Values.backendTLSPolicy.validation.subjectAltNames.hostnames }}
+      - type: Hostname
+        hostname: {{ . | quote }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.backendTLSPolicy.validation.subjectAltNames.uris }}
+      {{- range .Values.backendTLSPolicy.validation.subjectAltNames.uris }}
+      - type: URI
+        uri: {{ . | quote }}
+      {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}
