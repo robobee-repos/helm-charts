@@ -213,7 +213,7 @@ spec:
             httpGet:
               path: {{ trimSuffix "/" .Values.httpRelativePath }}/health/live
               port: {{ .Values.containerPorts.management }}
-              scheme: HTTP
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.tls.enabled }}
           {{- end }}
           {{- if .Values.customReadinessProbe }}
           readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customReadinessProbe "context" .) | nindent 12 }}
@@ -222,7 +222,7 @@ spec:
             httpGet:
               path: {{ trimSuffix "/" .Values.httpRelativePath }}/health/ready
               port: {{ .Values.containerPorts.management }}
-              scheme: HTTP
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.tls.enabled }}
           {{- end }}
           {{- end }}
           volumeMounts:
