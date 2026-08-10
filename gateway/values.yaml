@@ -114,7 +114,7 @@ backendTLSPolicy:
     enabled: false
     caCertificateRefs:
       group: ""
-      kind: # Secret
+      kind: ConfigMap
       name:
     hostname:
     subjectAltNames:

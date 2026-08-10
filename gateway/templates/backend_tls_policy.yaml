@@ -31,7 +31,7 @@ spec:
     hostname: {{ .Values.backendTLSPolicy.validation.hostname }}
     {{- if .Values.backendTLSPolicy.validation.subjectAltNames }}
     subjectAltNames:
-      {{ range .Values.backendTLSPolicy.validation.subjectAltNames }}
+      {{- range .Values.backendTLSPolicy.validation.subjectAltNames }}
       - {{ . | quote }}
       {{- end }}
     {{- end }}
