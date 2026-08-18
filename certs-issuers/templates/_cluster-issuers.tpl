@@ -93,16 +93,11 @@ metadata:
 spec:
   selfSigned: {}
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager
----
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ default .defaults.name .issuer.name }}-ca
-  namespace: cert-manager
+  namespace: {{ include "common.names.namespace" . | quote }}
 spec:
   isCA: true
   commonName: {{ default .defaults.name .issuer.name }}-ca
@@ -121,6 +116,5 @@ metadata:
   name: {{ default .defaults.name .issuer.name }}-ca-issuer
 spec:
   ca:
-    # `ClusterIssuer` resource is not namespaced, so `secretName` is assumed to reference secret in `cert-manager` namespace.
     secretName: {{ default .defaults.name .issuer.name }}-root-secret
 {{- end -}}
