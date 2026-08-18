@@ -93,11 +93,16 @@ metadata:
 spec:
   selfSigned: {}
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ default .defaults.name .issuer.name }}-ca
-  namespace: {{ include "common.names.namespace" . | quote }}
+  namespace: cert-manager
 spec:
   isCA: true
   commonName: {{ default .defaults.name .issuer.name }}-ca
