@@ -72,3 +72,50 @@ https://cert-manager.io/docs/reference/api-docs/#acme.cert-manager.io/v1.ACMECha
 {{- end }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Defines Selfsigned ClusterIssuer.
+https://cert-manager.io/docs/configuration/selfsigned/
+*/}}
+{{- define "certsissuers.selfsigned.issuer" -}}
+{{ include "certsissuers.selfsigned.issuer.general" (deepCopy $ | merge (dict "defaults" .Values.defaultsSelfsigned)) }}
+{{- end -}}
+
+{{/*
+Defines ACME ClusterIssuer.
+https://cert-manager.io/docs/configuration/selfsigned/
+*/}}
+{{- define "certsissuers.selfsigned.issuer.general" -}}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ default .defaults.name .issuer.name }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ default .defaults.name .issuer.name }}-ca
+  namespace: {{ include "common.names.namespace" . | quote }}
+spec:
+  isCA: true
+  commonName: {{ default .defaults.name .issuer.name }}-ca
+  secretName: {{ default .defaults.name .issuer.name }}-root-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: {{ default .defaults.name .issuer.name }}
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ default .defaults.name .issuer.name }}-ca-issuer
+spec:
+  ca:
+    # `ClusterIssuer` resource is not namespaced, so `secretName` is assumed to reference secret in `cert-manager` namespace.
+    secretName: {{ default .defaults.name .issuer.name }}-root-secret
+{{- end -}}

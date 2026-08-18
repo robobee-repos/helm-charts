@@ -1,5 +1,11 @@
 apiVersion: v2
 appVersion: v1.20.3
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  tags:
+  - bitnami-common
+  version: 2.x.x
 description: A Helm chart for cert issuer.
 keywords:
   - cert-manager
@@ -13,4 +19,4 @@ name: certs-issuers
 sources:
   - https://github.com/robobee-repos/helm-charts
   - https://github.com/jetstack/cert-manager
-version: 1.0.2
+version: 1.1.0

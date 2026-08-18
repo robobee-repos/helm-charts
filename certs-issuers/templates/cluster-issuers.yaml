@@ -6,3 +6,7 @@
 {{ include "certsissuers.acme.issuer.prod" (deepCopy $ | merge (dict "issuer" .)) }}
 ---
 {{- end }}
+{{- range .Values.selfsignedIssuers }}
+{{ include "certsissuers.selfsigned.issuer" (deepCopy $ | merge (dict "issuer" .)) }}
+---
+{{- end }}

@@ -19,3 +19,10 @@ defaultsAcmeProd:
 #  email: erwin@muellerpublic.de
 #acmeProdIssuers:
 #- email: erwin@muellerpublic.de
+
+defaultsSelfsigned:
+  name: selfsigned-issuer
+
+#selfsignedIssuers:
+#- name: selfsigned-issuer
+#  email: erwin@muellerpublic.de

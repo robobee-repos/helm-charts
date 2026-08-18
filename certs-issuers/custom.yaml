@@ -39,3 +39,6 @@ acmeStagingIssuers:
   email: erwin@muellerpublic.de
 acmeProdIssuers:
 - email: erwin@muellerpublic.de
+
+selfsignedIssuers:
+- name: selfsigned
