@@ -1,4 +1,4 @@
-{{- range .Values.customFileSets }}
+{{- range .Values.customDataSets }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

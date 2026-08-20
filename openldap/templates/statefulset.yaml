@@ -183,21 +183,21 @@ spec:
           {{- end }}
           {{- end }}
           volumeMounts:
-            {{- range .Values.customFileSets }}
+            {{- range .Values.customDataSets }}
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_DATA_DIR }}/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
-            {{- range .Values.predefinedFileSets }}
+            {{- range .Values.predefinedConfigSets }}
             {{- if (get $.Values.enableOptional .name) }}
             {{- range .fileSets }}
             {{- $fs := . }}
             {{- range .files }}
             - name: {{ $fs.name }}
-              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_SCHEMAS_DIR }}/{{ .filename }}
+              mountPath: {{ $.Values.env.OPENLDAP_CUSTOM_CONFIG_DIR }}/{{ .filename }}
               subPath: {{ .filename }}
             {{- end }}
             {{- end }}
@@ -236,7 +236,7 @@ spec:
           secret:
             secretName: {{ template "openldap.initdbScriptsSecret" . }}
         {{- end }}
-        {{- range .Values.customFileSets }}
+        {{- range .Values.customDataSets }}
         - name: {{ .name }}
           configMap:
             name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
