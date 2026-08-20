@@ -241,7 +241,7 @@ spec:
           configMap:
             name: {{ template "common.names.fullname" $ }}-fs-{{ .name }}
         {{- end }}
-        {{- range .Values.predefinedFileSets }}
+        {{- range .Values.predefinedConfigSets }}
         {{- if (get $.Values.enableOptional .name) }}
         {{- range .fileSets }}
         - name: {{ .name }}
