@@ -198,6 +198,12 @@ helm install my-release helm-charts-charts
 <td><code>%BITNAMI_KEYCLOAK_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>mariadb-cluster</code></td>
+<td><code>%MARIADB_CLUSTER_VERSION%</code></td>
+<td><code>%MARIADB_CLUSTER_APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>
