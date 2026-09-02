@@ -97,7 +97,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ default .defaults.name .issuer.name }}-ca
-  namespace: {{ include "common.names.namespace" . | quote }}
+  namespace: {{ .defaults.certManagerNamespace | quote }}
 spec:
   isCA: true
   commonName: {{ default .defaults.name .issuer.name }}-ca

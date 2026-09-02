@@ -8,13 +8,6 @@ defaultsAcmeStaging:
           spec:
             affinity:
               nodeAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                  nodeSelectorTerms:
-                  - matchExpressions:
-                    - key: robobeerun.com/edge
-                      operator: In 
-                      values:
-                      - required   
 
 defaultsAcmeProd:
   name: letsencrypt-production
@@ -26,17 +19,9 @@ defaultsAcmeProd:
           spec:
             affinity:
               nodeAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                  nodeSelectorTerms:
-                  - matchExpressions:
-                    - key: robobeerun.com/edge
-                      operator: In 
-                      values:
-                      - required   
 
 acmeStagingIssuers:
-- name: letsencrypt-staging
-  email: erwin@muellerpublic.de
+- email: erwin@muellerpublic.de
 acmeProdIssuers:
 - email: erwin@muellerpublic.de
 
