@@ -16,6 +16,7 @@ import time
 import csv
 import logging
 import threading
+import sys
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from kubernetes import client, config
@@ -58,12 +59,20 @@ def configure_logging(level_name: str = "INFO"):
         "TRACE": TRACE_LEVEL_NUM,
     }
     level = level_map.get(level_name, logging.INFO)
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-    )
-    return logging.getLogger("k8s-metrics-logger")
 
+    # Create logger and ensure output goes to stdout (unbuffered if PYTHONUNBUFFERED or -u)
+    logger = logging.getLogger("k8s-metrics-logger")
+    logger.setLevel(level)
+    # Avoid adding multiple handlers if configure_logging called multiple times
+    if not any(isinstance(h, logging.StreamHandler) and getattr(h, "stream", None) is sys.stdout for h in logger.handlers):
+        sh = logging.StreamHandler(stream=sys.stdout)
+        sh.setLevel(level)
+        fmt = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+        sh.setFormatter(fmt)
+        logger.addHandler(sh)
+    # Optionally disable propagation to root to avoid duplicate logs
+    logger.propagate = False
+    return logger
 
 logger = configure_logging(LOG_LEVEL)
 
