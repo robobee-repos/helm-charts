@@ -14,6 +14,9 @@ publish-harbor:
 
 .PHONY: package
 package: $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz
+
+.PHONY: build
+build:
 	$(MAKE) -C docker
 
 $(BASE_DIR)/charts/$(NAME)-$(VERSION).tgz:
