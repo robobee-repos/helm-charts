@@ -37,6 +37,7 @@ publish:
 	$(MAKE) -C gateway publish
 	$(MAKE) -C bitnami-keycloak publish
 	$(MAKE) -C mariadb-cluster publish
+	$(MAKE) -C k8s-metrics-logger publish
 
 .PHONY: publish-harbor-all
 publish-harbor-all: ##@targets Publish all helm charts to private harbor.
@@ -62,6 +63,7 @@ publish-harbor-all: ##@targets Publish all helm charts to private harbor.
 	$(MAKE) -C gateway publish-harbor
 	$(MAKE) -C bitnami-keycloak publish-harbor
 	$(MAKE) -C mariadb-cluster publish-harbor
+	$(MAKE) -C k8s-metrics-logger publish-harbor
 
 .PHONY: index
 index:
@@ -80,6 +82,7 @@ index:
 	$(MAKE) -C gateway update-index
 	$(MAKE) -C bitnami-keycloak update-index
 	$(MAKE) -C mariadb-cluster update-index
+	$(MAKE) -C k8s-metrics-logger update-index
 
 .PHONY: push
 push:

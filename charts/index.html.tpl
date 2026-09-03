@@ -204,6 +204,12 @@ helm install my-release helm-charts-charts
 <td><code>%MARIADB_CLUSTER_APP_VERSION%</code></td>
 </tr>
 
+<tr>
+<td><code>k8s-metrics-logger</code></td>
+<td><code>%K8S_METRICS_LOGGER_VERSION%</code></td>
+<td><code>%K8S_METRICS_LOGGER__APP_VERSION%</code></td>
+</tr>
+
 <tfoot>
 <tr>
 <td colspan="2">Updated %TIME%</td>
