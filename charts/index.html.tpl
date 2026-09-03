@@ -207,7 +207,7 @@ helm install my-release helm-charts-charts
 <tr>
 <td><code>k8s-metrics-logger</code></td>
 <td><code>%K8S_METRICS_LOGGER_VERSION%</code></td>
-<td><code>%K8S_METRICS_LOGGER__APP_VERSION%</code></td>
+<td><code>%K8S_METRICS_LOGGER_APP_VERSION%</code></td>
 </tr>
 
 <tfoot>
