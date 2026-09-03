@@ -9,6 +9,7 @@ Adds a lightweight HTTP server exposing:
  - /healthz  (liveness)
  - /readyz   (readiness based on last successful poll)
  - /metrics  (Prometheus-style metrics with last-run stats)
+ - /csv      (download the collected CSV file) — streams by CHUNK_SIZE to avoid high memory use
 """
 import os
 import re
@@ -32,6 +33,8 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 METRICS_PORT = int(os.getenv("METRICS_PORT", "8080"))
 # readiness: consider ready if last successful poll was within READY_THRESHOLD_SECONDS
 READY_THRESHOLD_SECONDS = int(os.getenv("READY_THRESHOLD_SECONDS", str(INTERVAL * 3)))
+# CSV streaming chunk size (bytes). Default = 64 KiB to avoid high memory use.
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", str(64 * 1024)))  # default 65536
 
 # Setup logging, including a custom TRACE level
 TRACE_LEVEL_NUM = 5
@@ -60,19 +63,18 @@ def configure_logging(level_name: str = "INFO"):
     }
     level = level_map.get(level_name, logging.INFO)
 
-    # Create logger and ensure output goes to stdout (unbuffered if PYTHONUNBUFFERED or -u)
     logger = logging.getLogger("k8s-metrics-logger")
     logger.setLevel(level)
-    # Avoid adding multiple handlers if configure_logging called multiple times
+    # ensure stdout StreamHandler exists
     if not any(isinstance(h, logging.StreamHandler) and getattr(h, "stream", None) is sys.stdout for h in logger.handlers):
         sh = logging.StreamHandler(stream=sys.stdout)
         sh.setLevel(level)
         fmt = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
         sh.setFormatter(fmt)
         logger.addHandler(sh)
-    # Optionally disable propagation to root to avoid duplicate logs
     logger.propagate = False
     return logger
+
 
 logger = configure_logging(LOG_LEVEL)
 
@@ -102,7 +104,7 @@ def cpu_to_millicores(s: str) -> float:
     if s == "0":
         logger.trace("cpu_to_millicores: input '0' -> 0.0")
         return 0.0
-    if s.endswith("n"):  # nanocores
+    if s.endswith("n"):
         try:
             n = float(s[:-1])
             val = n / 1e6
@@ -111,7 +113,7 @@ def cpu_to_millicores(s: str) -> float:
         except Exception:
             logger.debug("Failed parsing nanocores CPU string: %s", s, exc_info=True)
             return 0.0
-    if s.endswith("u"):  # microcores
+    if s.endswith("u"):
         try:
             u = float(s[:-1])
             val = u / 1000.0
@@ -128,7 +130,6 @@ def cpu_to_millicores(s: str) -> float:
         except Exception:
             logger.debug("Failed parsing millicores CPU string: %s", s, exc_info=True)
             return 0.0
-    # otherwise assume cores
     try:
         val = float(s) * 1000.0
         logger.trace("cpu_to_millicores: %s cores -> %f m", s, val)
@@ -271,12 +272,15 @@ def fetch_pod_metrics():
 
 class MetricsHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # health endpoint
         if self.path == "/healthz":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
             self.wfile.write(b"ok\n")
             return
+
+        # readiness endpoint
         if self.path == "/readyz":
             with stats_lock:
                 last_success = stats["last_success_unix"]
@@ -291,8 +295,9 @@ class MetricsHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"not ready\n")
             return
+
+        # prometheus-style metrics
         if self.path == "/metrics":
-            # Prometheus exposition format (basic)
             with stats_lock:
                 st = dict(stats)
             lines = []
@@ -318,6 +323,42 @@ class MetricsHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body.encode("utf-8"))
             return
+
+        # CSV download endpoint
+        if self.path == "/csv":
+            if not os.path.exists(OUTFILE):
+                self.send_response(404)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"not found\n")
+                logger.debug("CSV requested but file missing: %s", OUTFILE)
+                return
+            try:
+                file_size = os.path.getsize(OUTFILE)
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv")
+                self.send_header("Content-Disposition", f'attachment; filename="{os.path.basename(OUTFILE)}"')
+                self.send_header("Content-Length", str(file_size))
+                self.end_headers()
+                # stream the file in chunks with configurable CHUNK_SIZE
+                with open(OUTFILE, "rb") as fh:
+                    chunk = fh.read(CHUNK_SIZE)
+                    while chunk:
+                        self.wfile.write(chunk)
+                        chunk = fh.read(CHUNK_SIZE)
+                logger.info("Served CSV %s to %s (chunk_size=%d)", OUTFILE, self.client_address, CHUNK_SIZE)
+            except Exception:
+                logger.exception("Failed to serve CSV file: %s", OUTFILE)
+                try:
+                    if not self.wfile.closed:
+                        self.send_response(500)
+                        self.send_header("Content-Type", "text/plain")
+                        self.end_headers()
+                        self.wfile.write(b"internal server error\n")
+                except Exception:
+                    pass
+            return
+
         # default: 404
         self.send_response(404)
         self.send_header("Content-Type", "text/plain")
@@ -333,7 +374,7 @@ def start_http_server(port: int = METRICS_PORT):
     server = ThreadingHTTPServer(("0.0.0.0", port), MetricsHandler)
     t = threading.Thread(target=server.serve_forever, daemon=True, name="metrics-http-server")
     t.start()
-    logger.info("Started HTTP metrics server on port %d", port)
+    logger.info("Started HTTP metrics server on port %d (csv chunk_size=%d)", port, CHUNK_SIZE)
     return server
 
 
@@ -342,7 +383,7 @@ def main_loop():
     try_load_config()
     start_http_server(METRICS_PORT)
     logger.info(
-        "Starting main loop: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s",
+        "Starting main loop: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d",
         INTERVAL,
         OUTFILE,
         NAMESPACE or "<all>",
@@ -350,6 +391,7 @@ def main_loop():
         LOG_LEVEL,
         METRICS_PORT,
         READY_THRESHOLD_SECONDS,
+        CHUNK_SIZE,
     )
     while True:
         start = time.time()
@@ -386,7 +428,7 @@ def main_loop():
 
 if __name__ == "__main__":
     logger.info(
-        "k8s-metrics-logger starting: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s TRY_INCLUSTER_FIRST=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s",
+        "k8s-metrics-logger starting: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s TRY_INCLUSTER_FIRST=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d",
         INTERVAL,
         OUTFILE,
         NAMESPACE or "<all>",
@@ -395,5 +437,6 @@ if __name__ == "__main__":
         LOG_LEVEL,
         METRICS_PORT,
         READY_THRESHOLD_SECONDS,
+        CHUNK_SIZE,
     )
     main_loop()

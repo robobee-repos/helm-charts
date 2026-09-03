@@ -109,6 +109,10 @@ spec:
             - name: READY_THRESHOLD_SECONDS
               value: {{ .Values.k8sMetricsLogger.readyThresholdSeconds | quote }}
             {{- end }}
+            {{- if .Values.k8sMetricsLogger.chunkSize }}
+            - name: CHUNK_SIZE
+              value: {{ .Values.k8sMetricsLogger.chunkSize | quote }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

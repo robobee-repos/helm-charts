@@ -8,6 +8,7 @@ k8sMetricsLogger:
   tryInclusterFirst: "yes"
   metricsPort: "8080"
   readyThresholdSeconds: {}
+  chunkSize: {}
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -97,7 +98,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: robobeerun/k8s-metrics-logger
-  tag: 1.0.1
+  tag: 1.1.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
