@@ -69,38 +69,67 @@ gateway:
   gatewayClassName: internet-public
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
-  listeners:
-    - name: http
-      port: 80
-      protocol: HTTP
-      hostname: ldapmanager.anrisoftware.com
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https
-      hostname: ldapmanager.anrisoftware.com
-      port: 443
-      protocol: HTTPS
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: ldapmanager-anrisoftware-com-tls
+  listeners: []
+    # - name: http
+    #   port: 80
+    #   protocol: HTTP
+    #   hostname: ldapmanager.anrisoftware.com
+    #   allowedRoutes:
+    #     namespaces:
+    #       from: All
+    # - name: https
+    #   hostname: ldapmanager.anrisoftware.com
+    #   port: 443
+    #   protocol: HTTPS
+    #   allowedRoutes:
+    #     namespaces:
+    #       from: All
+    #   tls:
+    #     mode: Terminate
+    #     certificateRefs:
+    #       - name: ldapmanager-anrisoftware-com-tls
+
+## Configure multiple gateways resources that allows you to access the 
+## installation 
+## ref: https://gateway-api.sigs.k8s.io/
+##
+gateways: []
+  # - gatewayClassName: internet-public
+  #   annotations:
+  #     cert-manager.io/cluster-issuer: letsencrypt-production
+  #   listeners: []
+      # - name: http
+      #   port: 80
+      #   protocol: HTTP
+      #   hostname: ldapmanager.anrisoftware.com
+      #   allowedRoutes:
+      #     namespaces:
+      #       from: All
+      # - name: https
+      #   hostname: ldapmanager.anrisoftware.com
+      #   port: 443
+      #   protocol: HTTPS
+      #   allowedRoutes:
+      #     namespaces:
+      #       from: All
+      #   tls:
+      #     mode: Terminate
+      #     certificateRefs:
+      #       - name: ldapmanager-anrisoftware-com-tls
+
 httproute:
   enabled: false
-  hostnames:
-    - ldapmanager.anrisoftware.com
+  hostnames: []
+    # - ldapmanager.anrisoftware.com
 
 # Istio CRDs
 destinationRule:
   enabled: false
-  trafficPolicy:
-    tls:
-      mode: SIMPLE
-      sni: keycloak.keycloak.svc.cluster.local
-      insecureSkipVerify: true
+  trafficPolicy: {}
+    # tls:
+    #   mode: SIMPLE
+    #   sni: keycloak.keycloak.svc.cluster.local
+    #   insecureSkipVerify: true
 
 # See https://gateway-api.sigs.k8s.io/reference/api-spec/1.5/spec/#backendtlspolicyspec
 backendTLSPolicy:
