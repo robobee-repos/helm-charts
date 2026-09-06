@@ -122,6 +122,9 @@ httproute:
   hostnames: []
     # - ldapmanager.anrisoftware.com
 
+httproutes: []
+  # - hostnames: []
+
 # Istio CRDs
 destinationRule:
   enabled: false

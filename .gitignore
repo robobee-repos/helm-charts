@@ -1,3 +1,6 @@
 out
 charts_unpack
 custom.yaml
+*.png
+custom*
+*.csv

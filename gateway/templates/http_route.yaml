@@ -12,10 +12,18 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.gateway.enabled }}
     - name: {{ .Values.httproute.name | default $fullName }}
       {{- if .Values.httproute.namespace }}
       namespace: {{ .Values.httproute.namespace }}
       {{- end }}
+    {{- end }}
+    {{- range $index, $v := .Values.gateways }}
+    - name: {{ printf "%s-%d" ($v.name | default $fullName) $index }}
+      {{- if $.Values.httproute.namespace }}
+      namespace: {{ $.Values.httproute.namespace }}
+      {{- end }}
+    {{- end }}
   {{- if .Values.httproute.hostnames }}
   hostnames:
   {{- range .Values.httproute.hostnames }}
