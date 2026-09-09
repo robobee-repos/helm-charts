@@ -1,3 +1,4 @@
+import urllib.parse
 #!/usr/bin/env python3
 """
 consul_k8s_registrar.py (Gateway-based)
@@ -148,92 +149,246 @@ def _get_active_registrar_pods():
         return set()
 
 # --- Reconciliation helpers ---
+def consul_catalog_deregister(node, service_id, datacenter=None,
+                              namespace=None, partition=None):
+    """
+    Remove a service registration directly from the Consul catalog.
+
+    Unlike /v1/agent/service/deregister/<id>, this is cluster-aware:
+    Node + ServiceID identify the catalog registration regardless of which
+    Consul agent the registrar itself is connected to.
+    """
+    payload = {
+        "Node": node,
+        "ServiceID": service_id,
+    }
+
+    if datacenter:
+        payload["Datacenter"] = datacenter
+    if namespace:
+        payload["Namespace"] = namespace
+    if partition:
+        payload["Partition"] = partition
+
+    if DRY_RUN:
+        log.info(
+            "DRY-RUN catalog deregister node=%s service_id=%s "
+            "datacenter=%s namespace=%s partition=%s",
+            node, service_id, datacenter, namespace, partition
+        )
+        return
+
+    log.info(
+        "Catalog deregister node=%s service_id=%s "
+        "datacenter=%s namespace=%s partition=%s",
+        node, service_id, datacenter, namespace, partition
+    )
+
+    consul_put("/v1/catalog/deregister", payload)
+
+
+def _get_catalog_services():
+    """
+    Retrieve all service instances from the Consul catalog.
+
+    /v1/catalog/services returns service names. Each service is then queried
+    through /v1/catalog/service/<name> to obtain its instances, including
+    Node, Datacenter, ServiceID and ServiceMeta.
+    """
+    base = CONSUL_HTTP.rstrip("/")
+
+    r = session.get(base + "/v1/catalog/services", timeout=5)
+    r.raise_for_status()
+
+    service_names = r.json()
+    instances = []
+
+    for service_name in service_names.keys():
+        try:
+            encoded_name = urllib.parse.quote(service_name, safe="")
+            r = session.get(
+                base + "/v1/catalog/service/" + encoded_name,
+                timeout=5
+            )
+            r.raise_for_status()
+
+            entries = r.json()
+
+            for entry in entries:
+                entry["ServiceName"] = (
+                    entry.get("ServiceName") or service_name
+                )
+                instances.append(entry)
+
+        except Exception as e:
+            log.warning(
+                "Failed to retrieve catalog instances for service %s: %s",
+                service_name, e
+            )
+
+    return instances
+
+
 def reconcile_on_start():
     """
-    Populate registered_ids from Consul services that look like ones this registrar manages.
-    We use SERVICE_NAME_PREFIX and the owner meta to identify relevant services.
-    Also removes stale entries that no longer correspond to existing Gateways,
-    and cleans up services from dead registrar pods.
+    Reconcile Consul registrations using the cluster-wide Consul Catalog.
+
+    This avoids /v1/agent/services, which only returns registrations known
+    to the particular Consul agent receiving the request.
+
+    Stale registrations are removed using /v1/catalog/deregister with the
+    catalog's Node + ServiceID.
     """
     if DRY_RUN:
         log.info("DRY-RUN mode, skipping reconciliation")
         return
+
     try:
-        log.info("Reconciling existing Consul services for owner=%s prefix=%s", MY_OWNER, SERVICE_NAME_PREFIX)
-        r = session.get(CONSUL_HTTP.rstrip('/') + "/v1/agent/services", timeout=5)
-        r.raise_for_status()
-        svcs = r.json()
-        
-        log.info("Retrieved %d total services from Consul", len(svcs))
-        
-        # Build a set of all currently existing Gateway namespace/name pairs from Kubernetes
+        log.info(
+            "Reconciling Consul catalog for owner=%s prefix=%s",
+            MY_OWNER, SERVICE_NAME_PREFIX
+        )
+
         existing_gateways = _get_all_existing_gateways()
-        log.info("Found %d existing Gateways in Kubernetes: %s", len(existing_gateways), existing_gateways)
-        
-        # Get list of active registrar pods (to detect orphaned services from dead pods)
+        log.info(
+            "Found %d existing Gateways in Kubernetes: %s",
+            len(existing_gateways), existing_gateways
+        )
+
         active_pods = _get_active_registrar_pods()
         log.info("Active registrar pods: %s", active_pods)
-        
-        # Track which services match our prefix
+
+        catalog_services = _get_catalog_services()
+        log.info(
+            "Retrieved %d service instances from Consul catalog",
+            len(catalog_services)
+        )
+
         matching_services = []
-        
-        for sid, info in svcs.items():
+
+        for info in catalog_services:
+            sid = info.get("ServiceID") or ""
+            service_name = info.get("ServiceName") or ""
+
             if not sid.startswith(SERVICE_NAME_PREFIX):
                 continue
-            
+
             matching_services.append(sid)
-            meta = (info.get("Meta") or {})
+
+            meta = info.get("ServiceMeta") or {}
             owner = meta.get("owner")
             key = meta.get("registrar_key")
-            
-            log.debug("Found matching service: id=%s owner=%s key=%s", sid, owner, key)
-            
-            if owner and key:
-                # Extract namespace/name from registrar_key (format: "namespace/name:listener-ident")
-                gateway_ref = key.split(":")[0] if ":" in key else key
-                
-                # Determine if we should manage this service
-                is_our_service = (owner == MY_OWNER)
-                owner_pod_alive = (owner in active_pods) if owner else False
-                gateway_exists = (gateway_ref in existing_gateways)
-                
-                log.debug("Service analysis: id=%s owner=%s is_ours=%s owner_alive=%s gateway_exists=%s",
-                         sid, owner, is_our_service, owner_pod_alive, gateway_exists)
-                
-                # Case 1: Service is ours, track it and clean if gateway doesn't exist
-                if is_our_service:
-                    if gateway_exists:
-                        registered_ids[key] = sid
-                        log.info("Imported registration from Consul: key=%s id=%s", key, sid)
-                    else:
-                        log.warning("Found stale Consul service (Gateway %s no longer exists): key=%s id=%s, deregistering",
-                                   gateway_ref, key, sid)
-                        try:
-                            consul_deregister(sid)
-                        except Exception as e:
-                            log.error("Failed to deregister stale service id=%s: %s", sid, e)
-                
-                # Case 2: Service belongs to another owner pod that's dead (orphaned)
-                elif not owner_pod_alive:
-                    log.warning("Found orphaned Consul service from dead pod: owner=%s id=%s key=%s, deregistering",
-                               owner, sid, key)
-                    try:
-                        consul_deregister(sid)
-                    except Exception as e:
-                        log.error("Failed to deregister orphaned service id=%s: %s", sid, e)
-                
-                # Case 3: Service belongs to another live registrar pod (don't touch)
+
+            node = info.get("Node")
+            datacenter = info.get("Datacenter")
+            namespace = info.get("Namespace")
+            partition = info.get("Partition")
+
+            log.debug(
+                "Found matching catalog service: node=%s service=%s "
+                "service_id=%s owner=%s key=%s",
+                node, service_name, sid, owner, key
+            )
+
+            if not node:
+                log.warning(
+                    "Catalog service has no Node: service_id=%s; skipping",
+                    sid
+                )
+                continue
+
+            if not owner or not key:
+                log.debug(
+                    "Catalog service id=%s has no owner or registrar_key; "
+                    "skipping", sid
+                )
+                continue
+
+            gateway_ref = key.split(":", 1)[0] if ":" in key else key
+
+            is_our_service = owner == MY_OWNER
+            owner_pod_alive = owner in active_pods
+            gateway_exists = gateway_ref in existing_gateways
+
+            log.debug(
+                "Catalog service analysis: node=%s id=%s owner=%s "
+                "is_ours=%s owner_alive=%s gateway_exists=%s",
+                node, sid, owner, is_our_service,
+                owner_pod_alive, gateway_exists
+            )
+
+            if is_our_service:
+                if gateway_exists:
+                    registered_ids[key] = sid
+                    log.info(
+                        "Imported catalog registration: node=%s key=%s id=%s",
+                        node, key, sid
+                    )
                 else:
-                    log.debug("Service id=%s belongs to another active registrar pod %s, skipping", sid, owner)
+                    log.warning(
+                        "Found stale catalog service "
+                        "(Gateway %s no longer exists): node=%s key=%s "
+                        "id=%s; catalog deregistering",
+                        gateway_ref, node, key, sid
+                    )
+                    try:
+                        consul_catalog_deregister(
+                            node=node,
+                            service_id=sid,
+                            datacenter=datacenter,
+                            namespace=namespace,
+                            partition=partition,
+                        )
+                    except Exception as e:
+                        log.error(
+                            "Failed to catalog-deregister stale "
+                            "service node=%s id=%s: %s",
+                            node, sid, e
+                        )
+
+            elif not owner_pod_alive:
+                log.warning(
+                    "Found orphaned catalog service from dead pod: "
+                    "node=%s owner=%s id=%s key=%s; "
+                    "catalog deregistering",
+                    node, owner, sid, key
+                )
+                try:
+                    consul_catalog_deregister(
+                        node=node,
+                        service_id=sid,
+                        datacenter=datacenter,
+                        namespace=namespace,
+                        partition=partition,
+                    )
+                except Exception as e:
+                    log.error(
+                        "Failed to catalog-deregister orphaned "
+                        "service node=%s id=%s: %s",
+                        node, sid, e
+                    )
+
             else:
-                log.debug("Service id=%s has no owner or key in metadata, skipping", sid)
-        
+                log.debug(
+                    "Catalog service id=%s belongs to another active "
+                    "registrar pod %s; skipping",
+                    sid, owner
+                )
+
         if not matching_services:
-            log.info("No existing Consul services with prefix %s found", SERVICE_NAME_PREFIX)
+            log.info(
+                "No existing Consul catalog services with prefix %s found",
+                SERVICE_NAME_PREFIX
+            )
         else:
-            log.info("Reconciliation complete: processed %d services with prefix %s", len(matching_services), SERVICE_NAME_PREFIX)
+            log.info(
+                "Catalog reconciliation complete: processed %d "
+                "services with prefix %s",
+                len(matching_services), SERVICE_NAME_PREFIX
+            )
+
     except Exception:
-        log.exception("reconcile failed (continuing)")
+        log.exception("Consul catalog reconciliation failed (continuing)")
 
 def _get_all_existing_gateways():
     """
