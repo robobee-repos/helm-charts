@@ -139,37 +139,58 @@ def reconcile_on_start():
         r.raise_for_status()
         svcs = r.json()
         
-        # Build a set of all currently existing Gateways from Kubernetes
-        existing_gateways = _get_all_gateway_keys()
-        log.debug("Found %d existing Gateways in Kubernetes", len(existing_gateways))
+        log.info("Retrieved %d total services from Consul", len(svcs))
+        
+        # Build a set of all currently existing Gateway namespace/name pairs from Kubernetes
+        existing_gateways = _get_all_existing_gateways()
+        log.info("Found %d existing Gateways in Kubernetes: %s", len(existing_gateways), existing_gateways)
+        
+        # Track which services match our prefix
+        matching_services = []
         
         for sid, info in svcs.items():
             if not sid.startswith(SERVICE_NAME_PREFIX):
                 continue
+            
+            matching_services.append(sid)
             meta = (info.get("Meta") or {})
             owner = meta.get("owner")
             key = meta.get("registrar_key")
+            
+            log.debug("Found matching service: id=%s owner=%s key=%s", sid, owner, key)
+            
             if owner and owner == MY_OWNER and key:
+                # Extract namespace/name from registrar_key (format: "namespace/name:listener-ident")
+                gateway_ref = key.split(":")[0] if ":" in key else key
+                
+                log.debug("Checking if gateway %s exists in Kubernetes", gateway_ref)
+                
                 # Check if this gateway still exists in Kubernetes
-                if key in existing_gateways:
+                if gateway_ref in existing_gateways:
                     registered_ids[key] = sid
                     log.info("Imported registration from Consul: key=%s id=%s", key, sid)
                 else:
                     # Stale entry: this gateway no longer exists, deregister it
-                    log.warning("Found stale Consul service (no longer in Kubernetes): key=%s id=%s, deregistering", key, sid)
+                    log.warning("Found stale Consul service (Gateway %s no longer exists): key=%s id=%s, deregistering", 
+                               gateway_ref, key, sid)
                     try:
                         consul_deregister(sid)
                     except Exception as e:
                         log.error("Failed to deregister stale service id=%s: %s", sid, e)
+            else:
+                log.debug("Service id=%s skipped (owner=%s vs MY_OWNER=%s, key=%s)", sid, owner, MY_OWNER, key)
+        
+        if not matching_services:
+            log.info("No existing Consul services with prefix %s found", SERVICE_NAME_PREFIX)
+        else:
+            log.info("Reconciliation complete: processed %d services with prefix %s", len(matching_services), SERVICE_NAME_PREFIX)
     except Exception:
         log.exception("reconcile failed (continuing)")
 
-def _get_all_gateway_keys():
+def _get_all_existing_gateways():
     """
-    Fetch all Gateways from Kubernetes and return a set of their keys.
-    Key format: "<namespace>/<gateway-name>:<listener-ident>"
-    For reconciliation, we return full namespace/name keys without listener info,
-    since we want to know which gateways exist (not which specific listeners).
+    Fetch all Gateways from Kubernetes and return a set of their namespace/name references.
+    Returns set of strings in format: "namespace/name"
     """
     try:
         custom = CustomObjectsApi()
@@ -177,7 +198,7 @@ def _get_all_gateway_keys():
         version = "v1"
         plural = "gateways"
         
-        keys = set()
+        refs = set()
         
         # Fetch Gateways from specified namespace or cluster-wide
         if not WATCH_NAMESPACE:
@@ -189,10 +210,11 @@ def _get_all_gateway_keys():
         for gw in items:
             ns = meta_namespace(gw) or ""
             name = meta_name(gw) or ""
-            fullname = f"{ns}/{name}"
-            keys.add(fullname)
+            ref = f"{ns}/{name}"
+            refs.add(ref)
         
-        return keys
+        log.debug("Existing Gateways: %s", refs)
+        return refs
     except Exception as e:
         log.warning("Failed to fetch Gateways for reconciliation: %s", e)
         return set()
