@@ -39,6 +39,7 @@ DRY_RUN = os.getenv("DRY_RUN", "false").lower() in ("1", "true", "yes")
 HEALTH_PORT = int(os.getenv("HEALTH_PORT", "8080"))
 RETRY_ATTEMPTS = int(os.getenv("RETRY_ATTEMPTS", "3"))
 RETRY_BACKOFF = float(os.getenv("RETRY_BACKOFF", "0.5"))  # seconds
+REGISTRAR_NAMESPACE = os.getenv("REGISTRAR_NAMESPACE", "kube-system")  # namespace where registrar pods run
 
 # Owner ID for registrations (helps reconciling which registrar created services)
 MY_OWNER = os.getenv("POD_NAME") or os.getenv("MY_POD_NAME") or socket.gethostname()
@@ -123,12 +124,36 @@ def consul_deregister(id):
     log.info("Deregistering Consul service id=%s", id)
     consul_put(url, data=None)
 
+# --- Kubernetes helpers ---
+def _pod_exists(pod_name, namespace):
+    """Check if a pod with the given name exists in the namespace."""
+    try:
+        v1 = client.CoreV1Api()
+        v1.read_namespaced_pod(pod_name, namespace)
+        return True
+    except client.exceptions.ApiException as e:
+        if e.status == 404:
+            return False
+        log.warning("Error checking pod existence: %s", e)
+        return True  # assume exists on error to be safe
+
+def _get_active_registrar_pods():
+    """Get the set of all active registrar pod names in REGISTRAR_NAMESPACE."""
+    try:
+        v1 = client.CoreV1Api()
+        pods = v1.list_namespaced_pod(REGISTRAR_NAMESPACE, label_selector="app.kubernetes.io/name=consul-registrar")
+        return {pod.metadata.name for pod in pods.items}
+    except Exception as e:
+        log.warning("Failed to list registrar pods: %s", e)
+        return set()
+
 # --- Reconciliation helpers ---
 def reconcile_on_start():
     """
     Populate registered_ids from Consul services that look like ones this registrar manages.
     We use SERVICE_NAME_PREFIX and the owner meta to identify relevant services.
-    Also removes stale entries that no longer correspond to existing Gateways.
+    Also removes stale entries that no longer correspond to existing Gateways,
+    and cleans up services from dead registrar pods.
     """
     if DRY_RUN:
         log.info("DRY-RUN mode, skipping reconciliation")
@@ -145,6 +170,10 @@ def reconcile_on_start():
         existing_gateways = _get_all_existing_gateways()
         log.info("Found %d existing Gateways in Kubernetes: %s", len(existing_gateways), existing_gateways)
         
+        # Get list of active registrar pods (to detect orphaned services from dead pods)
+        active_pods = _get_active_registrar_pods()
+        log.info("Active registrar pods: %s", active_pods)
+        
         # Track which services match our prefix
         matching_services = []
         
@@ -159,26 +188,45 @@ def reconcile_on_start():
             
             log.debug("Found matching service: id=%s owner=%s key=%s", sid, owner, key)
             
-            if owner and owner == MY_OWNER and key:
+            if owner and key:
                 # Extract namespace/name from registrar_key (format: "namespace/name:listener-ident")
                 gateway_ref = key.split(":")[0] if ":" in key else key
                 
-                log.debug("Checking if gateway %s exists in Kubernetes", gateway_ref)
+                # Determine if we should manage this service
+                is_our_service = (owner == MY_OWNER)
+                owner_pod_alive = (owner in active_pods) if owner else False
+                gateway_exists = (gateway_ref in existing_gateways)
                 
-                # Check if this gateway still exists in Kubernetes
-                if gateway_ref in existing_gateways:
-                    registered_ids[key] = sid
-                    log.info("Imported registration from Consul: key=%s id=%s", key, sid)
-                else:
-                    # Stale entry: this gateway no longer exists, deregister it
-                    log.warning("Found stale Consul service (Gateway %s no longer exists): key=%s id=%s, deregistering", 
-                               gateway_ref, key, sid)
+                log.debug("Service analysis: id=%s owner=%s is_ours=%s owner_alive=%s gateway_exists=%s",
+                         sid, owner, is_our_service, owner_pod_alive, gateway_exists)
+                
+                # Case 1: Service is ours, track it and clean if gateway doesn't exist
+                if is_our_service:
+                    if gateway_exists:
+                        registered_ids[key] = sid
+                        log.info("Imported registration from Consul: key=%s id=%s", key, sid)
+                    else:
+                        log.warning("Found stale Consul service (Gateway %s no longer exists): key=%s id=%s, deregistering",
+                                   gateway_ref, key, sid)
+                        try:
+                            consul_deregister(sid)
+                        except Exception as e:
+                            log.error("Failed to deregister stale service id=%s: %s", sid, e)
+                
+                # Case 2: Service belongs to another owner pod that's dead (orphaned)
+                elif not owner_pod_alive:
+                    log.warning("Found orphaned Consul service from dead pod: owner=%s id=%s key=%s, deregistering",
+                               owner, sid, key)
                     try:
                         consul_deregister(sid)
                     except Exception as e:
-                        log.error("Failed to deregister stale service id=%s: %s", sid, e)
+                        log.error("Failed to deregister orphaned service id=%s: %s", sid, e)
+                
+                # Case 3: Service belongs to another live registrar pod (don't touch)
+                else:
+                    log.debug("Service id=%s belongs to another active registrar pod %s, skipping", sid, owner)
             else:
-                log.debug("Service id=%s skipped (owner=%s vs MY_OWNER=%s, key=%s)", sid, owner, MY_OWNER, key)
+                log.debug("Service id=%s has no owner or key in metadata, skipping", sid)
         
         if not matching_services:
             log.info("No existing Consul services with prefix %s found", SERVICE_NAME_PREFIX)
