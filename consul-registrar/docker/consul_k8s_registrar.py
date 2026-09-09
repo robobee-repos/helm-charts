@@ -128,6 +128,7 @@ def reconcile_on_start():
     """
     Populate registered_ids from Consul services that look like ones this registrar manages.
     We use SERVICE_NAME_PREFIX and the owner meta to identify relevant services.
+    Also removes stale entries that no longer correspond to existing Gateways.
     """
     if DRY_RUN:
         log.info("DRY-RUN mode, skipping reconciliation")
@@ -137,6 +138,11 @@ def reconcile_on_start():
         r = session.get(CONSUL_HTTP.rstrip('/') + "/v1/agent/services", timeout=5)
         r.raise_for_status()
         svcs = r.json()
+        
+        # Build a set of all currently existing Gateways from Kubernetes
+        existing_gateways = _get_all_gateway_keys()
+        log.debug("Found %d existing Gateways in Kubernetes", len(existing_gateways))
+        
         for sid, info in svcs.items():
             if not sid.startswith(SERVICE_NAME_PREFIX):
                 continue
@@ -144,10 +150,52 @@ def reconcile_on_start():
             owner = meta.get("owner")
             key = meta.get("registrar_key")
             if owner and owner == MY_OWNER and key:
-                registered_ids[key] = sid
-                log.info("Imported registration from Consul: key=%s id=%s", key, sid)
+                # Check if this gateway still exists in Kubernetes
+                if key in existing_gateways:
+                    registered_ids[key] = sid
+                    log.info("Imported registration from Consul: key=%s id=%s", key, sid)
+                else:
+                    # Stale entry: this gateway no longer exists, deregister it
+                    log.warning("Found stale Consul service (no longer in Kubernetes): key=%s id=%s, deregistering", key, sid)
+                    try:
+                        consul_deregister(sid)
+                    except Exception as e:
+                        log.error("Failed to deregister stale service id=%s: %s", sid, e)
     except Exception:
         log.exception("reconcile failed (continuing)")
+
+def _get_all_gateway_keys():
+    """
+    Fetch all Gateways from Kubernetes and return a set of their keys.
+    Key format: "<namespace>/<gateway-name>:<listener-ident>"
+    For reconciliation, we return full namespace/name keys without listener info,
+    since we want to know which gateways exist (not which specific listeners).
+    """
+    try:
+        custom = CustomObjectsApi()
+        group = "gateway.networking.k8s.io"
+        version = "v1"
+        plural = "gateways"
+        
+        keys = set()
+        
+        # Fetch Gateways from specified namespace or cluster-wide
+        if not WATCH_NAMESPACE:
+            resp = custom.list_cluster_custom_object(group=group, version=version, plural=plural)
+        else:
+            resp = custom.list_namespaced_custom_object(group=group, version=version, namespace=WATCH_NAMESPACE, plural=plural)
+        
+        items = resp.get("items", [])
+        for gw in items:
+            ns = meta_namespace(gw) or ""
+            name = meta_name(gw) or ""
+            fullname = f"{ns}/{name}"
+            keys.add(fullname)
+        
+        return keys
+    except Exception as e:
+        log.warning("Failed to fetch Gateways for reconciliation: %s", e)
+        return set()
 
 def deregister_all():
     keys = list(registered_ids.keys())
