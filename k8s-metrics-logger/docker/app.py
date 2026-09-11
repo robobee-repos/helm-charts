@@ -324,116 +324,66 @@ class MetricsHandler(BaseHTTPRequestHandler):
             self.wfile.write(body.encode("utf-8"))
             return
 
-            # CSV download endpoint with optional ISO8601 date range:
-            # /csv?start=YYYY-MM-DDThh:mm:ss[Z|(+|-)HH:MM]&end=...
-            if self.path.startswith("/csv"):
-                parsed = urllib.parse.urlparse(self.path)
-                qs = urllib.parse.parse_qs(parsed.query)
-                start_str = qs.get("start", [None])[0]
-                end_str = qs.get("end", [None])[0]
+        # CSV download endpoint with optional ISO8601 date range:
+        # /csv?start=YYYY-MM-DDThh:mm:ss[Z|(+|-)HH:MM]&end=...
+        if self.path.startswith("/csv"):
+            parsed = urllib.parse.urlparse(self.path)
+            qs = urllib.parse.parse_qs(parsed.query)
+            start_str = qs.get("start", [None])[0]
+            end_str = qs.get("end", [None])[0]
 
-                def parse_iso8601(s):
-                    if not s:
-                        return None
-                    # Accept trailing 'Z' by converting to +00:00 for fromisoformat
-                    s2 = s.rstrip()
-                    if s2.endswith("Z"):
-                        s2 = s2[:-1] + "+00:00"
-                    try:
-                        dt = datetime.fromisoformat(s2)
-                    except Exception:
-                        return "BAD"
-                    if dt.tzinfo is None:
-                        # treat naive datetimes as UTC
-                        dt = dt.replace(tzinfo=timezone.utc)
-                    return dt.astimezone(timezone.utc)
-
-                start_dt = parse_iso8601(start_str)
-                end_dt = parse_iso8601(end_str)
-
-                if start_dt == "BAD" or end_dt == "BAD":
-                    self.send_response(400)
-                    self.send_header("Content-Type", "text/plain")
-                    self.end_headers()
-                    self.wfile.write(b"invalid start/end datetime; use ISO8601 YYYY-MM-DDThh:mm:ss optionally with Z or offset\n")
-                    logger.debug("CSV range request with invalid datetime: start=%s end=%s", start_str, end_str)
-                    return
-
-                if not os.path.exists(OUTFILE):
-                    self.send_response(404)
-                    self.send_header("Content-Type", "text/plain")
-                    self.end_headers()
-                    self.wfile.write(b"not found\n")
-                    logger.debug("CSV requested but file missing: %s", OUTFILE)
-                    return
-
-                # No range: stream full file (with Content-Length)
-                if not start_dt and not end_dt:
-                    try:
-                        file_size = os.path.getsize(OUTFILE)
-                        self.send_response(200)
-                        self.send_header("Content-Type", "text/csv")
-                        self.send_header("Content-Disposition", f'attachment; filename="{os.path.basename(OUTFILE)}"')
-                        self.send_header("Content-Length", str(file_size))
-                        self.end_headers()
-                        with open(OUTFILE, "rb") as fh:
-                            chunk = fh.read(CHUNK_SIZE)
-                            while chunk:
-                                self.wfile.write(chunk)
-                                chunk = fh.read(CHUNK_SIZE)
-                        logger.info("Served full CSV %s to %s (chunk_size=%d)", OUTFILE, self.client_address, CHUNK_SIZE)
-                    except Exception:
-                        logger.exception("Failed to serve CSV file: %s", OUTFILE)
-                        try:
-                            if not self.wfile.closed:
-                                self.send_response(500)
-                                self.send_header("Content-Type", "text/plain")
-                                self.end_headers()
-                                self.wfile.write(b"internal server error\n")
-                        except Exception:
-                            pass
-                    return
-
-                # Range specified: stream header + matching rows (no Content-Length)
+            def parse_iso8601(s):
+                if not s:
+                    return None
+                # Accept trailing 'Z' by converting to +00:00 for fromisoformat
+                s2 = s.rstrip()
+                if s2.endswith("Z"):
+                    s2 = s2[:-1] + "+00:00"
                 try:
+                    dt = datetime.fromisoformat(s2)
+                except Exception:
+                    return "BAD"
+                if dt.tzinfo is None:
+                    # treat naive datetimes as UTC
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt.astimezone(timezone.utc)
+
+            start_dt = parse_iso8601(start_str)
+            end_dt = parse_iso8601(end_str)
+
+            if start_dt == "BAD" or end_dt == "BAD":
+                self.send_response(400)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"invalid start/end datetime; use ISO8601 YYYY-MM-DDThh:mm:ss optionally with Z or offset\n")
+                logger.debug("CSV range request with invalid datetime: start=%s end=%s", start_str, end_str)
+                return
+
+            if not os.path.exists(OUTFILE):
+                self.send_response(404)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"not found\n")
+                logger.debug("CSV requested but file missing: %s", OUTFILE)
+                return
+
+            # No range: stream full file (with Content-Length)
+            if not start_dt and not end_dt:
+                try:
+                    file_size = os.path.getsize(OUTFILE)
                     self.send_response(200)
                     self.send_header("Content-Type", "text/csv")
                     self.send_header("Content-Disposition", f'attachment; filename="{os.path.basename(OUTFILE)}"')
+                    self.send_header("Content-Length", str(file_size))
                     self.end_headers()
-
-                    with open(OUTFILE, "r", encoding="utf-8", errors="replace") as fh:
-                        header = fh.readline()
-                        if header:
-                            self.wfile.write(header.encode("utf-8"))
-                        for line in fh:
-                            parts = line.split(",", 1)
-                            if not parts:
-                                continue
-                            ts_str = parts[0].strip()
-                            if not ts_str:
-                                continue
-                            try:
-                                # CSV timestamps are written as "YYYY-MM-DD HH:MM:SS" in UTC;
-                                # convert to ISO-like form by replacing space with 'T' for parsing consistency
-                                ts_iso = ts_str.replace(" ", "T")
-                                # fromisoformat expects either "YYYY-MM-DDTHH:MM:SS" or with offset
-                                if ts_iso.endswith("Z"):
-                                    ts_iso = ts_iso[:-1] + "+00:00"
-                                ts_dt = datetime.fromisoformat(ts_iso)
-                                if ts_dt.tzinfo is None:
-                                    ts_dt = ts_dt.replace(tzinfo=timezone.utc)
-                                ts_dt = ts_dt.astimezone(timezone.utc)
-                            except Exception:
-                                # skip malformed timestamp lines
-                                continue
-                            if start_dt and ts_dt < start_dt:
-                                continue
-                            if end_dt and ts_dt > end_dt:
-                                continue
-                            self.wfile.write(line.encode("utf-8"))
-                    logger.info("Served CSV range start=%s end=%s from %s to %s", start_str, end_str, OUTFILE, self.client_address)
+                    with open(OUTFILE, "rb") as fh:
+                        chunk = fh.read(CHUNK_SIZE)
+                        while chunk:
+                            self.wfile.write(chunk)
+                            chunk = fh.read(CHUNK_SIZE)
+                    logger.info("Served full CSV %s to %s (chunk_size=%d)", OUTFILE, self.client_address, CHUNK_SIZE)
                 except Exception:
-                    logger.exception("Failed to serve filtered CSV file: %s range %s - %s", OUTFILE, start_str, end_str)
+                    logger.exception("Failed to serve CSV file: %s", OUTFILE)
                     try:
                         if not self.wfile.closed:
                             self.send_response(500)
@@ -443,6 +393,56 @@ class MetricsHandler(BaseHTTPRequestHandler):
                     except Exception:
                         pass
                 return
+
+            # Range specified: stream header + matching rows (no Content-Length)
+            try:
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv")
+                self.send_header("Content-Disposition", f'attachment; filename="{os.path.basename(OUTFILE)}"')
+                self.end_headers()
+
+                with open(OUTFILE, "r", encoding="utf-8", errors="replace") as fh:
+                    header = fh.readline()
+                    if header:
+                        self.wfile.write(header.encode("utf-8"))
+                    for line in fh:
+                        parts = line.split(",", 1)
+                        if not parts:
+                            continue
+                        ts_str = parts[0].strip()
+                        if not ts_str:
+                            continue
+                        try:
+                            # CSV timestamps are written as "YYYY-MM-DD HH:MM:SS" in UTC;
+                            # convert to ISO-like form by replacing space with 'T' for parsing consistency
+                            ts_iso = ts_str.replace(" ", "T")
+                            # fromisoformat expects either "YYYY-MM-DDTHH:MM:SS" or with offset
+                            if ts_iso.endswith("Z"):
+                                ts_iso = ts_iso[:-1] + "+00:00"
+                            ts_dt = datetime.fromisoformat(ts_iso)
+                            if ts_dt.tzinfo is None:
+                                ts_dt = ts_dt.replace(tzinfo=timezone.utc)
+                            ts_dt = ts_dt.astimezone(timezone.utc)
+                        except Exception:
+                            # skip malformed timestamp lines
+                            continue
+                        if start_dt and ts_dt < start_dt:
+                            continue
+                        if end_dt and ts_dt > end_dt:
+                            continue
+                        self.wfile.write(line.encode("utf-8"))
+                logger.info("Served CSV range start=%s end=%s from %s to %s", start_str, end_str, OUTFILE, self.client_address)
+            except Exception:
+                logger.exception("Failed to serve filtered CSV file: %s range %s - %s", OUTFILE, start_str, end_str)
+                try:
+                    if not self.wfile.closed:
+                        self.send_response(500)
+                        self.send_header("Content-Type", "text/plain")
+                        self.end_headers()
+                        self.wfile.write(b"internal server error\n")
+                except Exception:
+                    pass
+            return
 
         # default: 404
         self.send_response(404)
