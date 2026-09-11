@@ -98,7 +98,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: robobeerun/k8s-metrics-logger
-  tag: 1.1.2
+  tag: 1.2.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images

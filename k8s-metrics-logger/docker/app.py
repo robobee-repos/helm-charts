@@ -3,13 +3,57 @@
 k8s-metrics-logger
 
 Polls the metrics.k8s.io API and appends normalized CSV rows:
-timestamp,namespace,pod,cpu_m,mem_Mi
+    timestamp,namespace,pod,cpu_m,mem_Mi
 
-Adds a lightweight HTTP server exposing:
- - /healthz  (liveness)
- - /readyz   (readiness based on last successful poll)
- - /metrics  (Prometheus-style metrics with last-run stats)
- - /csv      (download the collected CSV file) — streams by CHUNK_SIZE to avoid high memory use
+HTTP endpoints:
+ - GET /healthz
+     Liveness probe. Returns 200 OK if server running.
+
+ - GET /readyz
+     Readiness probe. Returns 200 OK when the last successful poll was within READY_THRESHOLD_SECONDS.
+
+ - GET /metrics
+     Prometheus-style metrics about the poller (polls_total, last_success_unix_seconds,
+     last_poll_duration_seconds, last_rows, last_error).
+
+ - GET /csv
+     Download CSV. Supports optional ISO8601 date range and rotated-file inclusion:
+       Query parameters:
+         start=<ISO8601>  e.g. 2026-09-03T00:00:00 or 2026-09-03T00:00:00Z or with offset
+         end=<ISO8601>
+         include_rotated=true|false  (default false) - when true, rotated backup files
+             (OUTFILE.YYYYMMDD_HHMMSS and .gz) are also scanned so ranges spanning rotations
+             are covered.
+     Examples:
+       Full file:
+         curl -sS http://127.0.0.1:8080/csv -o k8s_metrics.csv
+       Range (no rotated files):
+         curl -G --data-urlencode "start=2026-09-03T00:00:00" --data-urlencode "end=2026-09-10T00:00:00" \
+           http://127.0.0.1:8080/csv -o range.csv
+       Range including rotated backups:
+         curl -G --data-urlencode "start=2026-09-03T00:00:00" --data-urlencode "end=2026-09-10T00:00:00" \
+           --data-urlencode "include_rotated=true" http://127.0.0.1:8080/csv -o range_with_rotated.csv
+
+Rotation behavior (size-based):
+ - When OUTFILE >= ROTATE_MAX_BYTES, OUTFILE is atomically renamed to OUTFILE.YYYYMMDD_HHMMSS.
+ - If ROTATE_COMPRESS=true an asynchronous background thread compresses the rotated file to .gz.
+ - ROTATE_MAX_BACKUPS most recent backups are retained; older ones are pruned (pruning skips files currently being compressed).
+ - Rotation is triggered in the poll loop before appending new rows.
+
+Environment variables (defaults shown):
+ - INTERVAL=60
+ - OUTFILE=/data/k8s_metrics.csv
+ - NAMESPACE=           (empty = all)
+ - POD_REGEX=           (empty = no filter)
+ - TRY_INCLUSTER_FIRST=true
+ - LOG_LEVEL=INFO       (supports TRACE, DEBUG, INFO, WARN, ERROR)
+ - METRICS_PORT=8080
+ - READY_THRESHOLD_SECONDS = INTERVAL*3
+ - CHUNK_SIZE = 65536   (CSV stream chunk size)
+ - ROTATE_MAX_BYTES = 104857600  (100 MiB)
+ - ROTATE_MAX_BACKUPS = 7
+ - ROTATE_COMPRESS = false  (set to "true" to enable async compression)
+
 """
 import os
 import re
@@ -18,8 +62,13 @@ import csv
 import logging
 import threading
 import sys
+import shutil
+import glob
+import gzip
+import urllib.parse
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 
@@ -31,10 +80,13 @@ POD_REGEX = os.getenv("POD_REGEX", "")  # empty = no filtering
 TRY_INCLUSTER_FIRST = os.getenv("TRY_INCLUSTER_FIRST", "true").lower() in ("1", "true", "yes")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 METRICS_PORT = int(os.getenv("METRICS_PORT", "8080"))
-# readiness: consider ready if last successful poll was within READY_THRESHOLD_SECONDS
 READY_THRESHOLD_SECONDS = int(os.getenv("READY_THRESHOLD_SECONDS", str(INTERVAL * 3)))
-# CSV streaming chunk size (bytes). Default = 64 KiB to avoid high memory use.
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", str(64 * 1024)))  # default 65536
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", str(64 * 1024)))  # bytes
+
+# Rotation settings
+ROTATE_MAX_BYTES = int(os.getenv("ROTATE_MAX_BYTES", str(100 * 1024 * 1024)))  # 100 MiB
+ROTATE_MAX_BACKUPS = int(os.getenv("ROTATE_MAX_BACKUPS", "7"))
+ROTATE_COMPRESS = os.getenv("ROTATE_COMPRESS", "false").lower() in ("1", "true", "yes")
 
 # Setup logging, including a custom TRACE level
 TRACE_LEVEL_NUM = 5
@@ -97,14 +149,128 @@ stats = {
     "last_error": 0,  # 0 = none, 1 = error in last poll
 }
 
+# Rotation helpers: asynchronous compression
+compressing_files = set()
+compressing_lock = threading.Lock()
 
-# unit helpers
+
+def _rotated_filename(timestamp_str: str) -> str:
+    return f"{OUTFILE}.{timestamp_str}"
+
+
+def _prune_rotated_backups():
+    """
+    Keep only the newest ROTATE_MAX_BACKUPS rotated files (including .gz variants),
+    skip files currently being compressed.
+    """
+    base_pattern = OUTFILE + ".*"
+    items = sorted(glob.glob(base_pattern), key=os.path.getmtime, reverse=True)
+    if not items:
+        return
+    with compressing_lock:
+        in_progress = set(compressing_files)
+    filtered_items = [p for p in items if p not in in_progress]
+    if len(filtered_items) <= ROTATE_MAX_BACKUPS:
+        return
+    to_remove = filtered_items[ROTATE_MAX_BACKUPS:]
+    for p in to_remove:
+        try:
+            os.remove(p)
+            logger.info("Pruned old rotated file: %s", p)
+        except Exception:
+            logger.exception("Failed to remove rotated backup: %s", p)
+
+
+def _compress_file_async(path: str):
+    """
+    Start a background thread to compress the given path (path -> path.gz) and remove original.
+    After compression completes it triggers pruning.
+    """
+
+    def worker(p):
+        logger.debug("Async compress worker started for %s", p)
+        with compressing_lock:
+            compressing_files.add(p)
+        try:
+            gz_path = p + ".gz"
+            try:
+                with open(p, "rb") as f_in, gzip.open(gz_path, "wb") as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+                try:
+                    os.remove(p)
+                except Exception:
+                    logger.exception("Failed to remove original rotated file after compression: %s", p)
+                logger.info("Async compressed rotated file: %s -> %s", p, gz_path)
+            except Exception:
+                logger.exception("Async compression failed for %s", p)
+        finally:
+            with compressing_lock:
+                compressing_files.discard(p)
+            try:
+                _prune_rotated_backups()
+            except Exception:
+                logger.exception("Error pruning rotated backups after async compression")
+
+    t = threading.Thread(target=worker, args=(path,), daemon=True, name=f"compress-{os.path.basename(path)}")
+    t.start()
+    logger.debug("Started async compression thread for %s (thread %s)", path, t.name)
+
+
+def rotate_csv_if_needed():
+    """
+    If OUTFILE exists and is >= ROTATE_MAX_BYTES, rotate it:
+     - rename to OUTFILE.YYYYMMDD_HHMMSS
+     - optionally compress asynchronously (ROTATE_COMPRESS)
+     - prune older backups to ROTATE_MAX_BACKUPS (skipping files being compressed)
+     - create a fresh OUTFILE with header (ensure_header)
+    """
+    try:
+        if not os.path.exists(OUTFILE):
+            return
+        try:
+            size = os.path.getsize(OUTFILE)
+        except OSError:
+            logger.debug("Could not stat OUTFILE for rotation: %s", OUTFILE)
+            return
+        if size < ROTATE_MAX_BYTES:
+            return
+
+        ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        rotated = _rotated_filename(ts)
+        logger.info("Rotating CSV %s (size=%d bytes) -> %s", OUTFILE, size, rotated)
+
+        try:
+            # atomic move
+            shutil.move(OUTFILE, rotated)
+        except Exception:
+            logger.exception("Failed to rotate file %s -> %s", OUTFILE, rotated)
+            return
+
+        if ROTATE_COMPRESS:
+            try:
+                _compress_file_async(rotated)
+            except Exception:
+                logger.exception("Failed to start async compression for %s", rotated)
+        else:
+            try:
+                _prune_rotated_backups()
+            except Exception:
+                logger.exception("Error pruning rotated backups")
+        try:
+            ensure_header(OUTFILE)
+        except Exception:
+            logger.exception("Error creating new OUTFILE after rotation: %s", OUTFILE)
+    except Exception:
+        logger.exception("Unexpected error in rotate_csv_if_needed")
+
+
+# unit helpers for metric parsing
 def cpu_to_millicores(s: str) -> float:
     s = str(s).strip()
     if s == "0":
         logger.trace("cpu_to_millicores: input '0' -> 0.0")
         return 0.0
-    if s.endswith("n"):
+    if s.endswith("n"):  # nanocores
         try:
             n = float(s[:-1])
             val = n / 1e6
@@ -113,7 +279,7 @@ def cpu_to_millicores(s: str) -> float:
         except Exception:
             logger.debug("Failed parsing nanocores CPU string: %s", s, exc_info=True)
             return 0.0
-    if s.endswith("u"):
+    if s.endswith("u"):  # microcores
         try:
             u = float(s[:-1])
             val = u / 1000.0
@@ -130,6 +296,7 @@ def cpu_to_millicores(s: str) -> float:
         except Exception:
             logger.debug("Failed parsing millicores CPU string: %s", s, exc_info=True)
             return 0.0
+    # otherwise assume cores
     try:
         val = float(s) * 1000.0
         logger.trace("cpu_to_millicores: %s cores -> %f m", s, val)
@@ -178,13 +345,17 @@ def mem_to_Mi(s: str) -> float:
 
 
 def ensure_header(path):
-    if not os.path.exists(path):
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
         d = os.path.dirname(path)
         if d and not os.path.exists(d):
             os.makedirs(d, exist_ok=True)
-        with open(path, "w") as f:
-            f.write("timestamp,namespace,pod,cpu_m,mem_Mi\n")
-        logger.info("Created metrics CSV with header: %s", path)
+        try:
+            with open(path, "w", encoding="utf-8", newline="") as f:
+                f.write("timestamp,namespace,pod,cpu_m,mem_Mi\n")
+            logger.info("Created metrics CSV with header: %s", path)
+        except Exception:
+            logger.exception("Failed to create CSV header: %s", path)
+            raise
 
 
 def try_load_config():
@@ -272,7 +443,7 @@ def fetch_pod_metrics():
 
 class MetricsHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        # health endpoint
+        # /healthz
         if self.path == "/healthz":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
@@ -280,7 +451,7 @@ class MetricsHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"ok\n")
             return
 
-        # readiness endpoint
+        # /readyz
         if self.path == "/readyz":
             with stats_lock:
                 last_success = stats["last_success_unix"]
@@ -296,7 +467,7 @@ class MetricsHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b"not ready\n")
             return
 
-        # prometheus-style metrics
+        # /metrics
         if self.path == "/metrics":
             with stats_lock:
                 st = dict(stats)
@@ -324,19 +495,19 @@ class MetricsHandler(BaseHTTPRequestHandler):
             self.wfile.write(body.encode("utf-8"))
             return
 
-        # CSV download endpoint with optional ISO8601 date range:
-        # /csv?start=YYYY-MM-DDThh:mm:ss[Z|(+|-)HH:MM]&end=...
+        # /csv with optional ISO8601 start/end and include_rotated flag
         if self.path.startswith("/csv"):
             parsed = urllib.parse.urlparse(self.path)
             qs = urllib.parse.parse_qs(parsed.query)
             start_str = qs.get("start", [None])[0]
             end_str = qs.get("end", [None])[0]
+            include_rotated_raw = qs.get("include_rotated", ["false"])[0].lower()
+            include_rotated = include_rotated_raw in ("1", "true", "yes")
 
-            def parse_iso8601(s):
+            def parse_iso8601_to_utc(s):
                 if not s:
                     return None
-                # Accept trailing 'Z' by converting to +00:00 for fromisoformat
-                s2 = s.rstrip()
+                s2 = s.strip()
                 if s2.endswith("Z"):
                     s2 = s2[:-1] + "+00:00"
                 try:
@@ -344,13 +515,11 @@ class MetricsHandler(BaseHTTPRequestHandler):
                 except Exception:
                     return "BAD"
                 if dt.tzinfo is None:
-                    # treat naive datetimes as UTC
                     dt = dt.replace(tzinfo=timezone.utc)
                 return dt.astimezone(timezone.utc)
 
-            start_dt = parse_iso8601(start_str)
-            end_dt = parse_iso8601(end_str)
-
+            start_dt = parse_iso8601_to_utc(start_str)
+            end_dt = parse_iso8601_to_utc(end_str)
             if start_dt == "BAD" or end_dt == "BAD":
                 self.send_response(400)
                 self.send_header("Content-Type", "text/plain")
@@ -367,8 +536,8 @@ class MetricsHandler(BaseHTTPRequestHandler):
                 logger.debug("CSV requested but file missing: %s", OUTFILE)
                 return
 
-            # No range: stream full file (with Content-Length)
-            if not start_dt and not end_dt:
+            # Fast full-file case (no range, no rotated)
+            if not start_dt and not end_dt and not include_rotated:
                 try:
                     file_size = os.path.getsize(OUTFILE)
                     self.send_response(200)
@@ -394,46 +563,79 @@ class MetricsHandler(BaseHTTPRequestHandler):
                         pass
                 return
 
-            # Range specified: stream header + matching rows (no Content-Length)
+            # Build list of files to scan (rotated oldest -> newest then current OUTFILE)
+            files_to_scan = []
+            if include_rotated:
+                base_pattern = OUTFILE + ".*"
+                rotated_candidates = sorted(glob.glob(base_pattern), key=os.path.getmtime)
+                for p in rotated_candidates:
+                    files_to_scan.append(p)
+            files_to_scan.append(OUTFILE)
+
+            # Streamed response (no Content-Length)
             try:
                 self.send_response(200)
                 self.send_header("Content-Type", "text/csv")
                 self.send_header("Content-Disposition", f'attachment; filename="{os.path.basename(OUTFILE)}"')
                 self.end_headers()
 
-                with open(OUTFILE, "r", encoding="utf-8", errors="replace") as fh:
-                    header = fh.readline()
-                    if header:
-                        self.wfile.write(header.encode("utf-8"))
-                    for line in fh:
-                        parts = line.split(",", 1)
-                        if not parts:
+                header_sent = False
+                total_rows = 0
+
+                def open_file_for_read(path):
+                    if path.endswith(".gz"):
+                        return gzip.open(path, "rt", encoding="utf-8", errors="replace")
+                    else:
+                        return open(path, "r", encoding="utf-8", errors="replace")
+
+                for path in files_to_scan:
+                    # prefer uncompressed if exists; else try .gz
+                    if not os.path.exists(path):
+                        if os.path.exists(path + ".gz"):
+                            path = path + ".gz"
+                        else:
                             continue
-                        ts_str = parts[0].strip()
-                        if not ts_str:
+                    try:
+                        fh = open_file_for_read(path)
+                    except Exception:
+                        logger.exception("Failed opening CSV file for scanning: %s", path)
+                        continue
+
+                    with fh:
+                        first_line = fh.readline()
+                        if not first_line:
                             continue
-                        try:
-                            # CSV timestamps are written as "YYYY-MM-DD HH:MM:SS" in UTC;
-                            # convert to ISO-like form by replacing space with 'T' for parsing consistency
-                            ts_iso = ts_str.replace(" ", "T")
-                            # fromisoformat expects either "YYYY-MM-DDTHH:MM:SS" or with offset
-                            if ts_iso.endswith("Z"):
-                                ts_iso = ts_iso[:-1] + "+00:00"
-                            ts_dt = datetime.fromisoformat(ts_iso)
-                            if ts_dt.tzinfo is None:
-                                ts_dt = ts_dt.replace(tzinfo=timezone.utc)
-                            ts_dt = ts_dt.astimezone(timezone.utc)
-                        except Exception:
-                            # skip malformed timestamp lines
-                            continue
-                        if start_dt and ts_dt < start_dt:
-                            continue
-                        if end_dt and ts_dt > end_dt:
-                            continue
-                        self.wfile.write(line.encode("utf-8"))
-                logger.info("Served CSV range start=%s end=%s from %s to %s", start_str, end_str, OUTFILE, self.client_address)
+                        if not header_sent:
+                            self.wfile.write(first_line.encode("utf-8"))
+                            header_sent = True
+                        for line in fh:
+                            parts = line.split(",", 1)
+                            if not parts:
+                                continue
+                            ts_str = parts[0].strip()
+                            if not ts_str:
+                                continue
+                            try:
+                                ts_iso = ts_str.replace(" ", "T")
+                                if ts_iso.endswith("Z"):
+                                    ts_iso = ts_iso[:-1] + "+00:00"
+                                ts_dt = datetime.fromisoformat(ts_iso)
+                                if ts_dt.tzinfo is None:
+                                    ts_dt = ts_dt.replace(tzinfo=timezone.utc)
+                                ts_dt = ts_dt.astimezone(timezone.utc)
+                            except Exception:
+                                continue
+                            if start_dt and ts_dt < start_dt:
+                                continue
+                            if end_dt and ts_dt > end_dt:
+                                continue
+                            self.wfile.write(line.encode("utf-8"))
+                            total_rows += 1
+                logger.info("Served CSV range start=%s end=%s include_rotated=%s rows=%d to %s",
+                            start_str, end_str, include_rotated, total_rows, self.client_address)
             except Exception:
-                logger.exception("Failed to serve filtered CSV file: %s range %s - %s", OUTFILE, start_str, end_str)
+                logger.exception("Failed to serve filtered CSV files: %s range %s - %s include_rotated=%s",
+                                 OUTFILE, start_str, end_str, include_rotated)
                 try:
                     if not self.wfile.closed:
                         self.send_response(500)
@@ -444,15 +646,15 @@ class MetricsHandler(BaseHTTPRequestHandler):
                     pass
             return
 
-        # default: 404
+        # default 404
         self.send_response(404)
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
         self.wfile.write(b"not found\n")
 
-    # route HTTP library logs into our logger
     def log_message(self, format, *args):
-        logger.debug("HTTP %s - %s" % (self.address_string(), format % args))
+        # Route http.server logs to our logger
+        logger.debug("HTTP %s - %s", self.address_string(), format % args)
 
 
 def start_http_server(port: int = METRICS_PORT):
@@ -468,7 +670,7 @@ def main_loop():
     try_load_config()
     start_http_server(METRICS_PORT)
     logger.info(
-        "Starting main loop: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d",
+        "Starting main loop: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d ROTATE_MAX_BYTES=%d ROTATE_COMPRESS=%s",
         INTERVAL,
         OUTFILE,
         NAMESPACE or "<all>",
@@ -477,6 +679,8 @@ def main_loop():
         METRICS_PORT,
         READY_THRESHOLD_SECONDS,
         CHUNK_SIZE,
+        ROTATE_MAX_BYTES,
+        ROTATE_COMPRESS,
     )
     while True:
         start = time.time()
@@ -485,14 +689,24 @@ def main_loop():
             duration = time.time() - start
             rows_written = 0
             if rows:
+                # rotate if file exceeded size BEFORE writing new rows
+                try:
+                    rotate_csv_if_needed()
+                except Exception:
+                    logger.exception("Error while attempting CSV rotation")
+
                 ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-                with open(OUTFILE, "a", newline="") as f:
-                    writer = csv.writer(f)
-                    for ns, pod, cpu_m, mem_Mi in rows:
-                        writer.writerow([ts, ns, pod, f"{cpu_m:.3f}", f"{mem_Mi:.3f}"])
-                        rows_written += 1
-                logger.info("Appended %d rows to %s", rows_written, OUTFILE)
-                logger.trace("Last timestamp written: %s", ts)
+                try:
+                    ensure_header(OUTFILE)
+                    with open(OUTFILE, "a", encoding="utf-8", newline="") as f:
+                        writer = csv.writer(f)
+                        for ns, pod, cpu_m, mem_Mi in rows:
+                            writer.writerow([ts, ns, pod, f"{cpu_m:.3f}", f"{mem_Mi:.3f}"])
+                            rows_written += 1
+                    logger.info("Appended %d rows to %s", rows_written, OUTFILE)
+                    logger.trace("Last timestamp written: %s", ts)
+                except Exception:
+                    logger.exception("Failed to append rows to CSV: %s", OUTFILE)
             else:
                 logger.debug("No rows fetched from metrics API on this poll")
             with stats_lock:
@@ -513,7 +727,7 @@ def main_loop():
 
 if __name__ == "__main__":
     logger.info(
-        "k8s-metrics-logger starting: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s TRY_INCLUSTER_FIRST=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d",
+        "k8s-metrics-logger starting: INTERVAL=%s OUTFILE=%s NAMESPACE=%s POD_REGEX=%s TRY_INCLUSTER_FIRST=%s LOG_LEVEL=%s METRICS_PORT=%s READY_THRESHOLD_SECONDS=%s CHUNK_SIZE=%d ROTATE_MAX_BYTES=%d ROTATE_MAX_BACKUPS=%d ROTATE_COMPRESS=%s",
         INTERVAL,
         OUTFILE,
         NAMESPACE or "<all>",
@@ -523,5 +737,8 @@ if __name__ == "__main__":
         METRICS_PORT,
         READY_THRESHOLD_SECONDS,
         CHUNK_SIZE,
+        ROTATE_MAX_BYTES,
+        ROTATE_MAX_BACKUPS,
+        ROTATE_COMPRESS,
     )
     main_loop()
