@@ -11,6 +11,7 @@ Gateway.status.addresses for address/port/vhost information.
 Env vars (existing plus):
   ANNOTATION_KEY_VHOST    (default: "haproxy.example.com/vhost")  # optional vhost annotation
   POD_NAME                (optional) used as owner id in Consul meta
+  REGISTRAR_VERSION       (default: "1.0.0") version of this registrar
 """
 import os
 import time
@@ -41,6 +42,7 @@ HEALTH_PORT = int(os.getenv("HEALTH_PORT", "8080"))
 RETRY_ATTEMPTS = int(os.getenv("RETRY_ATTEMPTS", "3"))
 RETRY_BACKOFF = float(os.getenv("RETRY_BACKOFF", "0.5"))  # seconds
 REGISTRAR_NAMESPACE = os.getenv("REGISTRAR_NAMESPACE", "kube-system")  # namespace where registrar pods run
+REGISTRAR_VERSION = os.getenv("REGISTRAR_VERSION", "1.0.0")
 
 # Owner ID for registrations (helps reconciling which registrar created services)
 MY_OWNER = os.getenv("POD_NAME") or os.getenv("MY_POD_NAME") or socket.gethostname()
@@ -227,6 +229,81 @@ def _get_catalog_services():
             )
 
     return instances
+
+
+def _cleanup_mismatched_versions():
+    """
+    Remove all Consul services with mismatched registrar version.
+    
+    This handles breaking changes when registrar version increments
+    and the expected service ID format changes.
+    """
+    if DRY_RUN:
+        log.info("DRY-RUN mode, skipping version cleanup")
+        return
+
+    try:
+        log.info(
+            "Cleaning up Consul services with mismatched registrar version. "
+            "Current version: %s, prefix: %s",
+            REGISTRAR_VERSION, SERVICE_NAME_PREFIX
+        )
+
+        catalog_services = _get_catalog_services()
+        cleaned_count = 0
+
+        for info in catalog_services:
+            sid = info.get("ServiceID") or ""
+            service_name = info.get("ServiceName") or ""
+
+            if not sid.startswith(SERVICE_NAME_PREFIX):
+                continue
+
+            meta = info.get("ServiceMeta") or {}
+            owner = meta.get("owner")
+            registrar_version = meta.get("registrar_version")
+
+            node = info.get("Node")
+            datacenter = info.get("Datacenter")
+            namespace = info.get("Namespace")
+            partition = info.get("Partition")
+
+            # Only clean up services created by this owner (registrar pod)
+            if owner != MY_OWNER:
+                continue
+
+            # If version is missing or mismatched, remove it
+            if not registrar_version or registrar_version != REGISTRAR_VERSION:
+                log.warning(
+                    "Found mismatched version service: node=%s id=%s "
+                    "expected_version=%s actual_version=%s; "
+                    "catalog deregistering",
+                    node, sid, REGISTRAR_VERSION, registrar_version
+                )
+                try:
+                    if node:
+                        consul_catalog_deregister(
+                            node=node,
+                            service_id=sid,
+                            datacenter=datacenter,
+                            namespace=namespace,
+                            partition=partition,
+                        )
+                        cleaned_count += 1
+                except Exception as e:
+                    log.error(
+                        "Failed to catalog-deregister mismatched version "
+                        "service node=%s id=%s: %s",
+                        node, sid, e
+                    )
+
+        log.info(
+            "Version cleanup complete: removed %d mismatched services",
+            cleaned_count
+        )
+
+    except Exception:
+        log.exception("Version cleanup failed (continuing)")
 
 
 def reconcile_on_start():
@@ -440,9 +517,8 @@ def sanitize_consul_name(s: str) -> str:
     s = s.strip('-')
     return s or "service"
 
-def make_registration_name(display_annotation, fallback_name):
-    # choose display annotation if present otherwise fallback_name; sanitize
-    base = display_annotation if display_annotation else fallback_name
+def make_listener_service_name(ns, gwname, listener_ident, hostname, protocol):
+    base = f"{ns}-{gwname}-{protocol}-{hostname or listener_ident}"
     return sanitize_consul_name(base)
 
 def parse_addrport(v):
@@ -536,14 +612,25 @@ def run_loop():
                         current_listener_keys = set()
 
                         for listener in listeners:
-                            # listener can be string-keyed dict
-                            listener_name = listener.get("name") or listener.get("protocol") or ""
-                            hostname = listener.get("hostname")  # may be None
+                            # Include hostname and port so listeners with
+                            # duplicate names still get unique registrations.
+                            listener_name = listener.get("name") or ""
+                            hostname = listener.get("hostname")
                             port = listener.get("port") or 80
                             protocol = (listener.get("protocol") or "").lower()
 
-                            # produce a listener identifier used in ID and tracking
-                            listener_ident = listener_name if listener_name else (hostname or str(port))
+                            if hostname:
+                                listener_ident = (
+                                    f"{listener_name}-{hostname}-{port}"
+                                    if listener_name
+                                    else f"{hostname}-{port}"
+                                )
+                            else:
+                                listener_ident = (
+                                    f"{listener_name}-{port}"
+                                    if listener_name
+                                    else str(port)
+                                )
 
                             key = f"{fullname}:{listener_ident}"
                             current_listener_keys.add(key)
@@ -587,13 +674,20 @@ def run_loop():
                                 display_value = f"{ns}/{name}"
 
                             # consul service name (sanitized)
-                            consul_name = sanitize_consul_name(display_value)
-
+                            consul_name = make_listener_service_name(
+                                ns=ns,
+                                gwname=name,
+                                listener_ident=listener_ident,
+                                hostname=hostname,
+                                protocol=protocol,
+                            )
                             # prepare meta (always include display_name per request)
                             meta = {"display_name": display_value}
                             # record registrar key & owner to allow reconciliation later
                             meta["registrar_key"] = key
                             meta["owner"] = MY_OWNER
+                            # record registrar version for cleanup on version mismatch
+                            meta["registrar_version"] = REGISTRAR_VERSION
 
                             # vhost: prefer hostname, else annotation ANNOTATION_KEY_VHOST if present
                             vhost_ann = anns.get(ANNOTATION_KEY_VHOST)
@@ -657,7 +751,7 @@ def main():
         config.load_kube_config()
         log.info("Loaded local kubeconfig")
 
-    log.info("Starting consul-registrar-gateway (DRY_RUN=%s LOG_LEVEL=%s owner=%s)", DRY_RUN, LOG_LEVEL, MY_OWNER)
+    log.info("Starting consul-registrar-gateway (DRY_RUN=%s LOG_LEVEL=%s owner=%s version=%s)", DRY_RUN, LOG_LEVEL, MY_OWNER, REGISTRAR_VERSION)
     health = start_health_server(HEALTH_PORT)
 
     # handle termination to perform cleanup
@@ -675,6 +769,9 @@ def main():
 
     signal.signal(signal.SIGINT, _handle_term)
     signal.signal(signal.SIGTERM, _handle_term)
+
+    # clean up mismatched versions before reconciliation
+    _cleanup_mismatched_versions()
 
     # reconcile existing services created by this registrar
     reconcile_on_start()

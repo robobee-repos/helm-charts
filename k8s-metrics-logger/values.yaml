@@ -1,6 +1,6 @@
 # values.yaml
 k8sMetricsLogger:
-  logLevel: "TRACE"
+  logLevel: "INFO"
   interval: "5"
   outfile: "/data/k8s_metrics.csv"
   namespace: ""

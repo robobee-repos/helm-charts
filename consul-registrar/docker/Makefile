@@ -10,11 +10,12 @@ all: build push ##@default Build docker image and push it to docker-hub.
 
 .PHONY: build
 build: ##@default Build docker image.
-	docker build -t docker.io/robobeerun/${NAME}:${APP_VERSION} .
+	docker build -t docker.io/robobeerun/${NAME}:${APP_VERSION} -t docker.io/robobeerun/${NAME}:latest .
 
 .PHONY: push
 push: ##@default Push the build docker image to docker-hub.
 	docker push docker.io/robobeerun/${NAME}:${APP_VERSION}
+	docker push docker.io/robobeerun/${NAME}:latest
 
 include $(BASE_DIR)/Makefile.help
 include $(BASE_DIR)/Makefile.functions

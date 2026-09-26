@@ -101,19 +101,33 @@ spec:
               value: {{ .Values.consulRegistrar.annotationKeyBackend | quote }}
             - name: ANNOTATION_KEY_NAME
               value: {{ .Values.consulRegistrar.annotationKeyName | quote }}
+            - name: ANNOTATION_KEY_VHOST
+              value: {{ .Values.consulRegistrar.annotationKeyVhost | quote }}
             - name: CONSUL_HTTP
               value: {{ .Values.consulRegistrar.consulHttp | quote }}
-            - name: SERVICE_NAME_PREFIX
-              value: {{ .Values.consulRegistrar.serviceNamePrefix | quote }}
-            - name: WATCH_NAMESPACE
-              value: {{ .Values.consulRegistrar.watchNamespace | quote }}
-            {{- if .Values.consulRegistrar.consulToken }}
             - name: CONSUL_TOKEN
+              {{- if .Values.consulRegistrar.consulToken }}
               valueFrom:
                 secretKeyRef:
                   name: consul-token
                   key: token
-            {{- end }}
+              {{- else }}
+              value: ""
+              {{- end }}
+            - name: SERVICE_NAME_PREFIX
+              value: {{ .Values.consulRegistrar.serviceNamePrefix | quote }}
+            - name: WATCH_NAMESPACE
+              value: {{ .Values.consulRegistrar.watchNamespace | quote }}
+            - name: SLEEP
+              value: {{ .Values.consulRegistrar.sleep | quote }}
+            - name: RETRY_ATTEMPTS
+              value: {{ .Values.consulRegistrar.retryAttempts | quote }}
+            - name: RETRY_BACKOFF
+              value: {{ .Values.consulRegistrar.retryBackoff | quote }}
+            - name: REGISTRAR_NAMESPACE
+              value: {{ .Values.consulRegistrar.registrarNamespace | quote }}
+            - name: REGISTRAR_VERSION
+              value: {{ .Values.consulRegistrar.registrarVersion | default .Chart.AppVersion | quote }}
             {{- if or .Values.livenessProbe.enabled .Values.readinessProbe.enabled }}
             - name: HEALTH_PORT
               value: "8080"
