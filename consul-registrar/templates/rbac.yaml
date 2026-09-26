@@ -18,9 +18,24 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 rules:
-  - apiGroups: ["v1","gateway.networking.k8s.io"]
-    resources: ["services","gateways","gateways/status"]
-    verbs: ["get","list","watch"]
+rules:
+  - apiGroups: [""]
+    resources:
+      - services
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gateways
+      - gateways/status
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
