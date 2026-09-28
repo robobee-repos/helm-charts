@@ -268,10 +268,6 @@ def _cleanup_mismatched_versions():
             namespace = info.get("Namespace")
             partition = info.get("Partition")
 
-            # Only clean up services created by this owner (registrar pod)
-            if owner != MY_OWNER:
-                continue
-
             # If version is missing or mismatched, remove it
             if not registrar_version or registrar_version != REGISTRAR_VERSION:
                 log.warning(
