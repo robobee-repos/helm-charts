@@ -39,8 +39,9 @@ frontend public-http
       {{- $nameKey := printf "seen_acl_http_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
-        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $san := index .ServiceMeta "vhost" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $vhost := index .ServiceMeta "vhost" }}
+  # {{- index .ServiceMeta "vhost" }}
   acl host_{{ $san }} hdr(host) -i {{ $vhost }}
   use_backend {{ $san }}-backend if host_{{ $san }}
       {{ end }}
@@ -65,8 +66,9 @@ frontend public-https
       {{- $nameKey := printf "seen_acl_https_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
-        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $san := index .ServiceMeta "vhost" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $vhost := index .ServiceMeta "vhost" }}
+  # {{- index .ServiceMeta "vhost" }}
   acl sni_{{ $san }} req_ssl_sni -i {{ $vhost }}
   use_backend {{ $san }}-ssl-backend if sni_{{ $san }}
       {{ end }}
@@ -96,9 +98,10 @@ backend backend-default-tcp
       {{- $nameKey := printf "seen_backend_http_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
-        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $san := index .ServiceMeta "vhost" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $port := .Port }}
         {{- $vhost := index .ServiceMeta "vhost" }}
+# {{- index .ServiceMeta "vhost" }}
 backend {{ $san }}-backend
   log global
   mode http
@@ -119,9 +122,10 @@ backend {{ $san }}-backend
       {{- $nameKey := printf "seen_backend_https_%s" .Name }}
       {{- if not (scratch.Key $nameKey) }}
         {{- scratch.Set $nameKey true }}
-        {{- $san := index .ServiceMeta "display_name" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
+        {{- $san := index .ServiceMeta "vhost" | regexReplaceAll "[^A-Za-z0-9]+" "-" | toLower }}
         {{- $port := .Port }}
         {{- $vhost := index .ServiceMeta "vhost" }}
+# {{- index .ServiceMeta "vhost" }}
 backend {{ $san }}-ssl-backend
   mode tcp
   option tcplog
