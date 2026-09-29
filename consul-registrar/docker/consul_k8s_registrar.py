@@ -120,12 +120,50 @@ def consul_register(id, name, addr, port, tags=None, meta=None):
     consul_put("/v1/agent/service/register", payload)
 
 def consul_deregister(id):
-    url = "/v1/agent/service/deregister/{}".format(id)
+    """
+    Deregister a service using the catalog API (cluster-aware).
+    Requires looking up the service in the catalog first to get node/service ID.
+    """
     if DRY_RUN:
         log.info("DRY-RUN deregister id=%s", id)
         return
+    
     log.info("Deregistering Consul service id=%s", id)
-    consul_put(url, data=None)
+    
+    # Look up the service in the catalog to get its node
+    try:
+        base = CONSUL_HTTP.rstrip("/")
+        # Query catalog for services matching this ID
+        r = session.get(base + "/v1/catalog/services", timeout=5)
+        r.raise_for_status()
+        
+        service_names = r.json()
+        for service_name in service_names.keys():
+            encoded_name = urllib.parse.quote(service_name, safe="")
+            r = session.get(
+                base + "/v1/catalog/service/" + encoded_name,
+                timeout=5
+            )
+            r.raise_for_status()
+            
+            entries = r.json()
+            for entry in entries:
+                if entry.get("ServiceID") == id:
+                    # Found it! Use catalog deregister
+                    consul_catalog_deregister(
+                        node=entry.get("Node"),
+                        service_id=id,
+                        datacenter=entry.get("Datacenter"),
+                        namespace=entry.get("Namespace"),
+                        partition=entry.get("Partition"),
+                    )
+                    return
+        
+        log.warning("Service id=%s not found in catalog, cannot deregister", id)
+    
+    except Exception as e:
+        log.error("Failed to look up service %s for deregistration: %s", id, e)
+        raise
 
 # --- Kubernetes helpers ---
 def _pod_exists(pod_name, namespace):
