@@ -1,4 +1,3 @@
-import urllib.parse
 #!/usr/bin/env python3
 """
 consul_k8s_registrar.py (Gateway-based)
@@ -13,6 +12,7 @@ Env vars (existing plus):
   POD_NAME                (optional) used as owner id in Consul meta
   REGISTRAR_VERSION       (default: "1.0.0") version of this registrar
 """
+import urllib.parse
 import os
 import time
 import json
@@ -22,6 +22,7 @@ import requests
 import re
 import signal
 import socket
+import hashlib
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from kubernetes import client, config, watch
 from kubernetes.client import CustomObjectsApi
@@ -552,8 +553,26 @@ def sanitize_consul_name(s: str) -> str:
     return s or "service"
 
 def make_listener_service_name(ns, gwname, listener_ident, hostname, protocol):
-    base = f"{ns}-{gwname}-{protocol}-{hostname or listener_ident}"
-    return sanitize_consul_name(base)
+    """
+    Generate a short, DNS-safe Consul service name.
+    
+    Format: <gwname>-<protocol>-<hash>
+    Example: interscalar-http-7f2c91ab
+    
+    The full hostname and listener details are stored in metadata.vhost
+    """
+    seed = f"{gwname}-{protocol}-{listener_ident}"
+    digest = hashlib.sha1(seed.encode()).hexdigest()[:8]
+    safe_gw = sanitize_consul_name(gwname)
+    service_name = f"{safe_gw}-{protocol}-{digest}"
+    
+    # Ensure it fits DNS label constraints (63 chars max)
+    if len(service_name) > 63:
+        # Trim gwname if needed
+        max_gw_len = 63 - len(protocol) - len(digest) - 2  # -2 for dashes
+        safe_gw = safe_gw[:max_gw_len].rstrip('-')
+        service_name = f"{safe_gw}-{protocol}-{digest}"
+    return service_name
 
 def parse_addrport(v):
     if not v:
