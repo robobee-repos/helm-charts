@@ -299,7 +299,6 @@ def _cleanup_mismatched_versions():
                 continue
 
             meta = info.get("ServiceMeta") or {}
-            owner = meta.get("owner")
             registrar_version = meta.get("registrar_version")
 
             node = info.get("Node")
@@ -339,7 +338,6 @@ def _cleanup_mismatched_versions():
 
     except Exception:
         log.exception("Version cleanup failed (continuing)")
-
 
 def reconcile_on_start():
     """
