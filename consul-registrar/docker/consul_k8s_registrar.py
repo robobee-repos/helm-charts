@@ -557,21 +557,29 @@ def make_listener_service_name(ns, gwname, listener_ident, hostname, protocol):
     Generate a short, DNS-safe Consul service name.
     
     Format: <gwname>-<protocol>-<hash>
-    Example: interscalar-http-7f2c91ab
-    
-    The full hostname and listener details are stored in metadata.vhost
+    Example: gateway-2-https-7f2c91ab
     """
+    # Create a seed from all unique identifiers
     seed = f"{gwname}-{protocol}-{listener_ident}"
+    
+    # Generate a short hash (8 chars)
     digest = hashlib.sha1(seed.encode()).hexdigest()[:8]
-    safe_gw = sanitize_consul_name(gwname)
+    
+    # Use only gateway name
+    safe_gw = gwname.lower().replace("_", "-")
+    
+    # Build: <gwname>-<protocol>-<hash>
+    # Format: "gateway-2-https-7f2c91ab"
+    # Parts: safe_gw (variable) + "-" + protocol + "-" + digest (8)
+    
+    # Calculate max length for gwname: 63 - len(protocol) - len(digest) - 2 dashes
+    max_gw_len = 63 - len(protocol) - len(digest) - 2
+    
+    if len(safe_gw) > max_gw_len:
+        safe_gw = safe_gw[:max_gw_len].rstrip('-')
+    
     service_name = f"{safe_gw}-{protocol}-{digest}"
     
-    # Ensure it fits DNS label constraints (63 chars max)
-    if len(service_name) > 63:
-        # Trim gwname if needed
-        max_gw_len = 63 - len(protocol) - len(digest) - 2  # -2 for dashes
-        safe_gw = safe_gw[:max_gw_len].rstrip('-')
-        service_name = f"{safe_gw}-{protocol}-{digest}"
     return service_name
 
 def parse_addrport(v):
