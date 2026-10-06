@@ -276,6 +276,9 @@ def _cleanup_mismatched_versions():
     
     This handles breaking changes when registrar version increments
     and the expected service ID format changes.
+    
+    Deletes ALL services with SERVICE_NAME_PREFIX, regardless of owner,
+    if they don't match the current REGISTRAR_VERSION.
     """
     if DRY_RUN:
         log.info("DRY-RUN mode, skipping version cleanup")
@@ -306,7 +309,7 @@ def _cleanup_mismatched_versions():
             namespace = info.get("Namespace")
             partition = info.get("Partition")
 
-            # If version is missing or mismatched, remove it
+            # Delete if version is missing or mismatched, regardless of owner
             if not registrar_version or registrar_version != REGISTRAR_VERSION:
                 log.warning(
                     "Found mismatched version service: node=%s id=%s "
