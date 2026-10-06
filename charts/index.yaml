@@ -11,7 +11,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.687761387+02:00"
+    created: "2026-10-06T10:10:44.691926708+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -50,7 +50,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.680103411+02:00"
+    created: "2026-10-06T10:10:44.682971716+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -89,7 +89,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.672323766+02:00"
+    created: "2026-10-06T10:10:44.672760929+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -128,7 +128,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.66402902+02:00"
+    created: "2026-10-06T10:10:44.665054227+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -167,7 +167,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.655558092+02:00"
+    created: "2026-10-06T10:10:44.655728554+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -199,7 +199,7 @@ entries:
   certs:
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.688409128+02:00"
+    created: "2026-10-06T10:10:44.693783108+02:00"
     description: A Helm chart for cert issuer.
     digest: 6ce2e4d5f1f8b8483de375b29a4cced734a8becad3c707aebba90aebf6764aa3
     keywords:
@@ -219,7 +219,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.688265988+02:00"
+    created: "2026-10-06T10:10:44.693502116+02:00"
     description: A Helm chart for cert issuer.
     digest: 6dcd32b8ebac9fd88c745a95e30c89cc1252c8e9ed8a073b7409439a9c0bfa91
     keywords:
@@ -239,7 +239,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.688081019+02:00"
+    created: "2026-10-06T10:10:44.693181851+02:00"
     description: A Helm chart for cert issuer.
     digest: 4dfe7ea4e395ea7850b8a9478cb7624ecd8abe3b0b8b49f27b793cbfc3f2f44d
     keywords:
@@ -259,7 +259,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.687935886+02:00"
+    created: "2026-10-06T10:10:44.692695271+02:00"
     description: A Helm chart for cert issuer.
     digest: 87da86752cddb9c736385d52a1a4ddbded36cbefc5bc4e1bdc3d9425293eff20
     keywords:
@@ -280,7 +280,7 @@ entries:
   certs-issuers:
   - apiVersion: v2
     appVersion: v1.20.3
-    created: "2026-09-30T14:55:12.691692687+02:00"
+    created: "2026-10-06T10:10:44.698313243+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -306,7 +306,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: v1.20.3
-    created: "2026-09-30T14:55:12.690991465+02:00"
+    created: "2026-10-06T10:10:44.697437728+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -332,7 +332,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: v1.20.3
-    created: "2026-09-30T14:55:12.690305873+02:00"
+    created: "2026-10-06T10:10:44.696489184+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -358,7 +358,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: v1.20.3
-    created: "2026-09-30T14:55:12.689592478+02:00"
+    created: "2026-10-06T10:10:44.695592278+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -384,7 +384,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: v1.20.3
-    created: "2026-09-30T14:55:12.688883111+02:00"
+    created: "2026-10-06T10:10:44.694611855+02:00"
     description: A Helm chart for cert issuer.
     digest: 4642835fb15b54f2cc42bedcd27147b1e73cb923e8319c97b595293e0302f354
     keywords:
@@ -404,7 +404,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.688722579+02:00"
+    created: "2026-10-06T10:10:44.694311507+02:00"
     description: A Helm chart for cert issuer.
     digest: e82d6915dc2b51aa6443cff5d8a753eb760803432d3de3d89123e9d5db5dea68
     keywords:
@@ -424,7 +424,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.688557818+02:00"
+    created: "2026-10-06T10:10:44.694047648+02:00"
     description: A Helm chart for cert issuer.
     digest: a6ef917d2b96784f7a254fb54ed67cd15e59f50145a9567b6d219d446d20289a
     keywords:
@@ -448,7 +448,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.741079794+02:00"
+    created: "2026-10-06T10:10:44.755368653+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -474,7 +474,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.738607153+02:00"
+    created: "2026-10-06T10:10:44.752607232+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -500,7 +500,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.737116092+02:00"
+    created: "2026-10-06T10:10:44.750810164+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -526,7 +526,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.735670387+02:00"
+    created: "2026-10-06T10:10:44.748877109+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -552,7 +552,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.734071403+02:00"
+    created: "2026-10-06T10:10:44.747072998+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -578,7 +578,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.732012782+02:00"
+    created: "2026-10-06T10:10:44.744380116+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -604,7 +604,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.719594343+02:00"
+    created: "2026-10-06T10:10:44.728788946+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -630,7 +630,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.718056394+02:00"
+    created: "2026-10-06T10:10:44.727089904+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -656,7 +656,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.716536479+02:00"
+    created: "2026-10-06T10:10:44.725386763+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -682,7 +682,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.714913319+02:00"
+    created: "2026-10-06T10:10:44.723680477+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -708,7 +708,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.711313714+02:00"
+    created: "2026-10-06T10:10:44.720051806+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -734,7 +734,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.709846909+02:00"
+    created: "2026-10-06T10:10:44.718395094+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -760,7 +760,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.708360857+02:00"
+    created: "2026-10-06T10:10:44.716682135+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -786,7 +786,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.4
-    created: "2026-09-30T14:55:12.706114042+02:00"
+    created: "2026-10-06T10:10:44.714500971+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -812,7 +812,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.3
-    created: "2026-09-30T14:55:12.704092722+02:00"
+    created: "2026-10-06T10:10:44.712744379+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -838,7 +838,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.702753808+02:00"
+    created: "2026-10-06T10:10:44.710956148+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -864,7 +864,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.701353198+02:00"
+    created: "2026-10-06T10:10:44.709371231+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -890,7 +890,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.699121811+02:00"
+    created: "2026-10-06T10:10:44.706648223+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -916,7 +916,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.697770935+02:00"
+    created: "2026-10-06T10:10:44.705113591+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -942,7 +942,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.69641531+02:00"
+    created: "2026-10-06T10:10:44.703527522+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -968,7 +968,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.730521661+02:00"
+    created: "2026-10-06T10:10:44.742230191+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -994,7 +994,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.729202234+02:00"
+    created: "2026-10-06T10:10:44.740360155+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1020,7 +1020,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.727680115+02:00"
+    created: "2026-10-06T10:10:44.738695197+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1046,7 +1046,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.725599433+02:00"
+    created: "2026-10-06T10:10:44.736091654+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1072,7 +1072,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.724307698+02:00"
+    created: "2026-10-06T10:10:44.734577962+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1098,7 +1098,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.722987239+02:00"
+    created: "2026-10-06T10:10:44.732980291+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1124,7 +1124,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.721657853+02:00"
+    created: "2026-10-06T10:10:44.731233058+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1150,7 +1150,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.712628302+02:00"
+    created: "2026-10-06T10:10:44.721567071+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1176,7 +1176,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.695030459+02:00"
+    created: "2026-10-06T10:10:44.701964216+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1202,7 +1202,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.692999511+02:00"
+    created: "2026-10-06T10:10:44.699794123+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1229,7 +1229,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.6
-    created: "2026-09-30T14:55:12.791620124+02:00"
+    created: "2026-10-06T10:10:44.815628091+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1255,7 +1255,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.5
-    created: "2026-09-30T14:55:12.789637046+02:00"
+    created: "2026-10-06T10:10:44.813682352+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1281,7 +1281,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.5
-    created: "2026-09-30T14:55:12.787137955+02:00"
+    created: "2026-10-06T10:10:44.810405967+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1307,7 +1307,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.4
-    created: "2026-09-30T14:55:12.78522029+02:00"
+    created: "2026-10-06T10:10:44.808336093+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1333,7 +1333,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.3
-    created: "2026-09-30T14:55:12.783624031+02:00"
+    created: "2026-10-06T10:10:44.806443615+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1359,7 +1359,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.2
-    created: "2026-09-30T14:55:12.7811675+02:00"
+    created: "2026-10-06T10:10:44.803651245+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1385,7 +1385,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.1
-    created: "2026-09-30T14:55:12.779097959+02:00"
+    created: "2026-10-06T10:10:44.801456585+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1411,7 +1411,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.3.1
-    created: "2026-09-30T14:55:12.777403174+02:00"
+    created: "2026-10-06T10:10:44.799779675+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1437,7 +1437,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.2.0
-    created: "2026-09-30T14:55:12.775285683+02:00"
+    created: "2026-10-06T10:10:44.797353367+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1463,7 +1463,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.6
-    created: "2026-09-30T14:55:12.773935317+02:00"
+    created: "2026-10-06T10:10:44.795795712+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1489,7 +1489,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.5
-    created: "2026-09-30T14:55:12.772607314+02:00"
+    created: "2026-10-06T10:10:44.79390684+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1515,7 +1515,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.4
-    created: "2026-09-30T14:55:12.771303877+02:00"
+    created: "2026-10-06T10:10:44.792252663+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1541,7 +1541,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.3
-    created: "2026-09-30T14:55:12.76952287+02:00"
+    created: "2026-10-06T10:10:44.789946893+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1567,7 +1567,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.2
-    created: "2026-09-30T14:55:12.76813844+02:00"
+    created: "2026-10-06T10:10:44.788196053+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1593,7 +1593,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.1
-    created: "2026-09-30T14:55:12.76687079+02:00"
+    created: "2026-10-06T10:10:44.786530824+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1619,7 +1619,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.765579116+02:00"
+    created: "2026-10-06T10:10:44.784964673+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1645,7 +1645,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2026-09-30T14:55:12.753000004+02:00"
+    created: "2026-10-06T10:10:44.770134542+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1671,7 +1671,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2026-09-30T14:55:12.751185824+02:00"
+    created: "2026-10-06T10:10:44.767616982+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1697,7 +1697,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.7
-    created: "2026-09-30T14:55:12.749828365+02:00"
+    created: "2026-10-06T10:10:44.765991468+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1723,7 +1723,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.6
-    created: "2026-09-30T14:55:12.748299693+02:00"
+    created: "2026-10-06T10:10:44.764423003+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1749,7 +1749,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.5
-    created: "2026-09-30T14:55:12.746970398+02:00"
+    created: "2026-10-06T10:10:44.762779796+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1775,7 +1775,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.4
-    created: "2026-09-30T14:55:12.744977541+02:00"
+    created: "2026-10-06T10:10:44.760332989+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1801,7 +1801,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.3
-    created: "2026-09-30T14:55:12.763610364+02:00"
+    created: "2026-10-06T10:10:44.782654364+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1827,7 +1827,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.3
-    created: "2026-09-30T14:55:12.761765787+02:00"
+    created: "2026-10-06T10:10:44.78079057+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1853,7 +1853,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.76034541+02:00"
+    created: "2026-10-06T10:10:44.779224109+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1879,7 +1879,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.2
-    created: "2026-09-30T14:55:12.758795448+02:00"
+    created: "2026-10-06T10:10:44.77737376+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1905,7 +1905,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.756890357+02:00"
+    created: "2026-10-06T10:10:44.774900604+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1931,7 +1931,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.755661631+02:00"
+    created: "2026-10-06T10:10:44.773392392+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1957,7 +1957,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.754410192+02:00"
+    created: "2026-10-06T10:10:44.771808858+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -1983,7 +1983,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.743697157+02:00"
+    created: "2026-10-06T10:10:44.758800692+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2009,7 +2009,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.742381608+02:00"
+    created: "2026-10-06T10:10:44.757073637+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2039,7 +2039,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.806847718+02:00"
+    created: "2026-10-06T10:10:44.835702698+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2068,7 +2068,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.804842969+02:00"
+    created: "2026-10-06T10:10:44.834104115+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2097,7 +2097,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.803627177+02:00"
+    created: "2026-10-06T10:10:44.832601083+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2126,7 +2126,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.802402459+02:00"
+    created: "2026-10-06T10:10:44.831051744+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2155,7 +2155,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.801196105+02:00"
+    created: "2026-10-06T10:10:44.828977782+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2184,7 +2184,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.799376635+02:00"
+    created: "2026-10-06T10:10:44.826636846+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2213,7 +2213,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.798186051+02:00"
+    created: "2026-10-06T10:10:44.825173509+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2242,7 +2242,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.797000596+02:00"
+    created: "2026-10-06T10:10:44.823392221+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2271,7 +2271,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.795790425+02:00"
+    created: "2026-10-06T10:10:44.821871225+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2300,7 +2300,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.794543544+02:00"
+    created: "2026-10-06T10:10:44.819554725+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2329,7 +2329,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.792799327+02:00"
+    created: "2026-10-06T10:10:44.81725142+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2355,7 +2355,7 @@ entries:
       category: Analytics
     apiVersion: v2
     appVersion: 1.17.3-0.1.1
-    created: "2026-09-30T14:55:12.813873462+02:00"
+    created: "2026-10-06T10:10:44.843505491+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -2393,7 +2393,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2026-09-30T14:55:12.815006828+02:00"
+    created: "2026-10-06T10:10:44.845473081+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2425,7 +2425,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2026-09-30T14:55:12.818596104+02:00"
+    created: "2026-10-06T10:10:44.849308203+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2457,7 +2457,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2026-09-30T14:55:12.817529363+02:00"
+    created: "2026-10-06T10:10:44.848044784+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2489,7 +2489,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.5.0
-    created: "2026-09-30T14:55:12.816077156+02:00"
+    created: "2026-10-06T10:10:44.846790142+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2520,7 +2520,7 @@ entries:
   ingress:
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.819761752+02:00"
+    created: "2026-10-06T10:10:44.850716185+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2543,7 +2543,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2026-09-30T14:55:12.819167201+02:00"
+    created: "2026-10-06T10:10:44.850027202+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2569,7 +2569,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.332.1
-    created: "2026-09-30T14:55:12.827788963+02:00"
+    created: "2026-10-06T10:10:44.860911222+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2600,7 +2600,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.332.1
-    created: "2026-09-30T14:55:12.826440431+02:00"
+    created: "2026-10-06T10:10:44.858532484+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2631,7 +2631,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.332.1
-    created: "2026-09-30T14:55:12.825063686+02:00"
+    created: "2026-10-06T10:10:44.856657188+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2662,7 +2662,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.319.2
-    created: "2026-09-30T14:55:12.823664899+02:00"
+    created: "2026-10-06T10:10:44.854588256+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2693,7 +2693,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: 2.319.2
-    created: "2026-09-30T14:55:12.821287277+02:00"
+    created: "2026-10-06T10:10:44.853070717+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2726,7 +2726,33 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.2.0
-    created: "2026-09-30T14:55:12.839067574+02:00"
+    created: "2026-10-06T10:10:44.876960337+02:00"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: Define namespace.
+    digest: 72cf0cfae7a7b450e656aaa1d31078bf5acea2ae6e2761133d1c9ea5f61efec0
+    home: https://robobee-repos.github.io/helm-charts-charts/
+    keywords:
+    - monitoring
+    - kubernetes
+    - metrics
+    maintainers:
+    - name: Erwin Müller
+      url: https://github.com/robobee-repos/helm-charts-charts
+    name: k8s-metrics-logger
+    urls:
+    - k8s-metrics-logger-1.2.1.tgz
+    version: 1.2.1
+  - annotations:
+      licenses: CC-BY-4.0 license
+      tanzuCategory: application
+    apiVersion: v2
+    appVersion: 1.2.0
+    created: "2026-10-06T10:10:44.874395738+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2752,7 +2778,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.2
-    created: "2026-09-30T14:55:12.837588836+02:00"
+    created: "2026-10-06T10:10:44.872634278+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2778,7 +2804,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.1
-    created: "2026-09-30T14:55:12.835587233+02:00"
+    created: "2026-10-06T10:10:44.87062048+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2804,7 +2830,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2026-09-30T14:55:12.833694375+02:00"
+    created: "2026-10-06T10:10:44.86866358+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2830,7 +2856,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-09-30T14:55:12.832339661+02:00"
+    created: "2026-10-06T10:10:44.86583442+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2856,7 +2882,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.830993133+02:00"
+    created: "2026-10-06T10:10:44.864249474+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2882,7 +2908,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.829634081+02:00"
+    created: "2026-10-06T10:10:44.862620373+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -2906,7 +2932,7 @@ entries:
   k8s-resources-job:
   - apiVersion: v2
     appVersion: v1.0.0
-    created: "2026-09-30T14:55:12.841243044+02:00"
+    created: "2026-10-06T10:10:44.879868085+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2930,7 +2956,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: v1.0.0
-    created: "2026-09-30T14:55:12.840465519+02:00"
+    created: "2026-10-06T10:10:44.878853527+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2954,7 +2980,7 @@ entries:
     version: 1.0.4-snapshot
   - apiVersion: v2
     appVersion: v1.0.0
-    created: "2026-09-30T14:55:12.839723109+02:00"
+    created: "2026-10-06T10:10:44.877784155+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -2981,7 +3007,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.854135798+02:00"
+    created: "2026-10-06T10:10:44.895479423+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3013,7 +3039,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.852754564+02:00"
+    created: "2026-10-06T10:10:44.893313427+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3045,7 +3071,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.851389621+02:00"
+    created: "2026-10-06T10:10:44.891536197+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3077,7 +3103,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.849104834+02:00"
+    created: "2026-10-06T10:10:44.888991055+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3109,7 +3135,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.847744069+02:00"
+    created: "2026-10-06T10:10:44.887301781+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3141,7 +3167,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.846297142+02:00"
+    created: "2026-10-06T10:10:44.885590375+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3173,7 +3199,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.844910297+02:00"
+    created: "2026-10-06T10:10:44.883891743+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3205,7 +3231,7 @@ entries:
       category: Infrastructure
     apiVersion: v2
     appVersion: v0.17.6
-    created: "2026-09-30T14:55:12.843304691+02:00"
+    created: "2026-10-06T10:10:44.881527192+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3244,7 +3270,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 26.3.3
-    created: "2026-09-30T14:55:12.861685559+02:00"
+    created: "2026-10-06T10:10:44.90456419+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -3276,7 +3302,7 @@ entries:
   kube-resources:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.863226204+02:00"
+    created: "2026-10-06T10:10:44.907046564+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3300,7 +3326,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.862461562+02:00"
+    created: "2026-10-06T10:10:44.905825455+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3331,7 +3357,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.881688225+02:00"
+    created: "2026-10-06T10:10:44.92793517+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3363,7 +3389,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.879411563+02:00"
+    created: "2026-10-06T10:10:44.924581268+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3395,7 +3421,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.876458056+02:00"
+    created: "2026-10-06T10:10:44.922074288+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3427,7 +3453,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.873850831+02:00"
+    created: "2026-10-06T10:10:44.918703084+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3459,7 +3485,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.87159008+02:00"
+    created: "2026-10-06T10:10:44.915316921+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3491,7 +3517,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.868626874+02:00"
+    created: "2026-10-06T10:10:44.912926912+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3523,7 +3549,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.866493092+02:00"
+    created: "2026-10-06T10:10:44.910469666+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -3550,7 +3576,7 @@ entries:
   mariadb-cluster:
   - apiVersion: v2
     appVersion: 0.0.0
-    created: "2026-09-30T14:55:12.881987269+02:00"
+    created: "2026-10-06T10:10:44.928601169+02:00"
     description: Create MariaDB cluster managed by mariadb-operator
     digest: edb5cd4e09d332c480bfb075900c88242a8cf46ae42d3e60a7dbe1eb9437eac7
     home: https://github.com/mariadb-operator/mariadb-operator
@@ -3574,7 +3600,7 @@ entries:
   mariadb-jobs:
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.895276239+02:00"
+    created: "2026-10-06T10:10:44.944273542+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3603,7 +3629,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.893786711+02:00"
+    created: "2026-10-06T10:10:44.941977962+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3632,7 +3658,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.892089452+02:00"
+    created: "2026-10-06T10:10:44.940056158+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3661,7 +3687,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.88981814+02:00"
+    created: "2026-10-06T10:10:44.938482092+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3690,7 +3716,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.888462585+02:00"
+    created: "2026-10-06T10:10:44.936289316+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3719,7 +3745,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.887055082+02:00"
+    created: "2026-10-06T10:10:44.933743452+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3748,7 +3774,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.885647649+02:00"
+    created: "2026-10-06T10:10:44.931828952+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3777,7 +3803,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 10.6.10
-    created: "2026-09-30T14:55:12.883364845+02:00"
+    created: "2026-10-06T10:10:44.930226382+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3809,7 +3835,7 @@ entries:
       category: Analytics
     apiVersion: v2
     appVersion: 4.7.1
-    created: "2026-09-30T14:55:12.900948862+02:00"
+    created: "2026-10-06T10:10:44.951013877+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3838,7 +3864,7 @@ entries:
       category: Analytics
     apiVersion: v2
     appVersion: 4.7.1
-    created: "2026-09-30T14:55:12.896579525+02:00"
+    created: "2026-10-06T10:10:44.946110435+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -3865,7 +3891,7 @@ entries:
       tanzuCategory: application
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-09-30T14:55:12.901586494+02:00"
+    created: "2026-10-06T10:10:44.951751141+02:00"
     description: Define namespace.
     digest: 1bdaba86f4fb5e1d16938da2bf0458e910e9bc485163c25ffd9222b4a1245761
     home: https://robobee-repos.github.io/helm-charts-charts/
@@ -3883,7 +3909,7 @@ entries:
   nextcloud:
   - apiVersion: v2
     appVersion: 23.0.2
-    created: "2026-09-30T14:55:12.975015159+02:00"
+    created: "2026-10-06T10:10:45.031685009+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -3924,7 +3950,7 @@ entries:
     version: 1.0.8
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.966911353+02:00"
+    created: "2026-10-06T10:10:45.022011147+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -3965,7 +3991,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.959154331+02:00"
+    created: "2026-10-06T10:10:45.013737925+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4006,7 +4032,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.951224974+02:00"
+    created: "2026-10-06T10:10:45.005092398+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4047,7 +4073,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.942289029+02:00"
+    created: "2026-10-06T10:10:44.996296587+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4088,7 +4114,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.933058109+02:00"
+    created: "2026-10-06T10:10:44.988023955+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4129,7 +4155,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.925579471+02:00"
+    created: "2026-10-06T10:10:44.979292115+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4170,7 +4196,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.917892621+02:00"
+    created: "2026-10-06T10:10:44.970371318+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4211,7 +4237,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 22.2.3
-    created: "2026-09-30T14:55:12.909164208+02:00"
+    created: "2026-10-06T10:10:44.961047999+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -4253,7 +4279,7 @@ entries:
   nexus:
   - apiVersion: v2
     appVersion: v0.6.0
-    created: "2026-09-30T14:55:12.975730518+02:00"
+    created: "2026-10-06T10:10:45.032901409+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4277,7 +4303,7 @@ entries:
   nexus-operator:
   - apiVersion: v2
     appVersion: v0.6.0
-    created: "2026-09-30T14:55:12.977878196+02:00"
+    created: "2026-10-06T10:10:45.035573932+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4300,7 +4326,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v0.6.0
-    created: "2026-09-30T14:55:12.976862081+02:00"
+    created: "2026-10-06T10:10:45.03418235+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4326,7 +4352,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-9
-    created: "2026-09-30T14:55:13.095050259+02:00"
+    created: "2026-10-06T10:10:45.171218445+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4352,7 +4378,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-9
-    created: "2026-09-30T14:55:13.092168677+02:00"
+    created: "2026-10-06T10:10:45.167796725+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4378,7 +4404,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-9
-    created: "2026-09-30T14:55:13.090089127+02:00"
+    created: "2026-10-06T10:10:45.164533074+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4404,7 +4430,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-9
-    created: "2026-09-30T14:55:13.087774534+02:00"
+    created: "2026-10-06T10:10:45.160804485+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4430,7 +4456,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-8
-    created: "2026-09-30T14:55:13.084804616+02:00"
+    created: "2026-10-06T10:10:45.158424084+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4456,7 +4482,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-7
-    created: "2026-09-30T14:55:13.0824462+02:00"
+    created: "2026-10-06T10:10:45.155951018+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4482,7 +4508,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-6
-    created: "2026-09-30T14:55:13.079832513+02:00"
+    created: "2026-10-06T10:10:45.152640819+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4508,7 +4534,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-4
-    created: "2026-09-30T14:55:13.075552185+02:00"
+    created: "2026-10-06T10:10:45.147925113+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4534,7 +4560,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-4
-    created: "2026-09-30T14:55:13.072440379+02:00"
+    created: "2026-10-06T10:10:45.14446471+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4560,7 +4586,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-3
-    created: "2026-09-30T14:55:13.069865184+02:00"
+    created: "2026-10-06T10:10:45.141950847+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4586,7 +4612,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.067601998+02:00"
+    created: "2026-10-06T10:10:45.139208762+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4612,7 +4638,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.064623774+02:00"
+    created: "2026-10-06T10:10:45.136553662+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4638,7 +4664,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.062555165+02:00"
+    created: "2026-10-06T10:10:45.134001927+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4664,7 +4690,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.060466708+02:00"
+    created: "2026-10-06T10:10:45.130437738+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4690,7 +4716,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.057193137+02:00"
+    created: "2026-10-06T10:10:45.127965944+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4716,7 +4742,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.054666374+02:00"
+    created: "2026-10-06T10:10:45.125524187+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4742,7 +4768,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.05237261+02:00"
+    created: "2026-10-06T10:10:45.122613374+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4768,7 +4794,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-2
-    created: "2026-09-30T14:55:13.111211764+02:00"
+    created: "2026-10-06T10:10:45.192697327+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4794,7 +4820,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-1
-    created: "2026-09-30T14:55:13.109134729+02:00"
+    created: "2026-10-06T10:10:45.189156171+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4820,7 +4846,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-1
-    created: "2026-09-30T14:55:13.106373183+02:00"
+    created: "2026-10-06T10:10:45.18656939+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4846,7 +4872,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.0.0-develop-1
-    created: "2026-09-30T14:55:13.104362653+02:00"
+    created: "2026-10-06T10:10:45.183651153+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4872,7 +4898,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.5.0-bookworm-1
-    created: "2026-09-30T14:55:13.102183305+02:00"
+    created: "2026-10-06T10:10:45.180001772+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4898,7 +4924,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.5.0-bookworm-1
-    created: "2026-09-30T14:55:13.099283639+02:00"
+    created: "2026-10-06T10:10:45.177443726+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4924,7 +4950,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.5.0-bookworm-1
-    created: "2026-09-30T14:55:13.097163853+02:00"
+    created: "2026-10-06T10:10:45.174822429+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4950,7 +4976,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.5.0-bookworm-1
-    created: "2026-09-30T14:55:13.077614242+02:00"
+    created: "2026-10-06T10:10:45.150296897+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -4976,7 +5002,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.5.0-bookworm-1
-    created: "2026-09-30T14:55:13.049545251+02:00"
+    created: "2026-10-06T10:10:45.120229346+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5002,7 +5028,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.13
-    created: "2026-09-30T14:55:13.047490958+02:00"
+    created: "2026-10-06T10:10:45.117318863+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5035,7 +5061,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.3
-    created: "2026-09-30T14:55:13.044826426+02:00"
+    created: "2026-10-06T10:10:45.114533657+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5068,7 +5094,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.3
-    created: "2026-09-30T14:55:13.042115636+02:00"
+    created: "2026-10-06T10:10:45.112051193+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5101,7 +5127,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.3
-    created: "2026-09-30T14:55:13.039935286+02:00"
+    created: "2026-10-06T10:10:45.108787182+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5134,7 +5160,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.027652492+02:00"
+    created: "2026-10-06T10:10:45.093177657+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5167,7 +5193,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.02565135+02:00"
+    created: "2026-10-06T10:10:45.090254901+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5200,7 +5226,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.021747982+02:00"
+    created: "2026-10-06T10:10:45.086411324+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5233,7 +5259,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.019859582+02:00"
+    created: "2026-10-06T10:10:45.083434465+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5266,7 +5292,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.017854152+02:00"
+    created: "2026-10-06T10:10:45.08130579+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5299,7 +5325,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.015332769+02:00"
+    created: "2026-10-06T10:10:45.078426466+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5332,7 +5358,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.013488633+02:00"
+    created: "2026-10-06T10:10:45.075294554+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5365,7 +5391,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.011607096+02:00"
+    created: "2026-10-06T10:10:45.073200876+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5398,7 +5424,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.008823629+02:00"
+    created: "2026-10-06T10:10:45.070658388+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5431,7 +5457,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.006958082+02:00"
+    created: "2026-10-06T10:10:45.067695847+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5464,7 +5490,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.00511584+02:00"
+    created: "2026-10-06T10:10:45.065640731+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5497,7 +5523,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.002342362+02:00"
+    created: "2026-10-06T10:10:45.063629809+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5530,7 +5556,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.999107935+02:00"
+    created: "2026-10-06T10:10:45.059133487+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5563,7 +5589,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.997224805+02:00"
+    created: "2026-10-06T10:10:45.05714646+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5596,7 +5622,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.994695347+02:00"
+    created: "2026-10-06T10:10:45.055105652+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5629,7 +5655,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.992821965+02:00"
+    created: "2026-10-06T10:10:45.052464297+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5662,7 +5688,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.991010801+02:00"
+    created: "2026-10-06T10:10:45.050469706+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5695,7 +5721,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.988126705+02:00"
+    created: "2026-10-06T10:10:45.048520701+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5728,7 +5754,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.986369222+02:00"
+    created: "2026-10-06T10:10:45.046598877+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5761,7 +5787,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.984583065+02:00"
+    created: "2026-10-06T10:10:45.044102768+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5794,7 +5820,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.982544111+02:00"
+    created: "2026-10-06T10:10:45.041518942+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5819,7 +5845,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.980648147+02:00"
+    created: "2026-10-06T10:10:45.039781307+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5844,7 +5870,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.036963684+02:00"
+    created: "2026-10-06T10:10:45.105673314+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5869,7 +5895,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.035399766+02:00"
+    created: "2026-10-06T10:10:45.10358214+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5894,7 +5920,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.034002683+02:00"
+    created: "2026-10-06T10:10:45.100526252+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5919,7 +5945,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.032649091+02:00"
+    created: "2026-10-06T10:10:45.098809396+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5944,7 +5970,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.031202554+02:00"
+    created: "2026-10-06T10:10:45.097163394+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5969,7 +5995,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.029051169+02:00"
+    created: "2026-10-06T10:10:45.095279912+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -5994,7 +6020,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.023065065+02:00"
+    created: "2026-10-06T10:10:45.088066894+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6019,7 +6045,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:13.000465754+02:00"
+    created: "2026-10-06T10:10:45.06137723+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6044,7 +6070,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-09-30T14:55:12.979215647+02:00"
+    created: "2026-10-06T10:10:45.037937461+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6068,7 +6094,7 @@ entries:
   openldap-stack-ha:
   - apiVersion: v2
     appVersion: 2.4.57
-    created: "2026-09-30T14:55:13.112407288+02:00"
+    created: "2026-10-06T10:10:45.194292202+02:00"
     dependencies:
     - condition: ltb-passwd.enabled
       name: ltb-passwd
@@ -6100,7 +6126,7 @@ entries:
   pgo:
   - apiVersion: v2
     appVersion: 5.2.0
-    created: "2026-09-30T14:55:13.116968616+02:00"
+    created: "2026-10-06T10:10:45.199325589+02:00"
     description: Installer for PGO, the open source Postgres Operator from Crunchy
       Data
     digest: 82e552d30b708d9899c60c025e5eeeaf4e1e005f2d520ca97bef77c6b41220f1
@@ -6111,7 +6137,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2026-09-30T14:55:13.114267214+02:00"
+    created: "2026-10-06T10:10:45.195819129+02:00"
     description: Installer for PGO, the open source Postgres Operator from Crunchy
       Data
     digest: edc450610ac38efddeabd32ad7bd1213e7fdb95613ae5067f9d5f1b15b846c21
@@ -6123,7 +6149,7 @@ entries:
   postgrescluster:
   - apiVersion: v2
     appVersion: 6.0.0
-    created: "2026-09-30T14:55:13.119433142+02:00"
+    created: "2026-10-06T10:10:45.202364966+02:00"
     description: A Helm chart for Kubernetes
     digest: 6d535715545c18e14f23e79d484348e125596ee54c8d6a5ada4acc9fd80cb728
     name: postgrescluster
@@ -6133,7 +6159,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: 6.0.0
-    created: "2026-09-30T14:55:13.118878125+02:00"
+    created: "2026-10-06T10:10:45.201601573+02:00"
     description: A Helm chart for Kubernetes
     digest: e59b86f22cae03605a5341d8f819eb1cc0be6b1ba84df2e69d7eb93531c76222
     name: postgrescluster
@@ -6143,7 +6169,7 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 5.2.0
-    created: "2026-09-30T14:55:13.118251915+02:00"
+    created: "2026-10-06T10:10:45.200853338+02:00"
     description: A Helm chart for Kubernetes
     digest: bfb92f1a871d6d10e9ee434435746e806739c8715c3fb32e5cdefc63a9b2059a
     name: postgrescluster
@@ -6153,7 +6179,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 5.0.4
-    created: "2026-09-30T14:55:13.117790034+02:00"
+    created: "2026-10-06T10:10:45.200242353+02:00"
     description: A Helm chart for Kubernetes
     digest: 00c91b84e48205798ef2f13fd922f9818d65bdb114311af071048d2b189546c6
     name: postgrescluster
@@ -6163,7 +6189,7 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 5.2.0
-    created: "2026-09-30T14:55:13.117345907+02:00"
+    created: "2026-10-06T10:10:45.199795097+02:00"
     description: A Helm chart for Kubernetes
     digest: d9b64003b6368070bd7f71b48c53520c34a0aa227b00c4654ded08526e941b0e
     name: postgrescluster
@@ -6176,7 +6202,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.8.1
-    created: "2026-09-30T14:55:13.126618156+02:00"
+    created: "2026-10-06T10:10:45.211936664+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6202,7 +6228,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.8.1
-    created: "2026-09-30T14:55:13.124600192+02:00"
+    created: "2026-10-06T10:10:45.209086074+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6228,7 +6254,7 @@ entries:
       category: iam
     apiVersion: v2
     appVersion: 1.8.1
-    created: "2026-09-30T14:55:13.122502728+02:00"
+    created: "2026-10-06T10:10:45.206053611+02:00"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -6250,4 +6276,4 @@ entries:
     urls:
     - self-service-password-1.0.0.tgz
     version: 1.0.0
-generated: "2026-09-30T14:55:12.646504506+02:00"
+generated: "2026-10-06T10:10:44.646223092+02:00"
